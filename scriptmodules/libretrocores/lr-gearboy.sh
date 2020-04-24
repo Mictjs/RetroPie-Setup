@@ -34,11 +34,12 @@ function install_lr-gearboy() {
 }
 
 function configure_lr-gearboy() {
-    for x in gb gbc; do
-        mkRomDir "$x"
-        ensureSystemretroconfig "$x"
+    local system
+    for system in gb gbc; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
 
-        addEmulator 1 "$md_id" "$x" "$md_inst/gearboy_libretro.so"
-        addSystem "$x"
+        addEmulator 1 "$md_id" "$system" "$md_inst/gearboy_libretro.so"
+        addSystem "$system"
     done
 }
