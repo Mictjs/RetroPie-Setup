@@ -29,7 +29,7 @@ function build_lr-fbalpha2012() {
     make -f makefile.libretro clean
     local params=()
     isPlatform "arm" && params+=("platform=armv")
-    make -f makefile.libretro "${params[@]}"
+    make -f makefile.libretro "${params[@]}" -j`nproc`
     md_ret_require="$md_build/svn-current/trunk/fbalpha2012_libretro.so"
 }
 

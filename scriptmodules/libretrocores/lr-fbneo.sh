@@ -32,7 +32,7 @@ function build_lr-fbneo() {
     isPlatform "neon" && params+=(HAVE_NEON=1)
     isPlatform "x86" && isPlatform "64bit" && params+=(USE_X64_DRC=1)
     make clean
-    make "${params[@]}"
+    make "${params[@]}" -j`nproc`
     md_ret_require="$md_build/src/burner/libretro/fbneo_libretro.so"
 }
 
