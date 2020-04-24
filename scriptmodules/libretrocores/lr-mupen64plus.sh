@@ -69,7 +69,7 @@ function build_lr-mupen64plus() {
         params+=(FORCE_GLES=1)
     fi
     make clean
-    make "${params[@]}"
+    make "${params[@]}" -j`nproc`
     rpSwap off
     md_ret_require="$md_build/mupen64plus_libretro.so"
 }

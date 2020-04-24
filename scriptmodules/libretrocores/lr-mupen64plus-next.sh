@@ -53,9 +53,9 @@ function build_lr-mupen64plus-next() {
 
     # workaround for linkage_arm.S including some armv7 instructions without this
     if isPlatform "armv6"; then
-        CFLAGS="$CFLAGS -DARMv5_ONLY" make "${params[@]}"
+        CFLAGS="$CFLAGS -DARMv5_ONLY" make "${params[@]}" -j`nproc`
     else
-        make "${params[@]}"
+        make "${params[@]}" -j`nproc`
     fi
 
     md_ret_require="$md_build/mupen64plus_next_libretro.so"
