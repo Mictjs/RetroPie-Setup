@@ -34,11 +34,12 @@ function install_lr-gearsystem() {
 }
 
 function configure_lr-gearsystem() {
-    for x in mastersystem gamegear sg-1000; do
-        mkRomDir "$x"
-        ensureSystemretroconfig "$x"
+    local system
+    for system in mastersystem gamegear sg-1000; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
 
-        addEmulator 1 "$md_id" "$x" "$md_inst/gearsystem_libretro.so"
-        addSystem "$x"
+        addEmulator 1 "$md_id" "$system" "$md_inst/gearsystem_libretro.so"
+        addSystem "$system"
     done
 }
