@@ -11,7 +11,7 @@
 
 rp_module_id="lr-flycast"
 rp_module_desc="Dreamcast/NAOMI/Atomiswave emulator - Reicast port for libretro"
-rp_module_help="Dreamcast ROM Extensions: .cdi .gdi .chd\nNaomi/Atomiswave ROM Extension: .zip\n\nCopy your Dreamcast roms to $romdir/dreamcast\nCopy your NAOMI roms to $romdir/naomi\nCopy your Atomiswave roms to $romdir/atomiswave\n\nCopy the required BIOS files dc_boot.bin, dc_flash.bin, naomi.zip and awbios.zip to $biosdir/dc"
+rp_module_help="Dreamcast ROM Extensions: .cdi .gdi .chd\nNaomi/Atomiswave ROM Extension: .zip (.chd (NAOMI-GD))\n\nCopy your Dreamcast roms to $romdir/dreamcast\nCopy your NAOMI roms to $romdir/naomi\nCopy your Atomiswave roms to $romdir/atomiswave\n\nCopy the required BIOS files dc_boot.bin, dc_flash.bin, naomi.zip and awbios.zip to $biosdir/dc"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/flycast/master/LICENSE"
 rp_module_section="opt"
 rp_module_flags="!mali !armv6"
