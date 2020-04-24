@@ -21,7 +21,7 @@ function sources_lr-beetle-lynx() {
 
 function build_lr-beetle-lynx() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/mednafen_lynx_libretro.so"
 }
 

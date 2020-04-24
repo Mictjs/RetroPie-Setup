@@ -21,7 +21,7 @@ function sources_lr-beetle-pcfx() {
 
 function build_lr-beetle-pcfx() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/mednafen_pcfx_libretro.so"
 }
 

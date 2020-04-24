@@ -26,7 +26,7 @@ function sources_lr-beetle-ngp() {
 
 function build_lr-beetle-ngp() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/mednafen_ngp_libretro.so"
 }
 

@@ -26,7 +26,7 @@ function sources_lr-beetle-pce-fast() {
 
 function build_lr-beetle-pce-fast() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/mednafen_pce_fast_libretro.so"
 }
 
