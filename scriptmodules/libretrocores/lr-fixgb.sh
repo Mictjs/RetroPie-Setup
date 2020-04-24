@@ -29,18 +29,19 @@ function build_lr-fixgb() {
 
 function install_lr-fixgb() {
     md_ret_files=(
-	'LICENSE'
-	'README.md'
-	'libretro/fixgb_libretro.so'
+        'LICENSE'
+        'README.md'
+        'libretro/fixgb_libretro.so'
     )
 }
 
 function configure_lr-fixgb() {
-    for x in gb gbc; do
-        mkRomDir "$x"
-        ensureSystemretroconfig "$x"
+    local system
+    for system in gb gbc; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
 
-        addEmulator 1 "$md_id" "$x" "$md_inst/fixgb_libretro.so"
-        addSystem "$x"
+        addEmulator 1 "$md_id" "$system" "$md_inst/fixgb_libretro.so"
+        addSystem "$xsystem"
     done
 }
