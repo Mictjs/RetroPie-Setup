@@ -33,11 +33,11 @@ function build_lr-emux() {
     for j in chip8 sms gb nes; do
         params+=(MACHINE="$j")
         if ! isPlatform "64bit"; then
-	    i="x86"
+            i="x86"
         else
-	    i="x86_64"
+            i="x86_64"
         fi
-	make -f Makefile.linux_"$i" "${params[@]}" clean
+        make -f Makefile.linux_"$i" "${params[@]}" clean
         make -f Makefile.linux_"$i" "${params[@]}"
         mv "emux_"$j"_libretro.linux_"$i".so" "emux_"$j"_libretro.so"
         mv "emux_"$j"_libretro.so" "emux-cores"
@@ -48,9 +48,9 @@ function build_lr-emux() {
 function install_lr-emux() {
     md_ret_files=(
         #'libretro/emux-cores/emux_chip8_libretro.so'
-	'libretro/emux-cores/emux_sms_libretro.so'
-	'libretro/emux-cores/emux_gb_libretro.so'
-	'libretro/emux-cores/emux_nes_libretro.so'
+        'libretro/emux-cores/emux_sms_libretro.so'
+        'libretro/emux-cores/emux_gb_libretro.so'
+        'libretro/emux-cores/emux_nes_libretro.so'
     )
 }
 
