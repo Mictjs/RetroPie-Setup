@@ -29,9 +29,9 @@ function build_lr-higan() {
 
 function install_lr-higan() {
     md_ret_files=(
-	'higan/out/higan_sfc_libretro.so'
-	'GPLv3.txt'
-	'LICENSE.txt'
+        'higan/out/higan_sfc_libretro.so'
+        'GPLv3.txt'
+        'LICENSE.txt'
     )
 }
 
