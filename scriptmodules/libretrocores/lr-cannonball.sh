@@ -33,8 +33,8 @@ function build_lr-cannonball() {
 
 function install_lr-cannonball() {
     md_ret_files=(
-	'CannonBall.game'
-	'cannonball_libretro.so'
+        'CannonBall.game'
+        'cannonball_libretro.so'
     )
 }
 
