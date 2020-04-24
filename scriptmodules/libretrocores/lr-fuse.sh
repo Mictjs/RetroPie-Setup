@@ -21,7 +21,7 @@ function sources_lr-fuse() {
 
 function build_lr-fuse() {
     make -f Makefile.libretro clean
-    make -f Makefile.libretro
+    make -f Makefile.libretro -j`nproc`
     md_ret_require="$md_build/fuse_libretro.so"
 }
 

@@ -21,7 +21,7 @@ function sources_lr-handy() {
 
 function build_lr-handy() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/handy_libretro.so"
 }
 

@@ -21,7 +21,7 @@ function sources_lr-gambatte() {
 
 function build_lr-gambatte() {
     make -f Makefile.libretro clean
-    make -f Makefile.libretro
+    make -f Makefile.libretro -j`nproc`
     md_ret_require="$md_build/gambatte_libretro.so"
 }
 
