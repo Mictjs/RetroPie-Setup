@@ -29,8 +29,8 @@ function build_lr-bsnes-hd-beta() {
 
 function install_lr-bsnes-hd-beta() {
     md_ret_files=(
-	'bsnes/out/bsnes_hd_beta_libretro.so'
-	'LICENSE'
+        'bsnes/out/bsnes_hd_beta_libretro.so'
+        'LICENSE'
     )
 }
 
