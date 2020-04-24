@@ -29,8 +29,8 @@ function build_lr-mu() {
 
 function install_lr-mu() {
     md_ret_files=(
-	'readme.md'
-	'libretroBuildSystem/mu_libretro.so'
+        'readme.md'
+        'libretroBuildSystem/mu_libretro.so'
     )
 }
 
