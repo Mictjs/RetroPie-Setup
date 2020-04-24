@@ -28,8 +28,8 @@ function build_lr-beetle-gba() {
 
 function install_lr-beetle-gba() {
     md_ret_files=(
-	'COPYING'
-	'mednafen_gba_libretro.so'
+        'COPYING'
+        'mednafen_gba_libretro.so'
     )
 }
 
