@@ -28,7 +28,7 @@ function build_lr-desmume() {
     local params=()
     isPlatform "arm" && params+=("platform=armvhardfloat")
     make clean
-    make "${params[@]}"
+    make "${params[@]}" -j`nproc`
     md_ret_require="$md_build/desmume/src/frontend/libretro/desmume_libretro.so"
 }
 

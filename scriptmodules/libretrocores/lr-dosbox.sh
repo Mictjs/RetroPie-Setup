@@ -30,7 +30,7 @@ function build_lr-dosbox() {
         fi
     fi
     make clean
-    make "${params[@]}"
+    make "${params[@]}" -j`nproc`
     md_ret_require="$md_build/dosbox_libretro.so"
 }
 

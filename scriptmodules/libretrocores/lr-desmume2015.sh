@@ -24,7 +24,7 @@ function build_lr-desmume2015() {
     local params=()
     isPlatform "arm" && params+=("platform=armvhardfloat")
     make -f Makefile.libretro clean
-    make -f Makefile.libretro "${params[@]}"
+    make -f Makefile.libretro "${params[@]}" -j`nproc`
     md_ret_require="$md_build/desmume/desmume2015_libretro.so"
 }
 
