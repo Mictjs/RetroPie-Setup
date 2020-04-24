@@ -66,15 +66,15 @@ function configure_lr-flycast() {
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
 
-	# system-specific
-	if isPlatform "gl"; then
+        # system-specific
+        if isPlatform "gl"; then
             iniConfig " = " "" "$configdir/$system/retroarch.cfg"
             iniSet "video_shared_context" "true"
-	fi
+        fi
 
-	local def=0
-	isPlatform "kms" && def=1
-	# segfaults on the rpi without redirecting stdin from </dev/null
+        local def=0
+        isPlatform "kms" && def=1
+        # segfaults on the rpi without redirecting stdin from </dev/null
         addEmulator $def "$md_id" "$system" "$md_inst/flycast_libretro.so </dev/null"
         addSystem "$system"
     done
