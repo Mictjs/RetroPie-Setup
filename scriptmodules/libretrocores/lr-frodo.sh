@@ -29,8 +29,8 @@ function build_lr-frodo() {
 
 function install_lr-frodo() {
     md_ret_files=(
-	'frodo_libretro.so'
-	'COPYING'
+        'frodo_libretro.so'
+        'COPYING'
     )
 }
 
