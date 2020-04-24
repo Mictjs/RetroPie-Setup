@@ -29,18 +29,19 @@ function build_lr-fixnes() {
 
 function install_lr-fixnes() {
     md_ret_files=(
-	'LICENSE'
-	'README.md'
-	'libretro/fixnes_libretro.so'
+        'LICENSE'
+        'README.md'
+        'libretro/fixnes_libretro.so'
     )
 }
 
 function configure_lr-fixnes() {
-    for x in fds nes; do
-        mkRomDir "$x"
-        ensureSystemretroconfig "$x"
+    local system
+    for system in fds nes; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
 
-        addEmulator 1 "$md_id" "$x" "$md_inst/fixnes_libretro.so"
-        addSystem "$x"
+        addEmulator 1 "$md_id" "$system" "$md_inst/fixnes_libretro.so"
+        addSystem "$system"
     done
 }
