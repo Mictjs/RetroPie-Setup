@@ -23,7 +23,7 @@ function sources_lr-kronos() {
 function build_lr-kronos() {
     cd yabause/src/libretro
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/yabause/src/libretro/kronos_libretro.so"
 }
 

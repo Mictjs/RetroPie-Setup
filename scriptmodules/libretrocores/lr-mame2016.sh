@@ -24,7 +24,7 @@ function build_lr-mame2016() {
     rpSwap on 1200
     local params=($(_get_params_lr-mame) SUBTARGET=arcade)
     make -f Makefile.libretro clean
-    make -f Makefile.libretro "${params[@]}"
+    make -f Makefile.libretro "${params[@]}" -j`nproc`
     rpSwap off
     md_ret_require="$md_build/mamearcade2016_libretro.so"
 }
