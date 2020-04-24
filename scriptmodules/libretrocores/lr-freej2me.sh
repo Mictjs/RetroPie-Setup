@@ -35,11 +35,11 @@ function build_lr-freej2me() {
 
 function install_lr-freej2me() {
     md_ret_files=(
-	'build/freej2me.jar'
-	'build/freej2me-lr.jar'
-	'build/freej2me-sdl.jar'
-	'src/libretro/retropie.txt'
-	'src/libretro/freej2me_libretro.so'
+        'build/freej2me.jar'
+        'build/freej2me-lr.jar'
+        'build/freej2me-sdl.jar'
+        'src/libretro/retropie.txt'
+        'src/libretro/freej2me_libretro.so'
     )
 }
 
