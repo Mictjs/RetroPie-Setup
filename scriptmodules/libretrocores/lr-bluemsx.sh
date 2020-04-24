@@ -10,8 +10,8 @@
 #
 
 rp_module_id="lr-bluemsx"
-rp_module_desc="MSX/MSX2/Colecovision emu - blueMSX port for libretro"
-rp_module_help="ROM Extensions: .rom .mx1 .mx2 .col .dsk .zip\n\nCopy your MSX/MSX2 games to $romdir/msx\nCopy your Colecovision games to $romdir/coleco\n\nlr-bluemsx requires the BIOS files from the full standalone package of BlueMSX to be copied to '$biosdir/Machines' folder.\nColecovision BIOS needs to be copied to '$biosdir/Machines/COL - ColecoVision\coleco.rom'"
+rp_module_desc="MSX/MSX2/Colecovision/SG-1000 emu - blueMSX port for libretro"
+rp_module_help="ROM Extensions: .rom .ri .mx1 .mx2 .col .dsk .cas .sg .sc .m3u .zip .7z\n\nCopy your MSX games to $romdir/msx\nCopy your MSX2 games to $romdir/msx2\nCopy your Colecovision games to $romdir/coleco\nCopy your SG-1000 games to $romdir/sg-1000\n\nYou need the 'Databases' and 'Machines' folders from an official full standalone blueMSX emulator installation and copy them to $biosdir."
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/blueMSX-libretro/master/license.txt"
 rp_module_section="opt"
 
@@ -21,7 +21,7 @@ function sources_lr-bluemsx() {
 
 function build_lr-bluemsx() {
     make -f Makefile.libretro clean
-    make -f Makefile.libretro
+    make -f Makefile.libretro -j`nproc`
     md_ret_require="$md_build/bluemsx_libretro.so"
 }
 
@@ -35,25 +35,15 @@ function install_lr-bluemsx() {
 }
 
 function configure_lr-bluemsx() {
-    mkRomDir "msx"
-    ensureSystemretroconfig "msx"
+    local system
+    for system in msx msx2 coleco sg-1000; do
+        mkRomDir "$system"
+        ensureSystemretroconfig "$system"
 
-    mkRomDir "coleco"
-    ensureSystemretroconfig "coleco"
-
-    # force colecovision system
-    local core_config="$md_conf_root/coleco/retroarch-core-options.cfg"
-    iniConfig " = " '"' "$md_conf_root/coleco/retroarch.cfg"
-    iniSet "core_options_path" "$core_config"
-    iniSet "bluemsx_msxtype" "ColecoVision" "$core_config"
-    chown $user:$user "$core_config"
+        addEmulator 1 "$md_id" "$system" "$md_inst/bluemsx_libretro.so"
+        addSystem "$system"
+    done
 
     cp -rv "$md_inst/"{Databases,Machines} "$biosdir/"
     chown -R $user:$user "$biosdir/"{Databases,Machines}
-
-    addEmulator 1 "$md_id" "msx" "$md_inst/bluemsx_libretro.so"
-    addSystem "msx"
-
-    addEmulator 1 "$md_id" "coleco" "$md_inst/bluemsx_libretro.so"
-    addSystem "coleco"
 }
