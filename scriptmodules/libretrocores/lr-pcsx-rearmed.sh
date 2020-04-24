@@ -38,7 +38,7 @@ function build_lr-pcsx-rearmed() {
     fi
 
     make -f Makefile.libretro "${params[@]}" clean
-    make -f Makefile.libretro "${params[@]}"
+    make -f Makefile.libretro "${params[@]}" -j`nproc`
     md_ret_require="$md_build/pcsx_rearmed_libretro.so"
 }
 

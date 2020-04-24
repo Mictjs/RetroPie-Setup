@@ -21,7 +21,7 @@ function sources_lr-pokemini() {
 
 function build_lr-pokemini() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/pokemini_libretro.so"
 }
 

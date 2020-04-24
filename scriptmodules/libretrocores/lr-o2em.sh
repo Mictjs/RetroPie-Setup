@@ -21,7 +21,7 @@ function sources_lr-o2em() {
 
 function build_lr-o2em() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/o2em_libretro.so"
 }
 

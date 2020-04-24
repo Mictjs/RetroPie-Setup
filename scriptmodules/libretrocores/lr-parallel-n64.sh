@@ -46,7 +46,7 @@ function build_lr-parallel-n64() {
         fi
     fi
     make clean
-    make "${params[@]}"
+    make "${params[@]}" -j`nproc`
     rpSwap off
     md_ret_require="$md_build/parallel_n64_libretro.so"
 }

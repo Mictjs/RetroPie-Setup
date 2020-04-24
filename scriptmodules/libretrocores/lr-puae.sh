@@ -20,7 +20,7 @@ function sources_lr-puae() {
 }
 
 function build_lr-puae() {
-    make
+    make -j`nproc`
     md_ret_require="$md_build/puae_libretro.so"
 }
 

@@ -11,7 +11,7 @@
 
 rp_module_id="lr-opera"
 rp_module_desc="3DO emulator - fork of 4DO/FreeDO for libretro"
-rp_module_help="ROM Extension: .iso\n\nCopy your 3do roms to $romdir/3do\n\nCopy the required BIOS file panazf10.bin to $biosdir"
+rp_module_help="ROM Extension: .iso .cue .chd .zip .7z\n\nCopy your 3do roms to $romdir/3do\n\nCopy the required BIOS file panazf10.bin to $biosdir"
 rp_module_licence="LGPL https://raw.githubusercontent.com/libretro/opera-libretro/master/libfreedo/freedo_3do.c"
 rp_module_section="exp"
 
@@ -25,7 +25,7 @@ function _update_hook_lr-opera() {
 
 function build_lr-opera() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/opera_libretro.so"
 }
 
