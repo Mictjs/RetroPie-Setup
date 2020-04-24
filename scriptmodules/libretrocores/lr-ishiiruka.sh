@@ -35,7 +35,7 @@ function build_lr-ishiiruka() {
 
 function install_lr-ishiiruka() {
     md_ret_files=(
-	'build/Binaries/ishiiruka_libretro.so'
+        'build/Binaries/ishiiruka_libretro.so'
     )
 }
 
