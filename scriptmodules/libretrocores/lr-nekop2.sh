@@ -28,8 +28,8 @@ function build_lr-nekop2() {
 
 function install_lr-nekop2() {
     md_ret_files=(
-	'libretro/nekop2_libretro.so'
-	'LICENSE'
+        'libretro/nekop2_libretro.so'
+        'LICENSE'
     )
 }
 
