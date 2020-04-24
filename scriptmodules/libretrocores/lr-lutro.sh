@@ -27,7 +27,7 @@ function build_lr-lutro() {
 
 function install_lr-lutro() {
     md_ret_files=(
-	'lutro_libretro.so'
+        'lutro_libretro.so'
     )
 }
 
