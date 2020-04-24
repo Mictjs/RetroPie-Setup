@@ -31,7 +31,7 @@ function install_lr-bsnes() {
     md_ret_files=(
         'bsnes/out/bsnes_libretro.so'
         'GPLv3.txt'
-	'LICENSE.txt'
+        'LICENSE.txt'
     )
 }
 
