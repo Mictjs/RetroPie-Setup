@@ -29,7 +29,7 @@ function build_lr-meteor() {
 
 function install_lr-meteor() {
     md_ret_files=(
-	'libretro/meteor_libretro.so'
+        'libretro/meteor_libretro.so'
     )
 }
 
