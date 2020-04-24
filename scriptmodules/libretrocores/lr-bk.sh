@@ -28,8 +28,8 @@ function build_lr-bk() {
 
 function install_lr-bk() {
     md_ret_files=(
-		'bk_libretro.so'
-		'COPYING'
+        'bk_libretro.so'
+        'COPYING'
     )
 }
 
