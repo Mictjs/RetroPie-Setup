@@ -59,11 +59,11 @@ function add_games_lr-boom3() {
     for game in "${!games[@]}"; do
         pk4="$romdir/ports/doom3/$game/pak000.pk4"
         if [[ -f "$pk4" ]]; then
-	    if [[ "$game" == d3xp ]]; then
+            if [[ "$game" == d3xp ]]; then
                 addPort "$md_id-xp" "doom3" "${games[$game]}" "$cmd1" "$pk4"
-	    else
+            else
                 addPort "$md_id" "doom3" "${games[$game]}" "$cmd2" "$pk4"
-	    fi
+            fi
         fi
     done
 }
