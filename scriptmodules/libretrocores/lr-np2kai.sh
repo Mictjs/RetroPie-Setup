@@ -21,7 +21,7 @@ function sources_lr-np2kai() {
 
 function build_lr-np2kai() {
     cd ./sdl2
-    make
+    make -j`nproc`
     md_ret_require="$md_build/sdl2/np2kai_libretro.so"
 }
 
