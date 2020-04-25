@@ -22,7 +22,7 @@ function sources_lr-virtualjaguar() {
 
 function build_lr-virtualjaguar() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/virtualjaguar_libretro.so"
 }
 

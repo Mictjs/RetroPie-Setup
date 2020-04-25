@@ -20,7 +20,7 @@ function sources_lr-tyrquake() {
 
 function build_lr-tyrquake() {
     make clean
-    make
+    make -j`nproc`
     md_ret_require="$md_build/tyrquake_libretro.so"
 }
 

@@ -25,7 +25,7 @@ function build_lr-vba-next() {
     if isPlatform "neon"; then
         make -f Makefile.libretro platform=armvhardfloatunix TILED_RENDERING=1 HAVE_NEON=1
     else
-        make -f Makefile.libretro
+        make -f Makefile.libretro -j`nproc`
     fi
     md_ret_require="$md_build/vba_next_libretro.so"
 }
