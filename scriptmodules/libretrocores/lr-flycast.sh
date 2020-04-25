@@ -62,7 +62,7 @@ function configure_lr-flycast() {
     mkUserDir "$biosdir/dc"
 
     local system
-    for system in dreamcast naomi atomiswave; do
+    for system in dreamcast naomi naomigd atomiswave; do
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
 
