@@ -26,13 +26,14 @@ function sources_lr-easyrpg() {
 }
 
 function build_lr-easyrpg() {
+    #build liblcf
     cd "liblcf"
     autoreconf -i
     ./configure --prefix=/usr
     make -j`nproc`
     sudo make install
     cd ..
-
+    #build lr-easyrpg
     cd "builds/libretro"
     make -f Makefile.libretro clean
     make -f Makefile.libretro -j`nproc`
