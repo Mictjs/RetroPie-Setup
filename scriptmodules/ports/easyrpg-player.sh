@@ -32,7 +32,7 @@ function sources_easyrpg-player() {
 
 function build_easyrpg-player() {
     cd "liblcf"
-	autoreconf -i
+    autoreconf -i
     ./configure --prefix=/usr
     make -j`nproc`
     sudo make install
