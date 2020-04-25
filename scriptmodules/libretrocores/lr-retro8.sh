@@ -33,8 +33,8 @@ function build_lr-retro8() {
 
 function install_lr-retro8() {
     md_ret_files=(
-	'retro8_libretro.so'
-	'LICENSE'
+        'retro8_libretro.so'
+        'LICENSE'
     )
 }
 
