@@ -38,25 +38,25 @@ function configure_lr-openlara() {
 
     for i in audio level video; do
         for j in {1..3}; do
-    	    mkRomDir "ports/tombraider/$i/$j"
+            mkRomDir "ports/tombraider/$i/$j"
         done
     done
 
     text="$romdir/ports/tombraider/README.txt"
     cat >"$text" << _EOF_
-			Support from Tomb Raider 1 to 3
+                        Support from Tomb Raider 1 to 3
 
-Folder		File Type(s)			Description
+Folder		    File Type(s)			        Description
 -----------     -----------------------------   -------------------------------------
-audio/1/	track_XX.ogg or XXX.ogg		X represents a number
-audio/2/	track_XX.ogg and MAIN.SFX	Both tracks and MAIN.SFX are required
-audio/3/	cdaudio.wad and MAIN.SFX	Both tracks and MAIN.SFX are required
-level/1/	.PNG and .PHD or .PSX or .SAT	Load-screens and levels
-level/2/	.PNG and .TR2 or *.PSX		Load-screens and levels
-level/3/	.PNG and .TR2 or *.PSX		Load-screens and levels
-video/1/	.RPL or .FMV			Video cut-scenes
-video/2/	.RPL or .FMV			Video cut-scenes
-video/3/	.RPL or .FMV			Video cut-scenes
+audio/1/        track_XX.ogg or XXX.ogg         X represents a number
+audio/2/        track_XX.ogg and MAIN.SFX       Both tracks and MAIN.SFX are required
+audio/3/        cdaudio.wad and MAIN.SFX        Both tracks and MAIN.SFX are required
+level/1/        .PNG and .PHD or .PSX or .SAT   Load-screens and levels
+level/2/        .PNG and .TR2 or *.PSX          Load-screens and levels
+level/3/        .PNG and .TR2 or *.PSX          Load-screens and levels
+video/1/        .RPL or .FMV                    Video cut-scenes
+video/2/        .RPL or .FMV                    Video cut-scenes
+video/3/        .RPL or .FMV                    Video cut-scenes
 _EOF_
     chown $user:$user "$text"
 
