@@ -46,7 +46,7 @@ function configure_lr-openlara() {
     cat >"$text" << _EOF_
                         Support from Tomb Raider 1 to 3
 
-Folder		    File Type(s)			        Description
+Folder          File Type(s)                    Description
 -----------     -----------------------------   -------------------------------------
 audio/1/        track_XX.ogg or XXX.ogg         X represents a number
 audio/2/        track_XX.ogg and MAIN.SFX       Both tracks and MAIN.SFX are required
