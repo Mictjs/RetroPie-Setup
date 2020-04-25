@@ -28,8 +28,8 @@ function build_lr-smsplus-gx() {
 
 function install_lr-smsplus-gx() {
     md_ret_files=(
-	'docs/license'
-	'smsplus_libretro.so'
+        'docs/license'
+        'smsplus_libretro.so'
     )
 }
 
