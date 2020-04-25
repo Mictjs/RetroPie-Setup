@@ -24,25 +24,25 @@ function build_lr-vice() {
     mkdir -p "vice-cores"
     local params=()
     for i in x64 x64sc xcbm2 xpet xplus4 xvic x128; do
-	params+=(EMUTYPE=$i)
-	make -f Makefile.libretro "${params[@]}" clean
-	make -f Makefile.libretro "${params[@]}" -j`nproc`
-	mv "vice_"$i"_libretro.so" "vice-cores"
-	md_ret_require="$md_build/vice-cores/vice_"$i"_libretro.so"
+        params+=(EMUTYPE=$i)
+        make -f Makefile.libretro "${params[@]}" clean
+        make -f Makefile.libretro "${params[@]}" -j`nproc`
+        mv "vice_"$i"_libretro.so" "vice-cores"
+        md_ret_require="$md_build/vice-cores/vice_"$i"_libretro.so"
     done
 }
 
 function install_lr-vice() {
     md_ret_files=(
-	'vice/data'
-	'vice/COPYING'
-	'vice-cores/vice_x64_libretro.so'
-	'vice-cores/vice_x64sc_libretro.so'
-	'vice-cores/vice_xcbm2_libretro.so'
-	'vice-cores/vice_xpet_libretro.so'
-	'vice-cores/vice_xplus4_libretro.so'
-	'vice-cores/vice_xvic_libretro.so'
-	'vice-cores/vice_x128_libretro.so'
+        'vice/data'
+        'vice/COPYING'
+        'vice-cores/vice_x64_libretro.so'
+        'vice-cores/vice_x64sc_libretro.so'
+        'vice-cores/vice_xcbm2_libretro.so'
+        'vice-cores/vice_xpet_libretro.so'
+        'vice-cores/vice_xplus4_libretro.so'
+        'vice-cores/vice_xvic_libretro.so'
+        'vice-cores/vice_x128_libretro.so'
     )
 }
 
@@ -64,7 +64,7 @@ function configure_lr-vice() {
             addEmulator 0 "$md_id-xvic" "$system" "$md_inst/vice_xvic_libretro.so"
         else
             addEmulator 0 "$md_id-x128" "$system" "$md_inst/vice_x128_libretro.so"
-	fi
+        fi
         addSystem "$system"
     done
 
