@@ -31,8 +31,8 @@ function build_lr-snes9x2005() {
         if [[ "$i" = _plus_ ]]; then
 	    params+=(USE_BLARGG_APU=1)
         fi
-	make "${params[@]}" clean
-	make "${params[@]}" -j`nproc`
+        make "${params[@]}" clean
+        make "${params[@]}" -j`nproc`
         mv "snes9x2005"$i"libretro.so" "snes9x2005-cores"   
         md_ret_require="$md_build/snes9x2005-cores/snes9x2005"$i"libretro.so"
     done
@@ -40,8 +40,8 @@ function build_lr-snes9x2005() {
 
 function install_lr-snes9x2005() {
     md_ret_files=(
-	'snes9x2005-cores/snes9x2005_libretro.so'
-	'snes9x2005-cores/snes9x2005_plus_libretro.so'
+        'snes9x2005-cores/snes9x2005_libretro.so'
+        'snes9x2005-cores/snes9x2005_plus_libretro.so'
     )
 }
 
