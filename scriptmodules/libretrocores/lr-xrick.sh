@@ -33,8 +33,8 @@ function build_lr-xrick() {
 function install_lr-xrick() {
     md_ret_files=(
         'xrick_libretro.so'
-	'data.zip'
- 	'README'
+        'data.zip'
+        'README'
     )
 }
 
