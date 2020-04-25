@@ -26,27 +26,27 @@ function build_lr-vitaquake2() {
     local params=()
     for i in _ -rogue_ -xatrix_ -zaero_; do
         if [[ $i == -rogue_ ]]; then 
-	    j="rogue"
+            j="rogue"
         elif [[ $i == -xatrix_ ]]; then 
-	    j="xatrix"
+            j="xatrix"
         elif [[ $i == -zaero_ ]]; then 
-	    j="zaero"
-	fi
-	params+=(basegame=$j)
-	make "${params[@]}" clean
-	make "${params[@]}" -j`nproc`
-	mv "vitaquake2"$i"libretro.so" "quake2-cores"
-	md_ret_require="$md_build/quake2-cores/vitaquake2"$i"libretro.so"
+            j="zaero"
+        fi
+        params+=(basegame=$j)
+        make "${params[@]}" clean
+        make "${params[@]}" -j`nproc`
+        mv "vitaquake2"$i"libretro.so" "quake2-cores"
+        md_ret_require="$md_build/quake2-cores/vitaquake2"$i"libretro.so"
     done
 }
 
 function install_lr-vitaquake2() {
     md_ret_files=(
-	'LICENSE'
-	'quake2-cores/vitaquake2_libretro.so'
-	'quake2-cores/vitaquake2-rogue_libretro.so'
-	'quake2-cores/vitaquake2-xatrix_libretro.so'
-	'quake2-cores/vitaquake2-zaero_libretro.so'
+        'LICENSE'
+        'quake2-cores/vitaquake2_libretro.so'
+        'quake2-cores/vitaquake2-rogue_libretro.so'
+        'quake2-cores/vitaquake2-xatrix_libretro.so'
+        'quake2-cores/vitaquake2-zaero_libretro.so'
     )
 }
 
@@ -68,15 +68,15 @@ function add_games_lr-vitaquake2() {
         pak="$romdir/ports/quake2/$dir/pak0.pak"
         pak_all="$romdir/ports/quake2/baseq2/pak0.pak"
         if [[ -f "$pak" ]]; then
-	    if [[ "$dir" == baseq2 ]]; then
+            if [[ "$dir" == baseq2 ]]; then
                 addPort "$md_id" "quake2" "${games[$dir]}" "$cmd1" "$pak_all"
-	    elif [[ "$dir" == rogue ]]; then
+            elif [[ "$dir" == rogue ]]; then
                 addPort "$md_id-rogue" "quake2" "${games[$dir]}" "$cmd2" "$pak_all"
-	    elif [[ "$dir" == xatrix ]]; then
+            elif [[ "$dir" == xatrix ]]; then
                 addPort "$md_id-xatrix" "quake2" "${games[$dir]}" "$cmd3" "$pak_all"
-	    elif [[ "$dir" == zaero ]]; then
+            elif [[ "$dir" == zaero ]]; then
                 addPort "$md_id-zaero" "quake2" "${games[$dir]}" "$cmd4" "$pak_all"
-	    fi       
+            fi       
         fi
     done
 }
