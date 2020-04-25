@@ -31,12 +31,13 @@ function sources_lr-sameboy() {
 }
 
 function build_lr-sameboy() {
+    #build rgbds
     cd rgbds
     make clean
     make -j`nproc`
     make install
     cd ..
-
+    #build lr-sameboy
     make clean
     CC=clang make -f Makefile libretro -j`nproc`
     md_ret_require="$md_build/build/bin/sameboy_libretro.so"
@@ -44,11 +45,12 @@ function build_lr-sameboy() {
 
 function install_lr-sameboy() {
     md_ret_files=(
-	'build/bin/sameboy_libretro.so'
+        'build/bin/sameboy_libretro.so'
     )
 }
 
 function remove_lr-sameboy() {
+    #delete files compiled from rgbds
     for x in rgbasm rgblink rgbfix rgbgfx; do
         rm -rf "/usr/local/bin/$x"
         rm -rf "/usr/local/share/man/man1/$x"*
