@@ -33,8 +33,8 @@ function build_lr-reminiscence() {
 
 function install_lr-reminiscence() {
     md_ret_files=(
-	'README.md'
-	'reminiscence_libretro.so'
+        'README.md'
+        'reminiscence_libretro.so'
     )
 }
 
