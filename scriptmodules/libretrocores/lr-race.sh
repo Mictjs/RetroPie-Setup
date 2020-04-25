@@ -28,8 +28,8 @@ function build_lr-race() {
 
 function install_lr-race() {
     md_ret_files=(
-	'license.txt'
-	'race_libretro.so'
+        'license.txt'
+        'race_libretro.so'
     )
 }
 
