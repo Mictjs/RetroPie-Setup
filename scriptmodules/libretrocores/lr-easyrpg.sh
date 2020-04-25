@@ -52,11 +52,9 @@ function remove_lr-easyrpg() {
 
 function configure_lr-easyrpg() {
     setConfigRoot "ports"
-
     mkRomDir "ports/easyrpg/games"
 
     addPort "$md_id" "easyrpg" "EasyRPG Player" "$md_inst/easyrpg_libretro.so" "$romdir/ports/easyrpg/games/"
-
     ensureSystemretroconfig "ports/easyrpg" 
 
     mkUserDir "$biosdir/rtp/2000"
