@@ -29,9 +29,9 @@ function build_lr-simcoupe() {
 
 function install_lr-simcoupe() {
     md_ret_files=(
-	'SimCoupe/SimCoupe.txt'
-	'readme.txt'
-	'simcp_libretro.so'
+        'SimCoupe/SimCoupe.txt'
+        'readme.txt'
+        'simcp_libretro.so'
     )
 }
 
