@@ -34,8 +34,8 @@ function build_lr-play() {
 
 function install_lr-play() {
     md_ret_files=(
-	'build/Source/ui_libretro/play_libretro.so'
-	'License.txt'
+        'build/Source/ui_libretro/play_libretro.so'
+        'License.txt'
     )
 }
 
