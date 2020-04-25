@@ -28,7 +28,7 @@ function build_lr-scummvm() {
     isPlatform "neon" && platform+="neon"
     [[ -n "$platform" ]] && params+=(platform="$platform")
 
-    make "${params[@]}" -C backends/platform/libretro/build
+    make "${params[@]}" -C backends/platform/libretro/build -j`nproc`
     md_ret_require="$md_build/backends/platform/libretro/build/scummvm_libretro.so"
 }
 

@@ -32,7 +32,7 @@ function build_lr-snes9x2010() {
     if [[ -n "$platform" ]]; then
         make -f Makefile.libretro platform="$platform"
     else
-        make -f Makefile.libretro
+        make -f Makefile.libretro -j`nproc`
     fi
     md_ret_require="$md_build/snes9x2010_libretro.so"
 }
