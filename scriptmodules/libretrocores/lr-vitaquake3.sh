@@ -30,18 +30,18 @@ function install_lr-vitaquake3() {
     md_ret_files=(
         'COPYING.txt'
         'vitaquake3_libretro.so'
-	'data/ioq3'
-	'data/openarena'
+        'data/ioq3'
+        'data/openarena'
     )
 }
 
 function _add_games_lr-vitaquake3() {
     local cmd="$1"
     declare -A games=(
-	['baseq3']="Quake III Arena"
-	['baseoa']="OpenArena"
-	['q3ut4']="Urban Terror"
-	['baseq3r']="Q3Rally"
+        ['baseq3']="Quake III Arena"
+        ['baseoa']="OpenArena"
+        ['q3ut4']="Urban Terror"
+        ['baseq3r']="Q3Rally"
     )
     local dir
     local pk3
@@ -49,14 +49,14 @@ function _add_games_lr-vitaquake3() {
     local pk3_rally
     for dir in "${!games[@]}"; do
         pk3="$romdir/ports/quake3/$dir/pak0.pk3"
-	pk3_ut="$romdir/ports/quake3/$dir/zUrT43_001.pk3"
-	pk3_rally="$romdir/ports/quake3/$dir/qvm.pk3"
+        pk3_ut="$romdir/ports/quake3/$dir/zUrT43_001.pk3"
+        pk3_rally="$romdir/ports/quake3/$dir/qvm.pk3"
         if [[ -f "$pk3" ]]; then
             addPort "$md_id" "quake3" "${games[$dir]}" "$cmd" "$pk3"
         elif  [[ -f "$pk3_ut" ]]; then
-	    addPort "$md_id" "quake3" "${games[$dir]}" "$cmd" "$pk3_ut"
+            addPort "$md_id" "quake3" "${games[$dir]}" "$cmd" "$pk3_ut"
         elif  [[ -f "$pk3_rally" ]]; then
-	    addPort "$md_id" "quake3" "${games[$dir]}" "$cmd" "$pk3_rally"
+            addPort "$md_id" "quake3" "${games[$dir]}" "$cmd" "$pk3_rally"
         fi
     done
 }
