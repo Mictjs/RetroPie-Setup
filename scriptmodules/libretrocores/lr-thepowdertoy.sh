@@ -34,8 +34,8 @@ function build_lr-thepowdertoy() {
 
 function install_lr-thepowdertoy() {
     md_ret_files=(
-	'README.md'
-	'build/src/thepowdertoy_libretro.so'
+        'README.md'
+        'build/src/thepowdertoy_libretro.so'
     )
 }
 
