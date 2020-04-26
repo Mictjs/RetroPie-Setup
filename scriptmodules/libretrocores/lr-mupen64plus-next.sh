@@ -31,8 +31,13 @@ function sources_lr-mupen64plus-next() {
 
 function build_lr-mupen64plus-next() {
     local params=()
-    if isPlatform "x86_64"; then
-        params+=(WITH_DYNAREC=x86_64 HAVE_PARALLEL_RSP=1 HAVE_THR_AL=1)
+    if isPlatform "x86"; then
+        if isPlatform "64bit"; then
+            params+=(WITH_DYNAREC=x86_64)
+        else
+            params+=(WITH_DYNAREC=x86)
+        fi
+        params+=(HAVE_PARALLEL_RSP=1 HAVE_THR_AL=1)
     fi
     if isPlatform "videocore"; then
         params+=(platform="$__platform")
