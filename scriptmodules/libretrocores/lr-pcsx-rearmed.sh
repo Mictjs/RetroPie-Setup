@@ -28,7 +28,7 @@ function sources_lr-pcsx-rearmed() {
 function build_lr-pcsx-rearmed() {
     local params=()
 
-    params=(DYNAREC=lightrec)
+    params+=(DYNAREC=lightrec)
     if isPlatform "arm"; then
         params+=(ARCH=arm DYNAREC=ari64)
         if isPlatform "neon"; then
