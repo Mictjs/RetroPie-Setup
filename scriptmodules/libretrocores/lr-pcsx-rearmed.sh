@@ -11,7 +11,7 @@
 
 rp_module_id="lr-pcsx-rearmed"
 rp_module_desc="Playstation emulator - PCSX (arm optimised) port for libretro"
-rp_module_help="ROM Extensions: .bin .cue .cbn .img .iso .m3u .mdf .pbp .toc .z .znx\n\nCopy your PSX roms to $romdir/psx\n\nCopy the required BIOS file SCPH1001.BIN to $biosdir"
+rp_module_help="ROM Extensions: .bin .cue .chd .cbn .img .iso .m3u .mdf .pbp .toc .z .znx .zip .7z\n\nCopy your PSX roms to $romdir/psx\n\nCopy the required BIOS file SCPH1001.BIN to $biosdir"
 rp_module_licence="GPL2 https://raw.githubusercontent.com/libretro/pcsx_rearmed/master/COPYING"
 rp_module_section="opt arm=main"
 
@@ -28,6 +28,7 @@ function sources_lr-pcsx-rearmed() {
 function build_lr-pcsx-rearmed() {
     local params=()
 
+    params=(DYNAREC=lightrec)
     if isPlatform "arm"; then
         params+=(ARCH=arm DYNAREC=ari64)
         if isPlatform "neon"; then
@@ -38,7 +39,7 @@ function build_lr-pcsx-rearmed() {
     fi
 
     make -f Makefile.libretro "${params[@]}" clean
-    make -f Makefile.libretro DYNAREC=lightrec "${params[@]}" -j`nproc`
+    make -f Makefile.libretro "${params[@]}" -j`nproc`
     md_ret_require="$md_build/pcsx_rearmed_libretro.so"
 }
 
