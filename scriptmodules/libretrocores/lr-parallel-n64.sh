@@ -35,8 +35,13 @@ function sources_lr-parallel-n64() {
 function build_lr-parallel-n64() {
     rpSwap on 1000
     local params=()
-    if isPlatform "x86_64"; then
-        params+=(WITH_DYNAREC=x86_64 HAVE_PARALLEL_RSP=1 HAVE_THR_AL=1)
+    if isPlatform "x86"; then
+        if isPlatform "64bit"; then
+            params+=(WITH_DYNAREC=x86_64)
+        else
+            params+=(WITH_DYNAREC=x86)
+        fi
+        params+=(HAVE_PARALLEL_RSP=1 HAVE_THR_AL=1)
     fi
     if isPlatform "videocore" || isPlatform "odroid-c1"; then
         params+=(platform="$__platform")
