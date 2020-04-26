@@ -28,7 +28,6 @@ function sources_lr-pcsx-rearmed() {
 function build_lr-pcsx-rearmed() {
     local params=()
 
-    params+=(DYNAREC=lightrec)
     if isPlatform "arm"; then
         params+=(ARCH=arm DYNAREC=ari64)
         if isPlatform "neon"; then
@@ -36,6 +35,8 @@ function build_lr-pcsx-rearmed() {
         else
             params+=(HAVE_NEON=0 BUILTIN_GPU=peops)
         fi
+    else 
+        params+=(DYNAREC=lightrec)
     fi
 
     make -f Makefile.libretro "${params[@]}" clean
