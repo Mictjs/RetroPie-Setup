@@ -31,6 +31,9 @@ function sources_lr-mupen64plus-next() {
 
 function build_lr-mupen64plus-next() {
     local params=()
+    if isPlatform "x86_64"; then
+        params+=(WITH_DYNAREC=x86_64 HAVE_PARALLEL_RSP=1 HAVE_THR_AL=1)
+    fi
     if isPlatform "videocore"; then
         params+=(platform="$__platform")
     elif isPlatform "mesa"; then
@@ -53,9 +56,9 @@ function build_lr-mupen64plus-next() {
 
     # workaround for linkage_arm.S including some armv7 instructions without this
     if isPlatform "armv6"; then
-        CFLAGS="$CFLAGS -DARMv5_ONLY" make HAVE_PARALLEL_RSP=1 HAVE_THR_AL=1 "${params[@]}" -j`nproc`
+        CFLAGS="$CFLAGS -DARMv5_ONLY" make "${params[@]}" -j`nproc`
     else
-        make HAVE_PARALLEL_RSP=1 HAVE_THR_AL=1 "${params[@]}" -j`nproc`
+        make "${params[@]}" -j`nproc`
     fi
 
     md_ret_require="$md_build/mupen64plus_next_libretro.so"
