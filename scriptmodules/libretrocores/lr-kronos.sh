@@ -41,7 +41,7 @@ function install_lr-kronos() {
 
 function configure_lr-kronos() {
     local system
-    for system in saturn stv; done
+    for system in saturn stv; do
         mkRomDir "$system"
         ensureSystemretroconfig "$system"
 
