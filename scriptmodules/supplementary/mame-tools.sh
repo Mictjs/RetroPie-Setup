@@ -2704,15 +2704,15 @@ function batch_createcd_chdman_mame-tools() {
 	    else
 	    	if [[ ${out_ext_2} = ??? ]]; then
 		    if [[ ${out_ext_1} = ??? ]]; then
-		    	aux_input="{*.zip#*.$out_ext_1, *.$out_ext_2}"
+		    	aux_input="*.zip#*.$out_ext_1, *.$out_ext_2"
 		    else
-			aux_input="{*.zip#*.{$out_ext_1}, *.$out_ext_2}"
+			aux_input="*.zip#*.{$out_ext_1}, *.$out_ext_2"
 		    fi
 		else
 		    if [[ ${out_ext_1} = ??? ]]; then
-		    	aux_input="{*.zip#*.$out_ext_1, *.{$out_ext_2}}"
+		    	aux_input="*.zip#*.$out_ext_1, *.{$out_ext_2}"
 		    else
-			aux_input="{*.zip#*.{$out_ext_1}, *.{$out_ext_2}}"
+			aux_input="*.zip#*.{$out_ext_1}, *.{$out_ext_2}"
 		    fi
 		fi		
 	    fi
@@ -2726,15 +2726,15 @@ function batch_createcd_chdman_mame-tools() {
 	    else
 	    	if [[ ${out_ext_2} = ??? ]]; then
 		    if [[ ${out_ext_1} = ??? ]]; then
-		    	aux_input="{*.7z#*.$out_ext_1, *.$out_ext_2}"
+		    	aux_input="*.7z#*.$out_ext_1, *.$out_ext_2"
 		    else
-			aux_input="{*.7z#*.{$out_ext_1}, *.$out_ext_2}"
+			aux_input="*.7z#*.{$out_ext_1}, *.$out_ext_2"
 		    fi
 		else
 		    if [[ ${out_ext_1} = ??? ]]; then
-		    	aux_input="{*.7z#*.$out_ext_1, *.{$out_ext_2}}"
+		    	aux_input="*.7z#*.$out_ext_1, *.{$out_ext_2}"
 		    else
-			aux_input="{*.7z#*.{$out_ext_1},*.{$out_ext_2}}"
+			aux_input="*.7z#*.{$out_ext_1},*.{$out_ext_2}"
 		    fi
 		fi		
 	    fi
@@ -2748,15 +2748,15 @@ function batch_createcd_chdman_mame-tools() {
 	    else
 	    	if [[ ${out_ext_2} = ??? ]]; then
 		    if [[ ${out_ext_1} = ??? ]]; then
-		    	aux_input="{*.{zip,7z}#*.$out_ext_1, *.$out_ext_2}"
+		    	aux_input="*.{zip,7z}#*.$out_ext_1, *.$out_ext_2"
 		    else
-			aux_input="{*.{zip,7z}#*.{$out_ext_1}, *.$out_ext_2}"
+			aux_input="*.{zip,7z}#*.{$out_ext_1}, *.$out_ext_2"
 		    fi
 		else
 		    if [[ ${out_ext_1} = ??? ]]; then
-		    	aux_input="{*.{zip,7z}#*.$out_ext_1, *.{$out_ext_2}}"
+		    	aux_input="*.{zip,7z}#*.$out_ext_1, *.{$out_ext_2}"
 		    else
-			aux_input="{*.{zip,7z}#*.{$out_ext_1}, *.{$out_ext_2}}"
+			aux_input="*.{zip,7z}#*.{$out_ext_1}, *.{$out_ext_2}"
 		    fi
 		fi		
 	    fi
@@ -3221,21 +3221,132 @@ function batch_createhd_chdman_mame-tools() {
 	fi
     done
 
-    if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
-	echo "Reading directory ..."
-	zipinfo -1 "${d%/}/*.zip" "${_ext[@]}" > out_1.txt
-	7z l -ba "${d%/}/*.7z" "${_ext[@]}" -r- > out_2.txt
- 	if [[ -z `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
-	    aux_input="*.zip#*.{*}"
-	elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
-	    aux_input="*.7z#*.{*}"
-	elif [[ -n `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
-	    aux_input="*.{zip,7z}#*.{*}"
-	else
-	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file" 
+    cd && cd $d
+    echo "Reading directory ..."
+    ls -1 $d > ext.txt
+    while read -r f; do
+	if [[ "$f" = *.[zZ][iI][pP] ]]; then
+	    zipinfo -1 "$f" "${_ext[@]}" >> out_1.txt
+	    cat out_1.txt >> out_merge_a.txt
+	elif [[ "$f" = *.7[zZ] ]]; then 
+	    7z l -ba "$f" "${_ext[@]}" -r- | cut -c54- >> out_2.txt
+	    cat out_2.txt >> out_merge_a.txt
+	else 
+	    find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.(${__ext[@]})" >> out_3.txt
+	    cat out_3.txt > out_merge_b.txt
 	fi 2>/dev/null >/dev/null
-    else 
-	aux_input="*.{*}"
+    done < ext.txt
+    rm -rf ext.txt
+	
+    for i in a b; do
+    	while read -r g; do
+	    if [[ "$g" = *.[iI][mM][gG] ]]; then
+	    	echo "img" >> out_$i.txt	# raw disk image (*.img)
+	    elif [[ "$g" = *.[dD][mM][gG] ]]; then 
+	    	echo "dmg">> out_$i.txt		# Mac disk image (*.dmg)
+	    elif [[ "$g" = *.2[mM][gG] ]]; then 
+	    	echo "2mg" >> out_$i.txt	# Apple IIgs disk image (*.2mg)
+	    elif [[ "$g" = *.[hH]0 ]]; then
+	    	echo "h0" >> out_$i.txt
+	    elif [[ "$g" = *.[hH]1 ]]; then 
+	    	echo "h1" >> out_$i.txt
+	    elif [[ "$g" = *.[hH]2 ]]; then 
+	    	echo "h2" >> out_$i.txt		# FM-Towns disk image (*.h[0,1,2,3,4])
+	    elif [[ "$g" = *.[hH]3 ]]; then 
+	    	echo "h3" >> out_$i.txt
+	    elif [[ "$g" = *.[hH]4 ]]; then 
+	    	echo "h4" >> out_$i.txt
+	    elif [[ "$g" = *.[hH][dD][dD] ]]; then 
+	    	echo "hdd">> out_$i.txt		# IDE64 disk image (*.hdd)
+	    elif [[ "$g" = *.[hH][dD][fF] ]]; then 
+	    	echo "hdf">> out_$i.txt		# X68k SASI disk image (*.hdf)
+	    elif [[ "$g" = *.[hH][dD][sS] ]]; then 
+	    	echo "hds">> out_$i.txt		# X68k SCSI disk image (*.hds)
+	    fi 2>/dev/null >/dev/null
+	done < out_merge_$i.txt
+	sort -u out_$i.txt -o out_$i.txt
+	awk 'BEGIN { ORS="" } { print p$0; p="," } END { print "\n" }' \
+	out_$i.txt > out_end_$i.txt
+    done
+    out_ext_1=`cat out_end_a.txt`
+    out_ext_2=`cat out_end_b.txt`
+
+    if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+ 	if [[ -z `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    if [[ -z `cat out_3.txt` ]]; then
+	    	if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.zip#*.$out_ext_1"
+		else
+		    aux_input="*.zip#*.{$out_ext_1}"
+		fi
+	    else
+	    	if [[ ${out_ext_2} = ??? ]]; then
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="*.zip#*.$out_ext_1, *.$out_ext_2"
+		    else
+			aux_input="*.zip#*.{$out_ext_1}, *.$out_ext_2"
+		    fi
+		else
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="*.zip#*.$out_ext_1, *.{$out_ext_2}"
+		    else
+			aux_input="*.zip#*.{$out_ext_1}, *.{$out_ext_2}"
+		    fi
+		fi		
+	    fi
+	elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
+	    if [[ -z `cat out_3.txt` ]]; then
+	    	if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.7z#*.$out_ext_1"
+		else
+		    aux_input="*.7z#*.{$out_ext_1}"
+		fi
+	    else
+	    	if [[ ${out_ext_2} = ??? ]]; then
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="*.7z#*.$out_ext_1, *.$out_ext_2"
+		    else
+			aux_input="*.7z#*.{$out_ext_1}, *.$out_ext_2"
+		    fi
+		else
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="*.7z#*.$out_ext_1, *.{$out_ext_2}"
+		    else
+			aux_input="*.7z#*.{$out_ext_1},*.{$out_ext_2}"
+		    fi
+		fi		
+	    fi
+	elif [[ -n `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    if [[ -z `cat out_3.txt` ]]; then
+	    	if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.{zip,7z}#*.$out_ext_1"
+		else
+		    aux_input="*.{zip,7z}#*.{$out_ext_1}"
+		fi
+	    else
+	    	if [[ ${out_ext_2} = ??? ]]; then
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="*.{zip,7z}#*.$out_ext_1, *.$out_ext_2"
+		    else
+			aux_input="*.{zip,7z}#*.{$out_ext_1}, *.$out_ext_2"
+		    fi
+		else
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="*.{zip,7z}#*.$out_ext_1, *.{$out_ext_2}"
+		    else
+			aux_input="*.{zip,7z}#*.{$out_ext_1}, *.{$out_ext_2}"
+		    fi
+		fi		
+	    fi
+	else
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed CD file" 
+	fi 2>/dev/null >/dev/null
+    else
+	if [[ ${out_ext_2} = ??? ]]; then
+	    aux_input="*.$out_ext_2"
+	else
+	    aux_input="*.{$out_ext_2}"	    
+	fi
     fi 2>/dev/null >/dev/null
 
     local output="${d%/}"
