@@ -3339,7 +3339,7 @@ function batch_createhd_chdman_mame-tools() {
 		fi		
 	    fi
 	else
-	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed CD file" 
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file" 
 	fi 2>/dev/null >/dev/null
     else
 	if [[ ${out_ext_2} = ??? ]]; then
