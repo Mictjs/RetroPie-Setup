@@ -81,8 +81,7 @@ function batch_convert_castool_mame-tools() {
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 function convert_castool_mame-tools(){
@@ -103,8 +102,7 @@ function convert_castool_mame-tools(){
     fi 
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 function __aux_castool_mame-tools(){
@@ -391,6 +389,8 @@ function dumpmeta_chdman_mame-tools(){
     local f="$1"
     local input="${f##*/}"
     local m="ERROR: $input isn't a CHD file"
+
+    local DIR=`dirname $f`
     
     local output="none"
     local __output="$output"
@@ -423,13 +423,23 @@ function dumpmeta_chdman_mame-tools(){
                     1)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
                     	tag=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
+                            tag="required"
+                    	else
+                            tag="$tag"
+                    	fi
                     	;;
                     2)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
                     	index=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
+                            index="auto"
+                    	else
+                            index="$index"
+                    	fi
                     	;;
                     O)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for output CHD:" 10 60 "$output")
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
                     	output=$("${cmd[@]}" 2>&1 >/dev/tty)
                     	if [[ "$output" = "default" ]] || [[ -z "$output" ]]; then
 			    __output="none"
@@ -438,7 +448,7 @@ function dumpmeta_chdman_mame-tools(){
 			    __output="$output"
 			    output="${__output##*/}"
                     	else
-                            __output="`dirname $f`/$output"
+                            __output="$DIR/$output"
 			    output="${__output##*/}"
                     	fi
                     	;;
@@ -461,8 +471,10 @@ function dumpmeta_chdman_mame-tools(){
     	if [[ "$force" -eq 1 ]]; then
             params+=(-f)
     	fi
-    	if [[ -n "$tag" ]] && [[ "$tag" != "none" ]]; then
+    	if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
             params+=(-t "$tag")
+	else
+	    dialog --stdout --clear --msgbox "Required Parameters missing (Tag)" 10 50
     	fi
     	if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
             params+=(-ix "$index")
@@ -497,8 +509,7 @@ function dumpmeta_chdman_mame-tools(){
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 
@@ -529,10 +540,20 @@ function delmeta_chdman_mame-tools(){
                     1)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
                     	tag=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
+                            tag="required"
+                    	else
+                            tag="$tag"
+                    	fi
                     	;;
                     2)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
                     	index=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
+                            index="auto"
+                    	else
+                            index="$index"
+                    	fi
                     	;;
 		    -)
 		    	return 0
@@ -544,8 +565,10 @@ function delmeta_chdman_mame-tools(){
     	done
 
     	local params=()
-    	if [[ -n "$tag" ]] && [[ "$tag" != "none" ]]; then
+    	if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
             params+=(-t "$tag")
+	else
+	    dialog --stdout --clear --msgbox "Required Parameters missing (Tag)" 10 50
     	fi
     	if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
             params+=(-ix "$index")
@@ -566,8 +589,7 @@ function delmeta_chdman_mame-tools(){
     fi
     dialog --stdout --clear --msgbox "$m" 10 50
 
-    clear
-    return 1
+
 }
 
 
@@ -575,6 +597,8 @@ function addmeta_chdman_mame-tools(){
     local f="$1"
     local input="${f##*/}"
     local m="ERROR: $input isn't a CHD file"
+
+    local DIR=`dirname $f`
 
     local tag="none"
     local index="auto"
@@ -615,21 +639,36 @@ function addmeta_chdman_mame-tools(){
 			elif  [[ "${value_file}" = */* ]]; then
 			    __value_file="$value_file"
                     	else
-                            __value_file="`dirname $f`/$value_file"
+                            __value_file="$DIR/$value_file"
                     	fi
                     	;;
 
                     2)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the text for the metadata:" 10 60 "$value_text")
                     	value_text=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$value_text" = "none" ]] || [[ -z "$value_text" ]]; then
+                            value_text="none"
+                    	else
+                            value_text="$value_text"
+                    	fi
                     	;;
                     3)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
                     	tag=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
+                            tag="required"
+                    	else
+                            tag="$tag"
+                    	fi
                     	;;
                     4)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
                     	index=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
+                            index="auto"
+                    	else
+                            index="$index"
+                    	fi
                     	;;
                     5)
                     	no_checksum="$((no_checksum ^ 1))"
@@ -650,8 +689,10 @@ function addmeta_chdman_mame-tools(){
     	if [[ -n "$value_text" ]] && [[ "$value_text" != "none" ]]; then
             params+=(-vt "$value_text")
     	fi
-    	if [[ -n "$tag" ]] && [[ "$tag" != "none" ]]; then
+    	if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
             params+=(-t "$tag")
+	else
+	    dialog --stdout --clear --msgbox "Required Parameters missing (Tag)" 10 50
     	fi
     	if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
             params+=(-ix "$index")
@@ -675,8 +716,7 @@ function addmeta_chdman_mame-tools(){
     fi
     dialog --stdout --clear --msgbox "$m" 10 50
 
-    clear
-    return 1
+
 }
 
 function copy_chdman_mame-tools(){
@@ -685,6 +725,8 @@ function copy_chdman_mame-tools(){
     local f_3="$3"
     local input="${f##*/}"
     local m="ERROR: $input isn't a CHD file"
+
+    local DIR=`dirname $f`
 
     local output="${f%.*} (copy).chd"
     local __output="$output"
@@ -763,22 +805,47 @@ function copy_chdman_mame-tools(){
                     1)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
                     	input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_byte" = "auto" ]] || [[ -z "$input_start_byte" ]]; then
+                            input_start_byte="auto"
+                    	else
+                            input_start_byte="$input_start_byte"
+                    	fi
                     	;;
                     2)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
                     	input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_hunk" = "auto" ]] || [[ -z "$input_start_hunk" ]]; then
+                            input_start_hunk="auto"
+                    	else
+                            input_start_hunk="$input_start_hunk"
+                    	fi
                     	;;
                     3)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
                     	input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_bytes" = "auto" ]] || [[ -z "$input_bytes" ]]; then
+                            input_bytes="auto"
+                    	else
+                            input_bytes="$input_bytes"
+                    	fi
                     	;;
                     4)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
                     	input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_hunks" = "auto" ]] || [[ -z "$input_hunks" ]]; then
+                            input_hunks="auto"
+                    	else
+                            input_hunks="$input_hunks"
+                    	fi
                     	;;
                     5)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
                     	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
+                            hunk_size="auto"
+                    	else
+                            hunk_size="$hunk_size"
+                    	fi
                     	;;
                     6)
                     	compression="$((( compression + 1 ) % 10))"
@@ -786,9 +853,14 @@ function copy_chdman_mame-tools(){
                     7)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
                     	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                            num_processors=`nproc`
+                    	else
+                            num_processors="$num_processors"
+                    	fi
                     	;;
                     O)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for output CHD:" 10 60 "$output")
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
                     	output=$("${cmd[@]}" 2>&1 >/dev/tty)
                     	if [[ "$output" = "${f%.*} (copy).chd" ]] || [[ -z "$output" ]]; then
                             __output="${f%.*} (copy).chd"
@@ -796,11 +868,11 @@ function copy_chdman_mame-tools(){
 			elif  [[ "${output}" = */* ]]; then
 			    __output="$output"
                     	else
-                            __output="`dirname $f`/$output"
+                            __output="$DIR/$output"
                     	fi
                     	;;
                     Y)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for input CHD:" 10 60 "$input_parent")
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD input:" 10 60 "$input_parent")
                     	input_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
                     	if [[ "$input_parent" = "none" ]] || [[ -z "$input_parent" ]]; then
                             __input_parent="none"
@@ -808,11 +880,11 @@ function copy_chdman_mame-tools(){
 			elif  [[ "${input_parent}" = */* ]]; then
 			    __input_parent="$input_parent"
                     	else
-                            __input_parent="`dirname $f`/$input_parent"
+                            __input_parent="$DIR/$input_parent"
                     	fi
                     	;;
                     X)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for output CHD:" 10 60 "$output_parent")
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD output:" 10 60 "$output_parent")
                     	output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
                     	if [[ "$output_parent" = "none" ]] || [[ -z "$output_parent" ]]; then
                             __output_parent="none"
@@ -820,7 +892,7 @@ function copy_chdman_mame-tools(){
 			elif  [[ "${output_parent}" = */* ]]; then
 			    __output_parent="$output_parent"
                     	else
-                            __output_parent="`dirname $f`/$output_parent"
+                            __output_parent="$DIR/$output_parent"
                     	fi
                     	;;
                     F)
@@ -884,72 +956,118 @@ function copy_chdman_mame-tools(){
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 function batch_extractld_chdman_mame-tools() {
     d="$1"
-    local m="ERROR: Input invalid !!!"
+    aux_input="*.chd"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory."
 
+    if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	echo "Reading directory ..."
+	zipinfo -1 "${d%/}/*.zip" $aux_input > out_1.txt
+	7z l -ba "${d%/}/*.7z" $aux_input -r- > out_2.txt
+ 	if [[ -z `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    aux_input="*.zip#$aux_input"
+	elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
+	    aux_input="*.7z#$aux_input"
+	elif [[ -n `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    aux_input="*.{zip,7z}#$aux_input"
+	else
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed CHD file" 
+	fi 2>/dev/null >/dev/null
+    fi
+
+    local output="${d%/}"
+    local __output="$output"
     local force="0"
     local input_start_frame="auto"
     local input_frames="auto"
 
-    local default
-    while true
-    do
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/*.chd (zip|7z)\nOutput dir: ${d%/}/*.avi\n\nOptional parameters" 22 76 16)
-        local options=()
+    if [[ -n `cat out_2.txt` ]] || [[ -n `cat out_1.txt` ]] || [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(chd)'` ]]; then
+	rm -rf out_*
 
-        options+=(- "Exit")
-        if [[ "$force" -eq 1 ]]; then
-            options+=(F "Overwrite existing files (Enabled)")
-        else
-            options+=(F "Overwrite existing files (Disabled)")
-        fi
-        options+=(1 "Input start frame ($input_start_frame)")
-        options+=(2 "Input frames ($input_frames)")
+	local default
+	while true
+	do
+            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/$aux_input\nOutput dir: $__output/*.avi\n\nOptional parameters:" 22 76 16)
+            local options=()
 
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            default="$choice"
-            case "$choice" in
-                1)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting frame within the input:" 10 60 "$input_start_frame")
-                    input_start_frame=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "input_start_frame" "$input_start_frame"
-                    ;;
-                2)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in frames:" 10 60 "$input_frames")
-                    input_frames=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "input_frames" "$input_frames"
-                    ;;
-                F)
-                    force="$((force ^ 1))"
-                    ;;
-		-)
-		    return 0
-		    ;;
-            esac
-        else
-            break
-        fi
-    done
+            options+=(- "Exit")
+            options+=(I "Input file: ./$aux_input")
+            options+=(O "Output file: ./*.avi")
+            if [[ "$force" -eq 1 ]]; then
+            	options+=(F "Overwrite existing files (Enabled)")
+            else
+            	options+=(F "Overwrite existing files (Disabled)")
+            fi
+            	options+=(1 "Input start frame ($input_start_frame)")
+            	options+=(2 "Input frames ($input_frames)")
 
-    if [ -d "$d" ]; then
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    1)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting frame within the input:" 10 60 "$input_start_frame")
+                    	input_start_frame=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_frame" = "auto" ]] || [[ -z "$input_start_frame" ]]; then
+                            input_start_frame="auto"
+                    	else
+                            input_start_frame="$input_start_frame"
+                    	fi
+                    	;;
+                    2)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in frames:" 10 60 "$input_frames")
+                    	input_frames=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_frames" = "auto" ]] || [[ -z "$input_frames" ]]; then
+                            input_frames="auto"
+                    	else
+                            input_frames="$input_frames"
+                    	fi
+                    	;;
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for AVI output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${d%/}" ]] || [[ -z "$output" ]]; then
+                            __output="${d%/}"
+                    	else
+                            __output="${output%/}"
+                    	fi
+                    	;;
+                    F)
+                    	force="$((force ^ 1))"
+                    	;;
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
+
         clear
 	cd && cd "$d"
-	if [[ -n $(find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)') ]]; then
+	remove="remove_files.txt"
+	create="create_files.txt"
+	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	    ls -1 * > out.txt
+	    #IFS=''
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
-	    for i in *.[zZ][iI][pP]; do 
-		unzip "$i"
-	    done 2>/dev/null >/dev/null
- 	    for i in *.7[zZ]; do 
-		7z e "$i"
-	    done 2>/dev/null >/dev/null
+	    while read -r i; do
+    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]]; then
+		    ls "$i" >> $remove
+		    unzip "$i"
+    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]]; then
+		    ls "$i" >> $remove
+		    7z e "$i" 
+    	    	fi 2>/dev/null >/dev/null
+	    done < out.txt 
+            chown $user:$user *.chd
+	    rm -rf out.txt
 	fi
-        chown $user:$user *
 
 	local params=()
         if [[ "$force" -eq 1 ]]; then
@@ -964,37 +1082,48 @@ function batch_extractld_chdman_mame-tools() {
 
 	extensions=`find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.chd'`
 	if [[ -n $extensions ]]; then
-            ls -1 > "$HOME/dir_1.txt"
 	    echo $'Converting files ...\n'
             for j in $extensions; do
-      	        $md_inst/chdman extracthd -i "$j" -o "${j%.*}.avi" ${params[@]}
- 	        chown $user:$user *".avi"
+        	if [[ "$output" != ${d%/} ]]; then
+	    	    j_bn="${j##*/}"
+            	    $md_inst/chdman extractld -i "$j" -o "$__output/${j_bn%.*}.avi" ${params[@]}
+		    chown $user:$user "$__output/${j_bn%.*}.avi"
+		else
+      	            $md_inst/chdman extractld -i "$j" -o "${j%.*}.avi" ${params[@]}
+		    chown $user:$user "${j%.*}.avi"
+		fi
+	    	if [[ -f "$__output/${j_bn%.*}.avi" ]] || [[ -f "${j%.*}.avi" ]]; then
+		    echo $j >> $remove
+		    if [[ -f "$__output/${j_bn%.*}.avi" ]]; then
+			echo ${j_bn%.*}.avi >> $create
+		    elif [[ -f "${j%.*}.avi" ]]; then
+			echo ${j%.*}.avi >> $create
+		    fi
+	    	fi
 	    done    	  
 	fi
-	ls -1 > "$HOME/dir_2.txt"
-	DIFF=`diff "$HOME/dir_1.txt" "$HOME/dir_2.txt"`
 
-	if [[ "$DIFF" != "" ]]; then
-            dialog --stdout --defaultno --yesno "Would you like to delete CHD files and keep only AVI files?" 8 50
+	if [[ -e "$create" ]]; then
+	    sort -u $remove -o $remove && sort -u $create -o $create 
+            dialog --stdout --defaultno --yesno "Would you like to delete $aux_input files and keep only *.avi files?" 8 50
             if [[ $? = 0 ]]; then
-	        if [[ -n `find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; 			then
-		    rm -rf *.[zZ][iI][pP]; rm -rf *.7[zZ]
-	        fi
-	        rm -rf $extensions
-	        dialog --stdout --msgbox "CHDs files have been deleted!" 8 50
+		xargs -d '\n' rm -f {} < $remove
+		#IFS=""; while read -r i; do rm -- $i; done < $remove
+		dialog --stdout --title "Removed files" --clear --textbox $remove 15 63
+	        dialog --stdout --msgbox "$aux_input files have been deleted!" 8 50
             fi
-	    rm -rf "$HOME/dir_1.txt" "$HOME/dir_2.txt"
-	    m="CHDs to AVI LaserDiscs successfully converted."
+	    dialog --stdout --title "Created files" --clear --textbox $create 15 63
+	    m="$aux_input to *.avi (LaserDiscs) successfully converted."
 	else
-	    m="ERROR: Conversion Failed !!!"
+	    m="ERROR: Conversion Failed."
         fi
+	rm -rf $remove $create
     else
         m="$m"
     fi
-    dialog --stdout --clear --msgbox "$m" 8 50
+    dialog --stdout --clear --msgbox "$m" 10 50
         
-    clear
-    return 1
+
 }
 
 function extractld_chdman_mame-tools(){
@@ -1002,18 +1131,19 @@ function extractld_chdman_mame-tools(){
     local __f="$f"
     local input="${f##*/}"
     local m="ERROR: $input isn't a CHD file"
+
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
  	if [[ "$f" = *.[zZ][iI][pP] ]]; then
 	    aux_input=`zipinfo -1 $f *.chd`
  	elif [[ "$f" = *.7[zZ] ]]; then
 	    7z l -ba $f *.chd -r- > out.txt 
-	    out=`cat out.txt | awk '{s=""; for (i=6; i<=NF; i++) s = s $i " "; print s}'`
+	    out=`cat out.txt | cut -c54-`
 	    rm -rf "out.txt"
 	    aux_input="$out"
 	fi
 
 	if [[ -z $aux_input ]]; then
-	    m="ERROR: $input haven't a compressed CHD file" 
+	    m="ERROR: $input doesn't have a compressed CHD file" 
 	fi
 	input="$input#$aux_input"
 	__f="$__f#$aux_input"
@@ -1052,12 +1182,22 @@ function extractld_chdman_mame-tools(){
 		default="$choice"
 		case "$choice" in
                     1)
-			cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting frame within the input:" 10 60 "$input_start_frame")
-                    	input_start_frame=$("${cmd[@]}" 2>&1 >/dev/tty)   
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting frame within the input:" 10 60 "$input_start_frame")
+                    	input_start_frame=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_frame" = "auto" ]] || [[ -z "$input_start_frame" ]]; then
+                            input_start_frame="auto"
+                    	else
+                            input_start_frame="$input_start_frame"
+                    	fi
                     	;;
                     2)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in frames:" 10 60 "$input_frames")
                     	input_frames=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_frames" = "auto" ]] || [[ -z "$input_frames" ]]; then
+                            input_frames="auto"
+                    	else
+                            input_frames="$input_frames"
+                    	fi
                     	;;
                     O)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for output AVI:" 10 60 "$output")
@@ -1072,7 +1212,7 @@ function extractld_chdman_mame-tools(){
                     	fi
                     	;;
                     Y)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for input CHD:" 10 60 "$input_parent")
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD input:" 10 60 "$input_parent")
                     	input_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
                     	if [[ "$input_parent" = "none" ]] || [[ -z "$input_parent" ]]; then
                             __input_parent="none"
@@ -1139,21 +1279,15 @@ function extractld_chdman_mame-tools(){
 	fi
 
 	if [[ -f "$__output" ]]; then
-	    if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
-		m="$input to ${__output##*/} successfully converted."
-                dialog --stdout --defaultno --yesno "Would you like to delete $input and keep only ${__output##*/}?" 10 50
-	    else
-		m="$input to ${__output##*/} successfully converted."
-		dialog --stdout --defaultno --yesno "Would you like to delete $input and keep only ${__output##*/}?" 10 50
-	    fi
+	    m="$input to ${__output##*/} successfully converted."
+	    dialog --stdout --defaultno --yesno "Would you like to delete $input and keep only ${__output##*/}?" 10 50
             if [[ $? = 0 ]]; then
                 if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
 	            rm -rf "$enter" && rm -rf "$f"
-		    dialog --stdout --msgbox "$input have been deleted!" 10 50
 	        else
 	            rm -rf "$f"
-		    dialog --stdout --msgbox "$input has been deleted!" 10 50
 	        fi
+		dialog --stdout --msgbox "$input has been deleted!" 10 50
             fi
         else
 	    m="ERROR: Conversion Failed."
@@ -1163,8 +1297,7 @@ function extractld_chdman_mame-tools(){
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 function batch_extractcd_chdman_mame-tools() {
@@ -1277,8 +1410,7 @@ function batch_extractcd_chdman_mame-tools() {
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 function extractcd_chdman_mame-tools(){
@@ -1290,7 +1422,7 @@ function extractcd_chdman_mame-tools(){
 	    aux_input=`zipinfo -1 $f *.chd`
 	elif [[ "$f" = *.7[zZ] ]]; then
 	    7z l -ba $f *.chd -r- > out.txt 
-	    out=`cat out.txt | awk '{s=""; for (i=6; i<=NF; i++) s = s $i " "; print s}'`
+	    out=`cat out.txt | cut -c54-`
 	    rm -rf "out.txt"
 	    aux_input="$out"
 	fi
@@ -1299,8 +1431,7 @@ function extractcd_chdman_mame-tools(){
 	input="$f_bn_ext"
     fi
     local m="ERROR: Input invalid !!!"
-    local DIR
-    DIR=`dirname $f`
+    local DIR=`dirname $f`
 
     local form="0"
     local exts="cue"
@@ -1354,7 +1485,7 @@ function extractcd_chdman_mame-tools(){
                     form="$((( form + 1) % 3))"
                     ;;
                 I)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for input CHD:" 10 60 "$input_parent")
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD input:" 10 60 "$input_parent")
                     input_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
 		    exts=$ext
                     ;;
@@ -1458,8 +1589,7 @@ function extractcd_chdman_mame-tools(){
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 function batch_extracthd_chdman_mame-tools() {
@@ -1583,8 +1713,7 @@ function batch_extracthd_chdman_mame-tools() {
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
         
-    clear
-    return 1
+
 }
 
 function extracthd_chdman_mame-tools(){
@@ -1596,7 +1725,7 @@ function extracthd_chdman_mame-tools(){
 	    aux_input=`zipinfo -1 $f *.chd`
 	elif [[ "$f" = *.7[zZ] ]]; then
 	    7z l -ba $f *.chd -r- > out.txt 
-	    out=`cat out.txt | awk '{s=""; for (i=6; i<=NF; i++) s = s $i " "; print s}'`
+	    out=`cat out.txt | cut -c54-`
 	    rm -rf "out.txt"
 	    aux_input="$out"
 	fi
@@ -1605,8 +1734,7 @@ function extracthd_chdman_mame-tools(){
 	input="$f_bn_ext"
     fi
     local m="ERROR: Input invalid !!!"
-    local DIR
-    DIR=`dirname $f`
+    local DIR=`dirname $f`
 
     local output="default"
     local __output="${f%.*}.img"
@@ -1666,7 +1794,7 @@ function extracthd_chdman_mame-tools(){
                     fi
                     ;;
                 I)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for output CHD:" 10 60 "$input_parent")
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD output:" 10 60 "$input_parent")
                     input_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
                     ;;
                 F)
@@ -1750,8 +1878,7 @@ function extracthd_chdman_mame-tools(){
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 function batch_extractraw_chdman_mame-tools() {
@@ -1875,8 +2002,7 @@ function batch_extractraw_chdman_mame-tools() {
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 
-    clear
-    return 1
+
 }
 
 function extractraw_chdman_mame-tools(){
@@ -1888,7 +2014,7 @@ function extractraw_chdman_mame-tools(){
 	    aux_input=`zipinfo -1 $f *.chd`
 	elif [[ "$f" = *.7[zZ] ]]; then
 	    7z l -ba $f *.chd -r- > out.txt 
-	    out=`cat out.txt | awk '{s=""; for (i=6; i<=NF; i++) s = s $i " "; print s}'`
+	    out=`cat out.txt | cut -c54-`
 	    rm -rf "out.txt"
 	    aux_input="$out"
 	fi
@@ -1897,8 +2023,7 @@ function extractraw_chdman_mame-tools(){
 	input="$f_bn_ext"
     fi
     local m="ERROR: Input invalid !!!"
-    local DIR
-    DIR=`dirname $f`
+    local DIR=`dirname $f`
 
     local output="default"
     local __output="${f%.*}.raw"
@@ -1958,7 +2083,7 @@ function extractraw_chdman_mame-tools(){
                     fi
                     ;;
                 I)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for input CHD:" 10 60 "$input_parent")
+                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD input:" 10 60 "$input_parent")
                     input_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
                     ;;
                 F)
@@ -2039,123 +2164,177 @@ function extractraw_chdman_mame-tools(){
         fi
     else
         m="$m"
+	rm -rf out_*
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
 }
-
 
 function batch_createld_chdman_mame-tools() {
     d="$1"
-    local m="ERROR: Input invalid !!!"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory."
+    aux_input="*.avi"
 
+    if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	echo "Reading directory ..."
+	zipinfo -1 "${d%/}/*.zip" $aux_input > out_1.txt
+	7z l -ba "${d%/}/*.7z" $aux_input -r- > out_2.txt
+ 	if [[ -z `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    aux_input="*.zip#$aux_input"
+	elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
+	    aux_input="*.7z#$aux_input"
+	elif [[ -n `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    aux_input="*.{zip,7z}#$aux_input"
+	else
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed AVI file" 
+	fi 2>/dev/null >/dev/null
+    fi
+
+    local output="${d%/}"
+    local __output="$output"
     local force="0"
     local input_start_frame="auto"
     local input_frames="auto"
     local hunk_size="auto"
     local compression="0"
-    local num_processors="`nproc`"
+    local num_processors=`nproc`
 
-    local default
-    while true
-    do
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/*.avi (zip|7z)\nOutput dir: ${d%/}/*.chd\n\nOptional parameters:" 25 76 16)
-        local options=()
+    if [[ -n `cat out_2.txt` ]] || [[ -n `cat out_1.txt` ]] || [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(avi)'` ]]; then
+	rm -rf out_*
 
-        options+=(- "Exit")
-        if [[ "$force" -eq 1 ]]; then
-            options+=(F "Overwrite existing files (Enabled)")
-        else
-            options+=(F "Overwrite existing files (Disabled)")
-        fi
-        options+=(1 "Input start frame ($input_start_frame)")
-        options+=(2 "Input frames ($input_frames)")
-        options+=(3 "Hunk size ($hunk_size)")
-        if [[ "$compression" -eq 0 ]]; then
-            compr="default"
-            options+=(4 "Compression: $compr")
-        elif [[ "$compression" -eq 1 ]]; then
-            compr="none"
-            options+=(4 "Compression: $compr")
-        elif [[ "$compression" -eq 2 ]]; then
-            compr="avhu"
-            options+=(4 "Compression: $compr (A/V Huffman)")
-        elif [[ "$compression" -eq 3 ]]; then
-            compr="cdfl"
-            options+=(4 "Compression: $compr (CD FLAC)")
-        elif [[ "$compression" -eq 4 ]]; then
-            compr="cdlz"
-            options+=(4 "Compression: $compr (CD LZMA)")
-        elif [[ "$compression" -eq 5 ]]; then
-            compr="cdzl"
-            options+=(4 "Compression: $compr (CD Deflate)")
-        elif [[ "$compression" -eq 6 ]]; then
-            compr="flac"
-            options+=(4 "Compression: $compr (FLAC)")
-        elif [[ "$compression" -eq 7 ]]; then
-            compr="huff"
-            options+=(4 "Compression: $compr (Huffman)")
-        elif [[ "$compression" -eq 8 ]]; then
-            compr="lzma"
-            options+=(4 "Compression: $compr (LZMA)")
-        elif [[ "$compression" -eq 9 ]]; then
-            compr="zlib"
-            options+=(4 "Compression: $compr (Deflate)")
-        fi
-        options+=(5 "Number of CPUs ($num_processors)")
+	local default
+	while true
+	do
+	    local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/$aux_input\nOutput dir: $__output/*.chd\n\nOptional parameters:" 25 76 16)
+	    local options=()
 
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            default="$choice"
-            case "$choice" in
-                1)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting frame within the input:" 10 60 "$input_start_frame")
-                    input_start_frame=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "input_start_frame" "$input_start_frame"
-                    ;;
-                2)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in frames:" 10 60 "$input_frames")
-                    input_frames=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "input_frames" "$input_frames"
-                    ;;
-                3)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
-                    hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                4)
-                    compression="$((( compression + 1) % 10))"
-                    ;;
-                5)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
-                    num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                F)
-                    force="$((force ^ 1))"
-                    ;;
-		-)
-		    return 0
-		    ;;
-            esac
-        else
-            break
-        fi
-    done
+            options+=(- "Exit")
+            options+=(I "Input file: ./$aux_input")
+            options+=(O "Output file: ./*.chd")
+            if [[ "$force" -eq 1 ]]; then
+            	options+=(F "Overwrite existing files (Enabled)")
+            else
+            	options+=(F "Overwrite existing files (Disabled)")
+            fi
+            options+=(1 "Input start frame ($input_start_frame)")
+            options+=(2 "Input frames ($input_frames)")
+            options+=(3 "Hunk size ($hunk_size)")
+            if [[ "$compression" -eq 0 ]]; then
+            	compr="default"
+            	options+=(4 "Compression: $compr")
+            elif [[ "$compression" -eq 1 ]]; then
+            	compr="none"
+            	options+=(4 "Compression: $compr")
+            elif [[ "$compression" -eq 2 ]]; then
+            	compr="avhu"
+            	options+=(4 "Compression: $compr (A/V Huffman)")
+            elif [[ "$compression" -eq 3 ]]; then
+            	compr="cdfl"
+            	options+=(4 "Compression: $compr (CD FLAC)")
+            elif [[ "$compression" -eq 4 ]]; then
+            	compr="cdlz"
+            	options+=(4 "Compression: $compr (CD LZMA)")
+            elif [[ "$compression" -eq 5 ]]; then
+            	compr="cdzl"
+            	options+=(4 "Compression: $compr (CD Deflate)")
+            elif [[ "$compression" -eq 6 ]]; then
+            	compr="flac"
+            	options+=(4 "Compression: $compr (FLAC)")
+            elif [[ "$compression" -eq 7 ]]; then
+            	compr="huff"
+            	options+=(4 "Compression: $compr (Huffman)")
+            elif [[ "$compression" -eq 8 ]]; then
+            	compr="lzma"
+            	options+=(4 "Compression: $compr (LZMA)")
+            elif [[ "$compression" -eq 9 ]]; then
+            	compr="zlib"
+            	options+=(4 "Compression: $compr (Deflate)")
+            fi
+            options+=(5 "Number of CPUs ($num_processors)")
 
-    if [ -d "$d" ]; then
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    1)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting frame within the input:" 10 60 "$input_start_frame")
+                    	input_start_frame=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_frame" = "auto" ]] || [[ -z "$input_start_frame" ]]; then
+                            input_start_frame="auto"
+                    	else
+                            input_start_frame="$input_start_frame"
+                    	fi
+                    	;;
+                    2)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in frames:" 10 60 "$input_frames")
+                    	input_frames=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_frames" = "auto" ]] || [[ -z "$input_frames" ]]; then
+                            input_frames="auto"
+                    	else
+                            input_frames="$input_frames"
+                    	fi
+                    	;;
+                    3)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
+                    	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
+                            hunk_size="auto"
+                    	else
+                            hunk_size="$hunk_size"
+                    	fi
+                    	;;
+                    4)
+                    	compression="$((( compression + 1) % 10))"
+                    	;;
+                    5)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
+                    	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                            num_processors=`nproc`
+                    	else
+                            num_processors="$num_processors"
+                    	fi
+                    	;;
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for CHD output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${d%/}" ]] || [[ -z "$output" ]]; then
+                            __output="${d%/}"
+                    	else
+                            __output="${output%/}"
+                    	fi
+                    	;;
+                    F)
+                    	force="$((force ^ 1))"
+                    	;;
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
+
         clear
 	cd && cd "$d"
-	if [[ -n $(find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)') ]]; then
+	remove="remove_files.txt"
+	create="create_files.txt"
+	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	    ls -1 * > out.txt
+	    #IFS=''
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
-	    for i in *.[zZ][iI][pP]; do 
-		unzip "$i"
-	    done 2>/dev/null >/dev/null
- 	    for i in *.7[zZ]; do 
-		7z e "$i"
-	    done 2>/dev/null >/dev/null
+	    while read -r i; do
+    	    	if [[ -n `zipinfo -1 $i '*.avi'` ]]; then
+		    ls "$i" >> $remove
+		    unzip "$i"
+    	    	elif [[ -n `7z l -ba $i '*.avi' -r-` ]]; then
+		    ls "$i" >> $remove
+		    7z e "$i" 
+    	    	fi 2>/dev/null >/dev/null
+	    done < out.txt 
+            chown $user:$user *.avi
+	    rm -rf out.txt
 	fi
-        chown $user:$user *
 
 	local params=()
         if [[ "$force" -eq 1 ]]; then
@@ -2176,58 +2355,78 @@ function batch_createld_chdman_mame-tools() {
         if [[ -n "$num_processors" ]]; then
             params+=(-np "$num_processors")
         fi
-	
+
 	extensions=`find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.avi'`
 	if [[ -n $extensions ]]; then
-            ls -1 > "$HOME/dir_1.txt"
 	    echo $'Converting files ...\n'
             for j in $extensions; do
-      	        $md_inst/chdman createld -i "$j" -o "${j%.*}.chd" ${params[@]}
- 	        chown $user:$user *".chd"
+        	if [[ "$output" != ${d%/} ]]; then
+	    	    j_bn="${j##*/}"
+            	    $md_inst/chdman createld -i "$j" -o "$__output/${j_bn%.*}.chd" ${params[@]}
+		    chown $user:$user "$__output/${j_bn%.*}.chd"
+		else
+      	            $md_inst/chdman createld -i "$j" -o "${j%.*}.chd" ${params[@]}
+		    chown $user:$user "${j%.*}.chd"
+		fi
+	    	if [[ -f "$__output/${j_bn%.*}.chd" ]] || [[ -f "${j%.*}.chd" ]]; then
+		    echo $j >> $remove
+		    if [[ -f "$__output/${j_bn%.*}.chd" ]]; then
+			echo ${j_bn%.*}.chd >> $create
+		    elif [[ -f "${j%.*}.chd" ]]; then
+			echo ${j%.*}.chd >> $create
+		    fi
+	    	fi
 	    done    	  
 	fi
-	ls -1 > "$HOME/dir_2.txt"
-	DIFF=`diff "$HOME/dir_1.txt" "$HOME/dir_2.txt"`
 
-	if [[ "$DIFF" != "" ]]; then
-            dialog --stdout --defaultno --yesno "Would you like to delete all original files in this directory and keep only CHD files?" 8 50
+	if [[ -e "$create" ]]; then
+	    sort -u $remove -o $remove && sort -u $create -o $create
+            dialog --stdout --defaultno --yesno "Would you like to delete $aux_input files and keep only *.chd files?" 8 50
             if [[ $? = 0 ]]; then
-                if [[ -n `find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; 			then
-		    rm -rf *.[zZ][iI][pP]; rm -rf *.7[zZ]
-	        fi
-		rm -rf $extensions
-	        dialog --stdout --msgbox "All original files have been deleted!" 8 50
+		xargs -d '\n' rm -f {} < $remove
+		dialog --stdout --title "Removed files" --clear --textbox $remove 15 63
+	        dialog --stdout --msgbox "$aux_input files have been deleted!" 8 50
             fi
-	    rm -rf "$HOME/dir_1.txt" "$HOME/dir_2.txt"
-	    m="LaserDiscs to CHDs successfully converted."
+	    dialog --stdout --title "Created files" --clear --textbox $create 15 63
+	    m="$aux_input to *.chd successfully converted."
 	else
-	    m="ERROR: Conversion Failed !!!"
+	    m="ERROR: Conversion Failed."
         fi
+	rm -rf $remove $create
     else
         m="$m"
     fi
-    dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
+    dialog --stdout --clear --msgbox "$m" 10 50
 }
 
 function createld_chdman_mame-tools(){
     local f="$1"
-    local f_bn_ext="${f##*/}"
-    local f_bn="${f_bn_ext%.*}"
-    if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
-	input="$f_bn_ext#$f_bn.avi"
-    else 
-	input="$f_bn_ext"
-    fi
-    local m="ERROR: Input invalid !!!"
-    local DIR
-    DIR=`dirname $f`
+    local __f="$f"
+    local input="${f##*/}"
+    local m="ERROR: $input isn't a AVI file"
 
-    local output="default"
-    local __output="${f%.*}.chd"
+    if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
+ 	if [[ "$f" = *.[zZ][iI][pP] ]]; then
+	    aux_input=`zipinfo -1 $f *.avi`
+ 	elif [[ "$f" = *.7[zZ] ]]; then
+	    7z l -ba $f *.avi -r- > out.txt 
+	    out=`cat out.txt | cut -c54-`
+	    rm -rf "out.txt"
+	    aux_input="$out"
+	fi
+
+	if [[ -z $aux_input ]]; then
+	    m="ERROR: $input haven't a compressed AVI file" 
+	fi
+	input="$input#$aux_input"
+	__f="$__f#$aux_input"
+    fi
+    local DIR=`dirname $f`
+
+    local output="${f%.*}.chd"
+    local __output="$output"
     local output_parent="none"
+    local __output_parent="$output_parent"
     local force="0"
     local input_start_frame="auto"
     local input_frames="auto"
@@ -2235,110 +2434,140 @@ function createld_chdman_mame-tools(){
     local compression="0"
     local num_processors="`nproc`"
 
-    local default
-    while true
-    do
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $input\nOutput file: ${__output##*/}\nParent output file: $output_parent\n\nOptional parameters:" 22 76 16)
-        local options=()
+    if [[ ! -z $aux_input ]] || [[ "${input}" = *.[aA][vV][iI] ]]; then
+	local default
+	while true
+	do
+	    local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $__f\nOutput file: $__output\nParent output file: $__output_parent\n\nOptional parameters:" 22 76 16)
+	    local options=()
 
-        options+=(- "Exit")
-        options+=(X "Output file: $output")
-        options+=(O "Parent output file: $output_parent")
-        if [[ "$force" -eq 1 ]]; then
-            options+=(F "Overwrite existing files (Enabled)")
-        else
-            options+=(F "Overwrite existing files (Disabled)")
-        fi
-        options+=(1 "Input start frame ($input_start_frame)")
-        options+=(2 "Input frames ($input_frames)")
-        options+=(3 "Hunk size ($hunk_size)")
-        if [[ "$compression" -eq 0 ]]; then
-            compr="default"
-            options+=(4 "Compression: $compr")
-        elif [[ "$compression" -eq 1 ]]; then
-            compr="none"
-            options+=(4 "Compression: $compr")
-        elif [[ "$compression" -eq 2 ]]; then
-            compr="avhu"
-            options+=(4 "Compression: $compr (A/V Huffman)")
-        elif [[ "$compression" -eq 3 ]]; then
-            compr="cdfl"
-            options+=(4 "Compression: $compr (CD FLAC)")
-        elif [[ "$compression" -eq 4 ]]; then
-            compr="cdlz"
-            options+=(4 "Compression: $compr (CD LZMA)")
-        elif [[ "$compression" -eq 5 ]]; then
-            compr="cdzl"
-            options+=(4 "Compression: $compr (CD Deflate)")
-        elif [[ "$compression" -eq 6 ]]; then
-            compr="flac"
-            options+=(4 "Compression: $compr (FLAC)")
-        elif [[ "$compression" -eq 7 ]]; then
-            compr="huff"
-            options+=(4 "Compression: $compr (Huffman)")
-        elif [[ "$compression" -eq 8 ]]; then
-            compr="lzma"
-            options+=(4 "Compression: $compr (LZMA)")
-        elif [[ "$compression" -eq 9 ]]; then
-            compr="zlib"
-            options+=(4 "Compression: $compr (Deflate)")
-        fi
-        options+=(5 "Number of CPUs ($num_processors)")
+            options+=(- "Exit")
+            options+=(I "Input file: $input")
+            options+=(O "Output file: ${output##*/}")
+            options+=(X "Parent output file: ${output_parent##*/}")
+            if [[ "$force" -eq 1 ]]; then
+		options+=(F "Overwrite existing files (Enabled)")
+            else
+		options+=(F "Overwrite existing files (Disabled)")
+            fi
+            options+=(1 "Input start frame ($input_start_frame)")
+            options+=(2 "Input frames ($input_frames)")
+            options+=(3 "Hunk size ($hunk_size)")
+            if [[ "$compression" -eq 0 ]]; then
+            	compr="default"
+            	options+=(4 "Compression: $compr")
+            elif [[ "$compression" -eq 1 ]]; then
+            	compr="none"
+            	options+=(4 "Compression: $compr")
+            elif [[ "$compression" -eq 2 ]]; then
+            	compr="avhu"
+            	options+=(4 "Compression: $compr (A/V Huffman)")
+            elif [[ "$compression" -eq 3 ]]; then
+            	compr="cdfl"
+            	options+=(4 "Compression: $compr (CD FLAC)")
+            elif [[ "$compression" -eq 4 ]]; then
+            	compr="cdlz"
+            	options+=(4 "Compression: $compr (CD LZMA)")
+            elif [[ "$compression" -eq 5 ]]; then
+            	compr="cdzl"
+            	options+=(4 "Compression: $compr (CD Deflate)")
+            elif [[ "$compression" -eq 6 ]]; then
+            	compr="flac"
+            	options+=(4 "Compression: $compr (FLAC)")
+            elif [[ "$compression" -eq 7 ]]; then
+            	compr="huff"
+            	options+=(4 "Compression: $compr (Huffman)")
+            elif [[ "$compression" -eq 8 ]]; then
+            	compr="lzma"
+            	options+=(4 "Compression: $compr (LZMA)")
+            elif [[ "$compression" -eq 9 ]]; then
+            	compr="zlib"
+            	options+=(4 "Compression: $compr (Deflate)")
+            fi
+            options+=(5 "Number of CPUs ($num_processors)")
 
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            default="$choice"
-            case "$choice" in
-                1)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting frame within the input:" 10 60 "$input_start_frame")
-                    input_start_frame=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "input_start_frame" "$input_start_frame"
-                    ;;
-                2)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in frames:" 10 60 "$input_frames")
-                    input_frames=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    iniSet "input_frames" "$input_frames"
-                    ;;
-                3)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
-                    hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                4)
-                    compression="$((( compression + 1 ) % 10))"
-                    ;;
-                5)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
-                    num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                X)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for output CHD:" 10 60 "$output")
-                    output=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    if [[ "$output" = "default" ]]; then
-                        __output="${f%.*}.chd"
-                    else
-                        __output="$output"
-                    fi
-                    ;;
-                O)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for output CHD:" 10 60 "$output_parent")
-                    output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                F)
-                    force="$((force ^ 1))"
-                    ;;
-		-)
-		    return 0
-		    ;;
-            esac
-        else
-            break
-        fi
-    done
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    1)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting frame within the input:" 10 60 "$input_start_frame")
+                    	input_start_frame=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_frame" = "auto" ]] || [[ -z "$input_start_frame" ]]; then
+                            input_start_frame="auto"
+                    	else
+                            input_start_frame="$input_start_frame"
+                    	fi
+                    	;;
+                    2)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in frames:" 10 60 "$input_frames")
+                    	input_frames=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_frames" = "auto" ]] || [[ -z "$input_frames" ]]; then
+                            input_frames="auto"
+                    	else
+                            input_frames="$input_frames"
+                    	fi
+                    	;;
+                    3)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
+                    	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
+                            hunk_size="auto"
+                    	else
+                            hunk_size="$hunk_size"
+                    	fi
+                    	;;
+                    4)
+                    	compression="$((( compression + 1 ) % 10))"
+                    	;;
+                    5)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
+                    	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                            num_processors=`nproc`
+                    	else
+                            num_processors="$num_processors"
+                    	fi
+                    	;;
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${f%.*}.chd" ]] || [[ -z "$output" ]]; then
+                            __output="${f%.*}.chd"
+			    output="$__output"
+		    	elif  [[ "${output}" = */* ]]; then
+			    __output="$output"
+                    	else
+                            __output="$DIR/$output"
+                    	fi
+		    	;;
+                    X)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD output:" 10 60 "$output_parent")
+                    	output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output_parent" = "none" ]] || [[ -z "$output_parent" ]]; then
+                            __output_parent="none"
+			    output_parent="$__output_parent"
+			elif  [[ "${output_parent}" = */* ]]; then
+			    __output_parent="$output_parent"
+                    	else
+                            __output_parent="$DIR/$output_parent"
+                    	fi
+                    	;;
+                    F)
+                    	force="$((force ^ 1))"
+                    	;;
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
 
-    if [ -f "$f" ]; then
         clear
 	cd && cd "$DIR"
-	if [[ -n `find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	if [[ -n `find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    for i in ${f%.*}.[zZ][iI][pP]; do 
 		unzip "$i"
@@ -2353,11 +2582,17 @@ function createld_chdman_mame-tools(){
         if [[ "$force" -eq 1 ]]; then
             params+=(-f)
         fi
+	if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
+	    enter="$DIR/$aux_input"
+	    params+=(-i "$enter")
+	else
+	    params+=(-i "$f")
+        fi
         if [[ -n "$output" ]]; then
             params+=(-o "$__output")
         fi
         if [[ -n "$output_parent" ]] && [[ "$output_parent" != "none" ]]; then
-            params+=(-op "$output_parent")
+            params+=(-op "$__output_parent")
         fi
         if [[ -n "$input_start_frame" ]] && [[ "$input_start_frame" != "auto" ]]; then
             params+=(-isf "$input_start_frame")
@@ -2375,138 +2610,302 @@ function createld_chdman_mame-tools(){
             params+=(-np "$num_processors")
         fi
 
-	if [[ -n `find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.avi'` ]]; then
-	    echo $'Converting files ...\n'
-	    ext="avi"
-	    $md_inst/chdman createld -i "${f%.*}.$ext" ${params[@]}
- 	    chown $user:$user "$__output" 
+	echo $'Converting files ...\n'
+	$md_inst/chdman createld ${params[@]} 
+	chown $user:$user "$__output" 
+	if [[ -f "$__output_parent" ]]; then
+	    chown $user:$user "$__output_parent"
 	fi
 
 	if [[ -f "$__output" ]]; then
-	    if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
-		m="$f_bn_ext#$f_bn.$ext to ${__output##*/} successfully converted."
-                dialog --stdout --defaultno --yesno "Would you like to delete $f_bn_ext#$f_bn.$ext and keep only ${__output##*/}?" 10 50
-	    else
-		m="$f_bn_ext to ${__output##*/} successfully converted."
-		dialog --stdout --defaultno --yesno "Would you like to delete $f_bn_ext and keep only ${__output##*/}?" 10 50
-	    fi
+	    m="$input to ${__output##*/} successfully converted."
+	    dialog --stdout --defaultno --yesno "Would you like to delete $input and keep only ${__output##*/}?" 10 50
             if [[ $? = 0 ]]; then
-                if [[ "${x}" = *.[zZ][iI][pP] ]] || [[ "${x}" = *.7[zZ] ]]; then
-	            rm -rf "${f%.*}.avi" && rm -rf "$x"
-		    dialog --stdout --msgbox "$f_bn_ext#$f_bn.$ext have been deleted!" 10 50
+                if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
+	            rm -rf "$aux_input" && rm -rf "$f"
 	        else
-	            rm -rf "${f%.*}.avi"
-		    dialog --stdout --msgbox "$f_bn_ext has been deleted!" 10 50
+	            rm -rf "$f"
 	        fi
+		dialog --stdout --msgbox "$input has been deleted!" 10 50
             fi
         else
-	    m="ERROR: Conversion Failed !!!"
+	    m="ERROR: Conversion Failed."
         fi
     else
         m="$m"
+	rm -rf out_*
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
 }
 
 function batch_createcd_chdman_mame-tools() {
     d="$1"
-    local m="ERROR: Input invalid !!!"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory."
 
+    local ext=('cue' 'gdi' 'toc' 'bin' 'raw')
+    for ((a=0; a<3; a++)); do
+	_ext=(${_ext[@]} \*.${ext[a]})
+    done
+    # binary files
+    for ((b=3; b<5; b++)); do
+	_ext_aux=(${_ext_aux[@]} \*.${ext[b]})
+    done
+
+    for ((c=0; c<3; c++)); do
+	if [ "$c" = 0 ]; then
+	    __ext=(${__ext[@]}${ext[c]})
+	else 
+	    __ext=(${__ext[@]}\|${ext[c]})
+	fi
+    done
+    
+    cd && cd $d
+    echo "Reading directory ..."
+    ls -1 $d > ext.txt
+    while read -r f; do
+	if [[ "$f" = *.[zZ][iI][pP] ]]; then
+	    zipinfo -1 "$f" "${_ext[@]}" >> out_1.txt
+	    cat out_1.txt >> out_merge_a.txt
+	elif [[ "$f" = *.7[zZ] ]]; then 
+	    7z l -ba "$f" "${_ext[@]}" -r- | cut -c54- >> out_2.txt
+	    cat out_2.txt >> out_merge_a.txt
+	else 
+	    find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.(${__ext[@]})" >> out_3.txt
+	    cat out_3.txt > out_merge_b.txt
+	fi 2>/dev/null >/dev/null
+    done < ext.txt
+    rm -rf ext.txt
+	
+    for i in a b; do
+    	while read -r g; do
+	    if [[ "$g" = *.[cC][uU][eE] ]]; then
+	    	echo "cue" >> out_$i.txt
+	    elif [[ "$g" = *.[gG][dD][iI] ]]; then 
+	    	echo "gdi">> out_$i.txt
+	    elif [[ "$g" = *.[tT][oO][cC] ]]; then 
+	    	echo "toc" >> out_$i.txt
+	    fi 2>/dev/null >/dev/null
+	done < out_merge_$i.txt
+	sort -u out_$i.txt -o out_$i.txt
+	awk 'BEGIN { ORS="" } { print p$0; p="," } END { print "\n" }' \
+	out_$i.txt > out_end_$i.txt
+    done
+    out_ext_1=`cat out_end_a.txt`
+    out_ext_2=`cat out_end_b.txt`
+
+    if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+ 	if [[ -z `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    if [[ -z `cat out_3.txt` ]]; then
+	    	if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.zip#*.$out_ext_1"
+		else
+		    aux_input="*.zip#*.{$out_ext_1}"
+		fi
+	    else
+	    	if [[ ${out_ext_2} = ??? ]]; then
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="{*.zip#*.$out_ext_1, *.$out_ext_2}"
+		    else
+			aux_input="{*.zip#*.{$out_ext_1}, *.$out_ext_2}"
+		    fi
+		else
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="{*.zip#*.$out_ext_1, *.{$out_ext_2}}"
+		    else
+			aux_input="{*.zip#*.{$out_ext_1}, *.{$out_ext_2}}"
+		    fi
+		fi		
+	    fi
+	elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
+	    if [[ -z `cat out_3.txt` ]]; then
+	    	if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.7z#*.$out_ext_1"
+		else
+		    aux_input="*.7z#*.{$out_ext_1}"
+		fi
+	    else
+	    	if [[ ${out_ext_2} = ??? ]]; then
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="{*.7z#*.$out_ext_1, *.$out_ext_2}"
+		    else
+			aux_input="{*.7z#*.{$out_ext_1}, *.$out_ext_2}"
+		    fi
+		else
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="{*.7z#*.$out_ext_1, *.{$out_ext_2}}"
+		    else
+			aux_input="{*.7z#*.{$out_ext_1},*.{$out_ext_2}}"
+		    fi
+		fi		
+	    fi
+	elif [[ -n `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    if [[ -z `cat out_3.txt` ]]; then
+	    	if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.{zip,7z}#*.$out_ext_1"
+		else
+		    aux_input="*.{zip,7z}#*.{$out_ext_1}"
+		fi
+	    else
+	    	if [[ ${out_ext_2} = ??? ]]; then
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="{*.{zip,7z}#*.$out_ext_1, *.$out_ext_2}"
+		    else
+			aux_input="{*.{zip,7z}#*.{$out_ext_1}, *.$out_ext_2}"
+		    fi
+		else
+		    if [[ ${out_ext_1} = ??? ]]; then
+		    	aux_input="{*.{zip,7z}#*.$out_ext_1, *.{$out_ext_2}}"
+		    else
+			aux_input="{*.{zip,7z}#*.{$out_ext_1}, *.{$out_ext_2}}"
+		    fi
+		fi		
+	    fi
+	else
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed CD file" 
+	fi 2>/dev/null >/dev/null
+    else
+	if [[ ${out_ext_2} = ??? ]]; then
+	    aux_input="*.$out_ext_2"
+	else
+	    aux_input="*.{$out_ext_2}"	    
+	fi
+    fi 2>/dev/null >/dev/null
+
+    local output="${d%/}"
+    local __output="$output"
     local force="0"
     local hunk_size="auto"
     local compression="0"
     local num_processors=`nproc`
 
-    local default
-    while true
-    do
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/*.toc|cue|gdi (zip|7z)\nOutput dir: ${d%/}/*.chd\n\nOptional parameters:" 25 76 16)
-        local options=()
+    if [[ -n `cat out_2.txt` ]] || [[ -n `cat out_1.txt` ]] || [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"` ]]; then
+	rm -rf out_*
 
-        options+=(- "Exit")
-        if [[ "$force" -eq 1 ]]; then
-            options+=(F "Overwrite existing files (Enabled)")
-        else
-            options+=(F "Overwrite existing files (Disabled)")
-        fi
-        options+=(1 "Hunk size ($hunk_size)")
-        if [[ "$compression" -eq 0 ]]; then
-            compr="default"
-            options+=(2 "Compression: $compr")
-        elif [[ "$compression" -eq 1 ]]; then
-            compr="none"
-            options+=(2 "Compression: $compr")
-        elif [[ "$compression" -eq 2 ]]; then
-            compr="avhu"
-            options+=(2 "Compression: $compr (A/V Huffman)")
-        elif [[ "$compression" -eq 3 ]]; then
-            compr="cdfl"
-            options+=(2 "Compression: $compr (CD FLAC)")
-        elif [[ "$compression" -eq 4 ]]; then
-            compr="cdlz"
-            options+=(2 "Compression: $compr (CD LZMA)")
-        elif [[ "$compression" -eq 5 ]]; then
-            compr="cdzl"
-            options+=(2 "Compression: $compr (CD Deflate)")
-        elif [[ "$compression" -eq 6 ]]; then
-            compr="flac"
-            options+=(2 "Compression: $compr (FLAC)")
-        elif [[ "$compression" -eq 7 ]]; then
-            compr="huff"
-            options+=(2 "Compression: $compr (Huffman)")
-        elif [[ "$compression" -eq 8 ]]; then
-            compr="lzma"
-            options+=(2 "Compression: $compr (LZMA)")
-        elif [[ "$compression" -eq 9 ]]; then
-            compr="zlib"
-            options+=(2 "Compression: $compr (Deflate)")
-        fi
-        options+=(3 "Number of CPUs ($num_processors)")
+    	local default
+    	while true
+    	do
+            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/$aux_input\nOutput dir: $__output/*.chd\n\nOptional parameters:" 25 76 16)
+            local options=()
 
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            default="$choice"
-            case "$choice" in
-                1)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
-                    hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                2)
-                    compression="$((( compression + 1) % 10))"
-                    ;;
-                3)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
-                    num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                F)
-                    force="$((force ^ 1))"
-                    ;;
-		-)
-		    return 0
-		    ;;
-            esac
-        else
-            break
-        fi
-    done
+            options+=(- "Exit")
+            options+=(I "Input file: ./$aux_input")
+            options+=(O "Output file: ./*.chd")
+            if [[ "$force" -eq 1 ]]; then
+            	options+=(F "Overwrite existing files (Enabled)")
+            else
+            	options+=(F "Overwrite existing files (Disabled)")
+            fi
+            options+=(1 "Hunk size ($hunk_size)")
+            if [[ "$compression" -eq 0 ]]; then
+            	compr="default"
+            	options+=(2 "Compression: $compr")
+            elif [[ "$compression" -eq 1 ]]; then
+            	compr="none"
+            	options+=(2 "Compression: $compr")
+            elif [[ "$compression" -eq 2 ]]; then
+            	compr="avhu"
+		options+=(2 "Compression: $compr (A/V Huffman)")
+            elif [[ "$compression" -eq 3 ]]; then
+            	compr="cdfl"
+            	options+=(2 "Compression: $compr (CD FLAC)")
+            elif [[ "$compression" -eq 4 ]]; then
+            	compr="cdlz"
+            	options+=(2 "Compression: $compr (CD LZMA)")
+            elif [[ "$compression" -eq 5 ]]; then
+            	compr="cdzl"
+            	options+=(2 "Compression: $compr (CD Deflate)")
+            elif [[ "$compression" -eq 6 ]]; then
+            	compr="flac"
+            	options+=(2 "Compression: $compr (FLAC)")
+            elif [[ "$compression" -eq 7 ]]; then
+            	compr="huff"
+            	options+=(2 "Compression: $compr (Huffman)")
+            elif [[ "$compression" -eq 8 ]]; then
+            	compr="lzma"
+            	options+=(2 "Compression: $compr (LZMA)")
+            elif [[ "$compression" -eq 9 ]]; then
+            	compr="zlib"
+            	options+=(2 "Compression: $compr (Deflate)")
+            fi
+            options+=(3 "Number of CPUs ($num_processors)")
 
-    if [ -d "$d" ]; then
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    1)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
+                    	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+			if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
+			    hunk_size="auto"
+			else
+			    hunk_size="$hunk_size"
+			fi
+			;;
+                    2)
+                    	compression="$((( compression + 1) % 10))"
+                    	;;
+                    3)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
+                    	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	;;
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for CHD output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${d%/}" ]] || [[ -z "$output" ]]; then
+                            __output="${d%/}"
+                    	else
+                            __output="${output%/}"
+                    	fi
+                    	;;
+                    F)
+                    	force="$((force ^ 1))"
+                    	;;
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
+
         clear
 	cd && cd "$d"
-	if [[ -n $(find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)') ]]; then
-	    echo $'Extracting files ...\n'
-	    for i in *.[zZ][iI][pP]; do 
-		unzip "$i"
-	    done 2>/dev/null >/dev/null
- 	    for i in *.7[zZ]; do 
-		7z e "$i"
-	    done 2>/dev/null >/dev/null
+	remove="remove_files.txt"
+	create="create_files.txt"
+	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	    ls -1 * > out.txt
+	    #IFS=''
+	    echo $'Extracting files ...\nThis may take several minutes ...\n'
+	    while read -r i; do
+    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]]; then
+		    ls "$i" >> $remove
+		    unzip "$i"
+    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]]; then
+		    ls "$i" >> $remove
+		    7z e "$i" 
+    	    	fi 2>/dev/null >/dev/null
+	    done < out.txt 
+            chown $user:$user ${_ext[@]} ${_ext_aux[@]} 2>/dev/null
+	    rm -rf out.txt
 	fi
-        chown $user:$user *
-	
+
+	remove_bins="remove_bins.txt"
+	find $d -maxdepth 1 | while read k; do
+	    if [[ "${k}" == ${_ext[0]} ]]; then # CUE
+	    	cat $k |  awk '/.bin/ {print}' > 1.txt
+	    	sed 's/FILE "\|" BINARY//g' 1.txt >> $remove_bins && rm -rf 1.txt 
+	    elif [[ "${k}" == ${_ext[1]} ]]; then # GDI
+	    	cat $k | awk '{s=""; for (i=5; i<NF; i++) s = s $i; print s}' >> 1.txt 2>/dev/null
+	    	sed '/^$/d' 1.txt >> $remove_bins && rm -rf 1.txt
+	    elif [[ "${k}" == ${_ext[2]} ]]; then
+	    	cat $k | awk '/.bin/ {print}' > 1.txt 
+		sed 's/DATAFILE "//g' 1.txt > 2.txt 
+		sed 's/" .*$//' 2.txt >> $remove_bins && rm -rf {1,2}.txt # TOC	    
+	    fi 2>/dev/null >/dev/null
+	done
+
 	local params=()
         if [[ "$force" -eq 1 ]]; then
             params+=(-f)
@@ -2521,151 +2920,209 @@ function batch_createcd_chdman_mame-tools() {
             params+=(-np "$num_processors")
         fi
 
-        extensions=`find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.(gdi|cue|toc)'`
+	extensions=`find . -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"`
 	if [[ -n $extensions ]]; then
-            ls -1 > "$HOME/dir_1.txt"
 	    echo $'Converting files ...\n'
             for j in $extensions; do
-      	        $md_inst/chdman createcd -i "$j" -o "${j%.*}.chd" ${params[@]}
- 	        chown $user:$user *".chd"
-	    done     
-	fi
-	ls -1 > "$HOME/dir_2.txt"
-	DIFF=`diff "$HOME/dir_1.txt" "$HOME/dir_2.txt"`
-        
-	if [[ "$DIFF" != "" ]]; then
-            dialog --stdout --defaultno --yesno "Would you like to delete all original files in this directory keeping only CHD files?" 8 50
+        	if [[ "$output" != ${d%/} ]]; then
+	    	    j_bn="${j##*/}"
+            	    $md_inst/chdman createcd -i "$j" -o "$__output/${j_bn%.*}.chd" ${params[@]}
+		    chown $user:$user "$__output/${j_bn%.*}.chd"
+		else
+      	            $md_inst/chdman createcd -i "$j" -o "${j%.*}.chd" ${params[@]}
+		    chown $user:$user "${j%.*}.chd"
+		fi
+	    	if [[ -f "$__output/${j_bn%.*}.chd" ]] || [[ -f "${j%.*}.chd" ]]; then
+		    echo $j >> $remove
+		    if [[ -f "$__output/${j_bn%.*}.chd" ]]; then
+			echo ${j_bn%.*}.chd >> $create
+		    elif [[ -f "${j%.*}.chd" ]]; then
+			echo ${j%.*}.chd >> $create
+		    fi
+	    	fi
+	    done    	  
+	fi  
+
+	if [[ -e "$create" ]]; then
+	    sort -u $remove -o $remove && sort -u $create -o $create
+	    sort -u $remove_bins -o $remove_bins
+            dialog --stdout --defaultno --yesno "Would you like to delete $aux_input (and *.bin) files and keep only *.chd files?" 8 50
             if [[ $? = 0 ]]; then
-                if [[ -n `find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; 			then
-		    rm -rf *.[zZ][iI][pP]; rm -rf *.7[zZ]
-	        fi
-		rm -rf $extensions && rm -rf *.{bin,raw,BIN,RAW}
-	        dialog --stdout --msgbox "All original files have been deleted!" 8 50
+		xargs -d '\n' rm -f {} < $remove
+		xargs -d '\n' rm -f {} < $remove_bins
+		dialog --stdout --title "Removed bin files" --clear --textbox $remove_bins 15 63
+		dialog --stdout --title "Removed input files" --clear --textbox $remove 15 63
+	        dialog --stdout --msgbox "$aux_input files have been deleted!" 8 50
             fi
-	    rm -rf "$HOME/dir_1.txt" "$HOME/dir_2.txt"
-	    m="CDs to CHDs successfully converted."
+	    dialog --stdout --title "Created files" --clear --textbox $create 15 63
+	    m="$aux_input to *.chd successfully converted."
 	else
-	    m="ERROR: Conversion Failed !!!"
+	    m="ERROR: Conversion Failed."
         fi
+	rm -rf $remove $create $remove_bins
     else
         m="$m"
+	rm -rf out_*
     fi
-    dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
+    dialog --stdout --clear --msgbox "$m" 10 50
 }
 
 function createcd_chdman_mame-tools(){
     local f="$1"
-    local f_bn_ext="${f##*/}"
-    local f_bn="${f_bn_ext%.*}"
-    if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
-	input="$f_bn_ext#$f_bn.{cue|gdi|toc}"
-    else 
-	input="$f_bn_ext"
-    fi
-    local m="ERROR: Input invalid !!!"
-    local DIR
-    DIR=`dirname $f`
+    local __f="$f"
+    local input="${f##*/}"
+    local m="ERROR: $input isn't a CD image file"
 
-    local output="default"
-    local __output="${f%.*}.chd"
+    local ext=('cue' 'gdi' 'toc' 'bin' 'raw')
+    local aux_input=""
+    for ((a=0; a<3; a++)); do
+	_ext=(${_ext[@]} \*.${ext[a]})
+	if [[ "$f" = "${f%.*}.${ext[a]}" ]]; then
+	    aux_input="$input"
+	fi
+    done
+    # binary files
+    for ((b=3; b<5; b++)); do
+	_ext_aux=(${_ext_aux[@]} \*.${ext[b]})
+    done
+
+    if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
+	if [[ "$f" = *.[zZ][iI][pP] ]]; then
+	    aux_input=`zipinfo -1 $f "${_ext[@]}"`
+	elif [[ "$f" = *.7[zZ] ]]; then
+	    7z l -ba $f "${_ext[@]}" -r- | cut -c54- > out.txt
+	    out=`cat out.txt`
+	    rm -rf "out.txt"
+	    aux_input="$out"
+	fi
+	if [[ -z $aux_input ]]; then
+	    m="ERROR: $input doesn't have a compressed CD image file" 
+	fi
+	input="$input#$aux_input"
+	__f="$__f#$aux_input"
+    fi
+    local DIR=`dirname $f`
+
+    local output="${f%.*}.chd"
+    local __output="$output"
     local output_parent="none"
+    local __output_parent="$output_parent"
     local force="0"
     local hunk_size="auto"
     local compression="0"
     local num_processors="`nproc`"
 
-    local default
-    while true
-    do
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $input\nOutput file: ${__output##*/}\nParent output file: $output_parent\n\nOptional parameters:" 22 76 16)
-        local options=()
+    if [[ -n $aux_input ]]; then
+    	local default
+    	while true
+    	do
+            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $__f\nOutput file: $__output\nParent output file: $__output_parent\n\nOptional parameters:" 22 76 16)
+            local options=()
 
-        options+=(- "Exit")
-        options+=(X "Output file: $output")
-        options+=(O "Parent output file: $output_parent")
-        if [[ "$force" -eq 1 ]]; then
-            options+=(F "Overwrite existing files (Enabled)")
-        else
-            options+=(F "Overwrite existing files (Disabled)")
-        fi
-        options+=(1 "Hunk size ($hunk_size)")
-        if [[ "$compression" -eq 0 ]]; then
-            compr="default"
-            options+=(2 "Compression: $compr")
-        elif [[ "$compression" -eq 1 ]]; then
-            compr="none"
-            options+=(2 "Compression: $compr")
-        elif [[ "$compression" -eq 2 ]]; then
-            compr="avhu"
-            options+=(2 "Compression: $compr (A/V Huffman)")
-        elif [[ "$compression" -eq 3 ]]; then
-            compr="cdfl"
-            options+=(2 "Compression: $compr (CD FLAC)")
-        elif [[ "$compression" -eq 4 ]]; then
-            compr="cdlz"
-            options+=(2 "Compression: $compr (CD LZMA)")
-        elif [[ "$compression" -eq 5 ]]; then
-            compr="cdzl"
-            options+=(2 "Compression: $compr (CD Deflate)")
-        elif [[ "$compression" -eq 6 ]]; then
-            compr="flac"
-            options+=(2 "Compression: $compr (FLAC)")
-        elif [[ "$compression" -eq 7 ]]; then
-            compr="huff"
-            options+=(2 "Compression: $compr (Huffman)")
-        elif [[ "$compression" -eq 8 ]]; then
-            compr="lzma"
-            options+=(2 "Compression: $compr (LZMA)")
-        elif [[ "$compression" -eq 9 ]]; then
-            compr="zlib"
-            options+=(2 "Compression: $compr (Deflate)")
-        fi
-        options+=(3 "Number of CPUs ($num_processors)")
+            options+=(- "Exit")
+            options+=(I "Input file: $input")
+            options+=(O "Output file: ${output##*/}")
+            options+=(X "Parent Output file: ${output_parent##*/}")
+            if [[ "$force" -eq 1 ]]; then
+            	options+=(F "Overwrite existing files (Enabled)")
+            else
+            	options+=(F "Overwrite existing files (Disabled)")
+            fi
+            options+=(1 "Hunk size ($hunk_size)")
+            if [[ "$compression" -eq 0 ]]; then
+            	compr="default"
+            	options+=(2 "Compression: $compr")
+            elif [[ "$compression" -eq 1 ]]; then
+            	compr="none"
+            	options+=(2 "Compression: $compr")
+            elif [[ "$compression" -eq 2 ]]; then
+            	compr="avhu"
+            	options+=(2 "Compression: $compr (A/V Huffman)")
+            elif [[ "$compression" -eq 3 ]]; then
+            	compr="cdfl"
+            	options+=(2 "Compression: $compr (CD FLAC)")
+            elif [[ "$compression" -eq 4 ]]; then
+            	compr="cdlz"
+            	options+=(2 "Compression: $compr (CD LZMA)")
+            elif [[ "$compression" -eq 5 ]]; then
+            	compr="cdzl"
+            	options+=(2 "Compression: $compr (CD Deflate)")
+            elif [[ "$compression" -eq 6 ]]; then
+            	compr="flac"
+            	options+=(2 "Compression: $compr (FLAC)")
+            elif [[ "$compression" -eq 7 ]]; then
+            	compr="huff"
+            	options+=(2 "Compression: $compr (Huffman)")
+            elif [[ "$compression" -eq 8 ]]; then
+            	compr="lzma"
+            	options+=(2 "Compression: $compr (LZMA)")
+            elif [[ "$compression" -eq 9 ]]; then
+            	compr="zlib"
+            	options+=(2 "Compression: $compr (Deflate)")
+            fi
+            options+=(3 "Number of CPUs ($num_processors)")
 
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            default="$choice"
-            case "$choice" in
-                1)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
-                    hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                2)
-                    compression="$((( compression + 1) % 10))"
-                    ;;
-                3)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
-                    num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                X)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for output CHD:" 10 60 "$output")
-                    output=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    if [[ "$output" = "default" ]]; then
-                        __output="${f%.*}.chd"
-                    else
-                        __output="$output"
-                    fi
-                    ;;
-                O)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for output CHD:" 10 60 "$output_parent")
-                    output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                F)
-                    force="$((force ^ 1))"
-                    ;;
-		-)
-		    return 0
-		    ;;
-            esac
-        else
-            break
-        fi
-    done
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    1)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
+                    	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
+                            hunk_size="auto"
+                    	else
+                            hunk_size="$hunk_size"
+                    	fi
+                    	;;
+                    2)
+                    	compression="$((( compression + 1) % 10))"
+                    	;;
+                    3)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
+                    	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                            num_processors=`nproc`
+                    	else
+                            num_processors="$num_processors"
+                    	fi
+                        ;;
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${f%.*}.chd" ]] || [[ -z "$output" ]]; then
+                            __output="${f%.*}.chd"
+			    output="$__output"
+		    	elif  [[ "${output}" = */* ]]; then
+			    __output="$output"
+                    	else
+                            __output="$DIR/$output"
+                    	fi
+		    	;;
+                    X)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD output:" 10 60 "$output_parent")
+                    	output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output_parent" = "none" ]] || [[ -z "$output_parent" ]]; then
+                            __output_parent="none"
+			    output_parent="$__output_parent"
+			elif  [[ "${output_parent}" = */* ]]; then
+			    __output_parent="$output_parent"
+                    	else
+                            __output_parent="$DIR/$output_parent"
+                    	fi
+                    	;;
+                    F)
+                    	force="$((force ^ 1))"
+                    	;;
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
 
-    if [ -f "$f" ]; then
         clear
 	cd && cd "$DIR"
 	if [[ -n `find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
@@ -2677,17 +3134,34 @@ function createcd_chdman_mame-tools(){
 		7z e "$i"
 	    done 2>/dev/null >/dev/null
 	fi
-        chown $user:$user *
+        chown $user:$user ${_ext[@]} ${_ext_aux[@]} 2>/dev/null
+
+	remove_bin="remove_bin.txt"
+	if [[ "${aux_input}" == ${_ext[0]} ]]; then # CUE
+	    cat $aux_input |  awk '/.bin/ {print}' > 1.txt
+	    sed 's/FILE "\|" BINARY//g' 1.txt > $remove_bin && rm -rf 1.txt 
+	elif [[ "${aux_input}" == ${_ext[1]} ]]; then # GDI
+	    cat $aux_input | awk '{s=""; for (i=5; i<NF; i++) s = s $i; print s}' >> 1.txt 2>/dev/null
+	    sed '/^$/d' 1.txt > $remove_bin && rm -rf 1.txt
+	elif [[ "${aux_input}" == ${_ext[2]} ]]; then
+	    cat $aux_input | awk '/.bin/ {print}' > 1.txt && sed 's/DATAFILE "//g' 1.txt > 2.txt && sed 's/" .*$//' 2.txt > $remove_bin && rm -rf {1,2}.txt # TOC	    
+	fi 2>/dev/null >/dev/null	
 
 	local params=()
         if [[ "$force" -eq 1 ]]; then
             params+=(-f)
         fi
+	if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
+	    enter="$DIR/$aux_input"
+	    params+=(-i "$enter")
+	else
+	    params+=(-i "$f")
+        fi
         if [[ -n "$output" ]]; then
             params+=(-o "$__output")
         fi
         if [[ -n "$output_parent" ]] && [[ "$output_parent" != "none" ]]; then
-            params+=(-op "$output_parent")
+            params+=(-op "$__output_parent")
         fi
         if [[ -n "$hunk_size" ]] && [[ "$hunk_size" != "auto" ]]; then
             params+=(-hs "$hunk_size")
@@ -2699,63 +3173,82 @@ function createcd_chdman_mame-tools(){
             params+=(-np "$num_processors")
         fi
 
-	if [[ -n `find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.(gdi|cue|toc)'` ]]; then
-	    echo $'Converting file ...\n'
-	    if [[ -f "${f%.*}.gdi" ]]; then
-	        ext="gdi"
-	    elif [[ -f "${f%.*}.cue" ]]; then
-	        ext="cue"
-	    elif [[ -f "${f%.*}.toc" ]]; then
-	        ext="toc"
-	    fi
-      	    $md_inst/chdman createcd -i "${f%.*}.$ext" ${params[@]}
- 	    chown $user:$user "$__output"     
+	echo $'Converting files ...\n'
+	$md_inst/chdman createcd ${params[@]} 
+	chown $user:$user "$__output"
+	if [[ -f "$__output_parent" ]]; then
+	    chown $user:$user "$__output_parent"
 	fi
 
 	if [[ -f "$__output" ]]; then
-	    if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
-		m="$f_bn_ext#$f_bn.$ext to ${__output##*/} successfully converted."
-                dialog --stdout --defaultno --yesno "Would you like to delete $f_bn_ext#$f_bn.$ext and keep only ${__output##*/}?" 10 50
-	    else
-		m="$f_bn_ext to ${__output##*/} successfully converted."
-		dialog --stdout --defaultno --yesno "Would you like to delete $f_bn_ext and keep only ${__output##*/}?" 10 50
-	    fi
-            if [[ $? = 0 ]]; then
-		if [ -f "${f%.*}"*.raw ]; then
-		    rm -rf "${f%.*}"*.raw
+	    sort -u $remove_bin -o $remove_bin 
+	    m="$input to ${__output##*/} successfully converted."
+	    dialog --stdout --defaultno --yesno "Would you like to delete $input (and your bins) and keep only ${__output##*/}?" 10 50
+	    if [[ $? = 0 ]]; then
+		if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
+		    rm -rf "$aux_input" && rm -rf "$f"
+		else
+		    rm -rf "$f"
 		fi
-                if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
-	            rm -rf "${f%.*}.$ext" && rm -rf "${f%.*}"*.bin && rm -rf "$f"
-		    dialog --stdout --msgbox "$f_bn_ext#$f_bn.$ext have been deleted!" 10 50
-	        else
-	            rm -rf "$f" && rm -rf "${f%.*}"*.bin
-		    dialog --stdout --msgbox "$f_bn_ext has been deleted!" 10 50
-	        fi
-            fi
-        else
-	    m="ERROR: Conversion Failed !!!"
-        fi
+		xargs -d '\n' rm -f {} < $remove_bin
+		dialog --stdout --title "Removed bin files" --clear --textbox $remove_bin 15 63
+		dialog --stdout --clear --msgbox "$input has been deleted!" 10 50
+	    fi
+	else
+	    m="ERROR: Conversion Failed."
+	fi
+	rm -rf $remove_bin
     else
         m="$m"
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
 }
 
 function batch_createhd_chdman_mame-tools() {
     d="$1"
-    local m="ERROR: Input invalid !!!"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory."
 
+    local ext=('img' 'dmg' '2mg' 'h0' 'h1' 'h2' 'h3' 'h4' 'hdd' 'hdf' 'hds')
+    for ((a=0; a<${#ext[@]}; a++)); do
+	_ext=(${_ext[@]} \*.${ext[a]})
+    done
+
+    for ((b=0; b<${#ext[@]}; b++)); do
+	if [ "$b" = 0 ]; then
+	    __ext=(${__ext[@]}${ext[b]})
+	else 
+	    __ext=(${__ext[@]}\|${ext[b]})
+	fi
+    done
+
+    if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	echo "Reading directory ..."
+	zipinfo -1 "${d%/}/*.zip" "${_ext[@]}" > out_1.txt
+	7z l -ba "${d%/}/*.7z" "${_ext[@]}" -r- > out_2.txt
+ 	if [[ -z `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    aux_input="*.zip#*.{*}"
+	elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
+	    aux_input="*.7z#*.{*}"
+	elif [[ -n `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	    aux_input="*.{zip,7z}#*.{*}"
+	else
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file" 
+	fi 2>/dev/null >/dev/null
+    else 
+	aux_input="*.{*}"
+    fi 2>/dev/null >/dev/null
+
+    local output="${d%/}"
+    local __output="$output"
+    local ident="none"
+    local __ident="$ident"
     local force="0"
     local input_start_byte="auto"
     local input_start_hunk="auto"
     local input_bytes="auto"
     local input_hunks="auto"
     local hunk_size="auto"
-    local template="5"
-    local ident="none"
+    local template="0"
     local c="auto" # cyls (CHS)
     local h="auto" # heads (CHS)
     local s="auto" # sectors (CHS)
@@ -2765,188 +3258,265 @@ function batch_createhd_chdman_mame-tools() {
     local compression="0"
     local num_processors=`nproc`
 
-    local default
-    while true
-    do
+    if [[ -n `cat out_2.txt` ]] || [[ -n `cat out_1.txt` ]] || [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"` ]]; then
+	rm -rf out_*
 
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/*.*\nOutput dir: ${d%/}/*.chd\nIdent File: $ident\n\nOptional parameters:" 25 76 16)
-        local options=()
+	local default
+	while true
+	do
+	    local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/$aux_input\nOutput dir: $__output/*.chd\nIdent File: $__ident\n\nOptional parameters:" 25 76 16)
+            local options=()
 
-        options+=(- "Exit")
-        options+=(I "Ident File: $ident")
-        if [[ "$force" -eq 1 ]]; then
-            options+=(F "Overwrite existing files (Enabled)")
-        else
-            options+=(F "Overwrite existing files (Disabled)")
-        fi
-        options+=(1 "Input start byte ($input_start_byte)")
-        options+=(2 "Input start hunk ($input_start_hunk)")
-        options+=(3 "Input byte ($input_bytes)")
-        options+=(4 "Input hunk ($input_hunks)")
-        options+=(5 "Hunk size ($hunk_size)")
-	if [[ "$template" -eq 0 ]]; then
-            templ="Conner CFA170A"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 1 ]]; then
-            templ="Rodime R0201"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 2 ]]; then
-            templ="Rodime R0202"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 3 ]]; then
-            templ="Rodime R0203"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 4 ]]; then
-            templ="Rodime R0204"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 5 ]]; then
-	    templ="none"
-            options+=(6 "Template: $templ")
-        fi
-        options+=(7 "Cyls ($c) heads ($h) sectors ($s)")
-        options+=(8 "Size ($size)")
-        options+=(9 "Sector size ($sector_size)")
-	if [[ "$compression" -eq 0 ]]; then
-            compr="default"
-            options+=(10 "Compression: $compr")
-        elif [[ "$compression" -eq 1 ]]; then
-            compr="none"
-            options+=(10 "Compression: $compr")
-        elif [[ "$compression" -eq 2 ]]; then
-            compr="avhu"
-            options+=(10 "Compression: $compr (A/V Huffman)")
-        elif [[ "$compression" -eq 3 ]]; then
-            compr="cdfl"
-            options+=(10 "Compression: $compr (CD FLAC)")
-        elif [[ "$compression" -eq 4 ]]; then
-            compr="cdlz"
-            options+=(10 "Compression: $compr (CD LZMA)")
-        elif [[ "$compression" -eq 5 ]]; then
-            compr="cdzl"
-            options+=(10 "Compression: $compr (CD Deflate)")
-        elif [[ "$compression" -eq 6 ]]; then
-            compr="flac"
-            options+=(10 "Compression: $compr (FLAC)")
-        elif [[ "$compression" -eq 7 ]]; then
-            compr="huff"
-            options+=(10 "Compression: $compr (Huffman)")
-        elif [[ "$compression" -eq 8 ]]; then
-            compr="lzma"
-            options+=(10 "Compression: $compr (LZMA)")
-        elif [[ "$compression" -eq 9 ]]; then
-            compr="zlib"
-            options+=(10 "Compression: $compr (Deflate)")
-        fi
-        options+=(11 "Number of CPUs ($num_processors)")
+            options+=(- "Exit")
+            options+=(I "Input file: ./$aux_input")
+            options+=(O "Output file: ./*.chd")
+            options+=(D "Ident File: ${ident##*/}")
+            if [[ "$force" -eq 1 ]]; then
+            	options+=(F "Overwrite existing files (Enabled)")
+            else
+            	options+=(F "Overwrite existing files (Disabled)")
+            fi
+            options+=(1 "Input start byte ($input_start_byte)")
+            options+=(2 "Input start hunk ($input_start_hunk)")
+            options+=(3 "Input byte ($input_bytes)")
+            options+=(4 "Input hunk ($input_hunks)")
+            options+=(5 "Hunk size ($hunk_size)")
+            if [[ "$template" -eq 0 ]]; then
+	    	templ="none"
+            	options+=(6 "Template: $templ")
+	    elif [[ "$template" -eq 1 ]]; then
+            	templ="Conner CFA170A"
+            	options+=(6 "Template: $templ")
+            elif [[ "$template" -eq 2 ]]; then
+            	templ="Rodime R0201"
+            	options+=(6 "Template: $templ")
+            elif [[ "$template" -eq 3 ]]; then
+            	templ="Rodime R0202"
+            	options+=(6 "Template: $templ")
+            elif [[ "$template" -eq 4 ]]; then
+            	templ="Rodime R0203"
+            	options+=(6 "Template: $templ")
+            elif [[ "$template" -eq 5 ]]; then
+            	templ="Rodime R0204"
+            	options+=(6 "Template: $templ")
+            fi
+            options+=(7 "Cyls ($c) heads ($h) sectors ($s)")
+            options+=(8 "Size ($size)")
+            options+=(9 "Sector size ($sector_size)")
+	    if [[ "$compression" -eq 0 ]]; then
+            	compr="default"
+            	options+=(10 "Compression: $compr")
+            elif [[ "$compression" -eq 1 ]]; then
+            	compr="none"
+            	options+=(10 "Compression: $compr")
+            elif [[ "$compression" -eq 2 ]]; then
+            	compr="avhu"
+            	options+=(10 "Compression: $compr (A/V Huffman)")
+            elif [[ "$compression" -eq 3 ]]; then
+            	compr="cdfl"
+            	options+=(10 "Compression: $compr (CD FLAC)")
+            elif [[ "$compression" -eq 4 ]]; then
+            	compr="cdlz"
+            	options+=(10 "Compression: $compr (CD LZMA)")
+            elif [[ "$compression" -eq 5 ]]; then
+            	compr="cdzl"
+            	options+=(10 "Compression: $compr (CD Deflate)")
+            elif [[ "$compression" -eq 6 ]]; then
+            	compr="flac"
+            	options+=(10 "Compression: $compr (FLAC)")
+            elif [[ "$compression" -eq 7 ]]; then
+            	compr="huff"
+            	options+=(10 "Compression: $compr (Huffman)")
+            elif [[ "$compression" -eq 8 ]]; then
+            	compr="lzma"
+            	options+=(10 "Compression: $compr (LZMA)")
+            elif [[ "$compression" -eq 9 ]]; then
+            	compr="zlib"
+            	options+=(10 "Compression: $compr (Deflate)")
+            fi
+            options+=(11 "Number of CPUs ($num_processors)")
 
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            default="$choice"
-            case "$choice" in
-                1)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
-                    input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                2)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
-                    input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                3)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
-                    input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                4)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
-                    input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                5)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
-                    hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                6)
-                    template="$((( template + 1) % 6))"
-                    ;;
-                7)
-                    cmd_1=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Cylinders values directly:" 10 60 "$c")
-                    c=$("${cmd_1[@]}" 2>&1 >/dev/tty)
-
-   		    cmd_2=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Heads values directly:" 10 60 "$h")
-                    h=$("${cmd_2[@]}" 2>&1 >/dev/tty)
-
-		    cmd_3=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Sectors values directly:" 10 60 "$s")
-                    s=$("${cmd_3[@]}" 2>&1 >/dev/tty)
-                
-		    if [[ -n $c ]] && [[ $c != "auto" ]]; then
-			if [[ -z $h ]] || [[ $h = "auto" ]]; then
-			    h="1"
-			fi 
-                        if [[ -z $s ]] || [[ $s = "auto" ]]; then
-			    s="1"
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    1)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
+                    	input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_byte" = "auto" ]] || [[ -z "$input_start_byte" ]]; then
+                            input_start_byte="auto"
+                    	else
+                            input_start_byte="$input_start_byte"
+                    	fi
+                    	;;
+                    2)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
+                    	input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_hunk" = "auto" ]] || [[ -z "$input_start_hunk" ]]; then
+                            input_start_hunk="auto"
+                    	else
+                            input_start_hunk="$input_start_hunk"
+                    	fi
+                    	;;
+                    3)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
+                    	input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_bytes" = "auto" ]] || [[ -z "$input_bytes" ]]; then
+                            input_bytes="auto"
+                    	else
+                            input_bytes="$input_bytes"
+                    	fi
+                    	;;
+                    4)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
+                    	input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_hunks" = "auto" ]] || [[ -z "$input_hunks" ]]; then
+                            input_hunks="auto"
+                    	else
+                            input_hunks="$input_hunks"
+                    	fi
+                    	;;
+                    5)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
+                    	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
+                            hunk_size="auto"
+                    	else
+                            hunk_size="$hunk_size"
+                    	fi
+                    	;;
+                    6)
+                    	template="$((( template + 1) % 6))"
+                    	;;
+                    7)
+                    	cmd_1=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Cylinders values directly:" 10 60 "$c")
+                    	c=$("${cmd_1[@]}" 2>&1 >/dev/tty)
+			if [[ "$c" = "auto" ]] || [[ -z "$c" ]]; then
+			    c="auto"
+			else
+			    c="$c"
+			    if [[ "$h" = "auto" ]] || [[ -z "$h" ]]; then
+				h="1"
+			    fi
+			    if [[ "$s" = "auto" ]] || [[ -z "$s" ]]; then
+				s="1"
+			    fi
 			fi
-                    fi
-		    if [[ -n $h ]] && [[ $h != "auto" ]]; then
-			if [[ -z $c ]] || [[ $c = "auto" ]]; then
-			    c="1"
-			fi 
-                        if [[ -z $s ]] || [[ $s = "auto" ]]; then
-			    s="1"
-			fi
-                    fi
-		    if [[ -n $s ]] && [[ $s != "auto" ]]; then
-			if [[ -z $c ]] || [[ $c = "auto" ]]; then
-			    c="1"
-			fi 
-                        if [[ -z $h ]] || [[ $h = "auto" ]]; then
-			    h="1"
-			fi
-                    fi
 
-                    chs="$c,$h,$s"
-                    ;;
-                8)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of the output file in bytes:" 10 60 "$size")
-                    size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                9)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hard disk sector in bytes:" 10 60 "$sector_size")
-                    sector_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                10)
-                    compression="$((( compression + 1) % 10))"
-                    ;;
-                11)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
-                    num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                I)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the name of ident file to provide CHS information:" 10 60 "$ident")
-                    ident=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                F)
-                    force="$((force ^ 1))"
-                    ;;
-		-)
-		    return 0
-		    ;;
-            esac
-        else
-            break
-        fi
-    done
+   		    	cmd_2=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Heads values directly:" 10 60 "$h")
+                    	h=$("${cmd_2[@]}" 2>&1 >/dev/tty)
+			if [[ "$h" = "auto" ]] || [[ -z "$h" ]]; then
+			    h="auto"
+			else
+			    h="$h"
+			    if [[ "$c" = "auto" ]] || [[ -z "$c" ]]; then
+				c="1"
+			    fi
+			    if [[ "$s" = "auto" ]] || [[ -z "$s" ]]; then
+				s="1"
+			    fi
+			fi
 
-    if [ -d "$d" ]; then
+		    	cmd_3=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Sectors values directly:" 10 60 "$s")
+                    	s=$("${cmd_3[@]}" 2>&1 >/dev/tty)
+			if [[ "$s" = "auto" ]] || [[ -z "$s" ]]; then
+			    s="auto"
+			    if [[ $c != "auto" ]] || [[ $h != "auto" ]]; then
+				s="1"
+			    fi
+			else
+			    s="$s"
+			    if [[ "$c" = "auto" ]] || [[ -z "$c" ]]; then
+				c="1"
+			    fi
+			    if [[ "$h" = "auto" ]] || [[ -z "$h" ]]; then
+				h="1"
+			    fi
+			fi
+
+                    	chs="$c,$h,$s"
+                    	;;
+                    8)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of the output file in bytes:" 10 60 "$size")
+                    	size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$size" = "auto" ]] || [[ -z "$size" ]]; then
+                            size="auto"
+                    	else
+                            size="$size"
+                    	fi
+                    	;;
+                    9)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hard disk sector in bytes:" 10 60 "$sector_size")
+                    	sector_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$sector_size" = "auto" ]] || [[ -z "$sector_size" ]]; then
+                            sector_size="auto"
+                    	else
+                            sector_size="$sector_size"
+                    	fi
+                    	;;
+                    10)
+                    	compression="$((( compression + 1) % 10))"
+                    	;;
+                    11)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
+                    	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                            num_processors=`nproc`
+                    	else
+                            num_processors="$num_processors"
+                    	fi
+                    	;;
+                    D)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the name of ident file to provide CHS information:" 10 60 "$ident")
+                    	ident=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$ident" = "none" ]] || [[ -z "$ident" ]]; then
+                            __ident="none"
+			    ident="$__ident"
+                    	else
+                            __ident="$ident"
+                    	fi
+                    	;;
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for CHD output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${d%/}" ]] || [[ -z "$output" ]]; then
+                            __output="${d%/}"
+                    	else
+                            __output="${output%/}"
+                    	fi
+                    	;;
+                    F)
+                    	force="$((force ^ 1))"
+                    	;;
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
+
         clear
 	cd && cd "$d"
-	if [[ -n $(find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)') ]]; then
+	remove="remove_files.txt"
+	create="create_files.txt"
+	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	    ls -1 * > out.txt
+	    #IFS=''
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
-	    for i in *.[zZ][iI][pP]; do 
-		unzip "$i"
-	    done 2>/dev/null >/dev/null
- 	    for i in *.7[zZ]; do 
-		7z e "$i"
-	    done 2>/dev/null >/dev/null
+	    while read -r i; do
+    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]]; then
+		    ls "$i" >> $remove
+		    unzip "$i"
+    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]]; then
+		    ls "$i" >> $remove
+		    7z e "$i" 
+    	    	fi 2>/dev/null >/dev/null
+	    done < out.txt 
+            chown $user:$user ${_ext[@]} 2>/dev/null
+	    rm -rf out.txt
 	fi
-        chown $user:$user *
 
 	local params=()
         if [[ "$force" -eq 1 ]]; then
@@ -2967,7 +3537,7 @@ function batch_createhd_chdman_mame-tools() {
         if [[ -n "$hunk_size" ]] && [[ "$hunk_size" != "auto" ]]; then
             params+=(-hs "$hunk_size")
         fi
-        if [[ "$template" -ne 5 ]]; then
+        if [[ "$template" -ne 0 ]]; then
             params+=(-tp "$template")
         fi
         if [[ -n "$ident" ]] && [[ "$ident" != "none" ]]; then
@@ -2988,284 +3558,441 @@ function batch_createhd_chdman_mame-tools() {
         if [[ -n "$num_processors" ]]; then
             params+=(-np "$num_processors")
         fi
-	
-        extensions=`find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(dmg|img|2mg|h0|h1|h2|h3|h4|hdd|hdf|hds)'`
-	if [[ -n $extensions ]]; then
-            ls -1 > "$HOME/dir_1.txt"
-	    echo $'Converting files ...\n'
-	    for j in $extensions; do
-      	        $md_inst/chdman createhd -i "$j" -o "${j%.*}.chd" ${params[@]}
- 	        chown $user:$user *".chd"
-	    done   
-	fi
-        ls -1 > "$HOME/dir_2.txt"
-	DIFF=`diff "$HOME/dir_1.txt" "$HOME/dir_2.txt"`
 
-	if [[ "$DIFF" != "" ]]; then
-            dialog --stdout --defaultno --yesno "Would you like to delete all original files in this directory and keep only CHD files?" 8 50
+	extensions=`find . -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"`
+	if [[ -n $extensions ]]; then
+	    echo $'Converting files ...\n'
+            for j in $extensions; do
+        	if [[ "$output" != ${d%/} ]]; then
+	    	    j_bn="${j##*/}"
+            	    $md_inst/chdman createhd -i "$j" -o "$__output/${j_bn%.*}.chd" ${params[@]}
+		    chown $user:$user "$__output/${j_bn%.*}.chd"
+		else
+      	            $md_inst/chdman createhd -i "$j" -o "${j%.*}.chd" ${params[@]}
+		    chown $user:$user "${j%.*}.chd"
+		fi
+	    	if [[ -f "$__output/${j_bn%.*}.chd" ]] || [[ -f "${j%.*}.chd" ]]; then
+		    echo $j >> $remove
+		    if [[ -f "$__output/${j_bn%.*}.chd" ]]; then
+			echo ${j_bn%.*}.chd >> $create
+		    elif [[ -f "${j%.*}.chd" ]]; then
+			echo ${j%.*}.chd >> $create
+		    fi
+	    	fi
+	    done    	  
+	fi
+
+	if [[ -e "$create" ]]; then
+	    sort -u $remove -o $remove && sort -u $create -o $create
+            dialog --stdout --defaultno --yesno "Would you like to delete $aux_input files and keep only *.chd files?" 8 50
             if [[ $? = 0 ]]; then
-	        if [[ -n `find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; 			then
-		    rm -rf *.[zZ][iI][pP]; rm -rf *.7[zZ]
-	        fi
-	        rm -rf $extensions
-	        dialog --stdout --msgbox "All original files have been deleted!" 8 50
+		xargs -d '\n' rm -f {} < $remove
+		dialog --stdout --title "Removed files" --clear --textbox $remove 15 63
+	        dialog --stdout --msgbox "$aux_input files have been deleted!" 8 50
             fi
-            rm -rf "$HOME/dir_1.txt" "$HOME/dir_2.txt"
-	    m="HDs to CHDs successfully converted."
+	    dialog --stdout --title "Created files" --clear --textbox $create 15 63
+	    m="$aux_input to *.chd successfully converted."
 	else
-	    m="ERROR: Conversion Failed !!!"
+	    m="ERROR: Conversion Failed."
         fi
+	rm -rf $remove $create
     else
         m="$m"
+	rm -rf out_*
     fi
-    dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
+    dialog --stdout --clear --msgbox "$m" 10 50
 }
 
 function createhd_chdman_mame-tools(){
     local f="$1"
-    local m="ERROR: Input invalid !!!"
-    local DIR
-    DIR=`dirname $f`
+    local __f="$f"
+    local input="${f##*/}"
+    local m="ERROR: $input isn't a disk image file"
 
-    local output="default"
-    if [[ -z "$f" ]]; then
-        local input="default"
-        local __input="none"
-	local __output="$romdir/blank.chd"
+    local ext=('img' 'dmg' '2mg' 'h0' 'h1' 'h2' 'h3' 'h4' 'hdd' 'hdf' 'hds')
+    local aux_input=""
+    for ((a=0; a<${#ext[@]}; a++)); do
+	_ext=(${_ext[@]} \*.${ext[a]})
+	if [[ "$f" = "${f%.*}.${ext[a]}" ]]; then
+	    aux_input="$input"
+	fi
+    done
+
+    if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
+	if [[ "$f" = *.[zZ][iI][pP] ]]; then
+	    aux_input=`zipinfo -1 $f ${_ext[@]}`
+	elif [[ "$f" = *.7[zZ] ]]; then
+	    7z l -ba $f ${_ext[@]} -r- | cut -c54- > out.txt
+	    out=`cat out.txt`
+	    rm -rf "out.txt"
+	    aux_input="$out"
+	fi
+	if [[ -z $aux_input ]]; then
+	    m="ERROR: $input doesn't have a compressed disk image file" 
+	fi
+	input="$input#$aux_input"
+	__f="$__f#$aux_input"
+    fi
+    local DIR=`dirname $f`
+
+    local output="${f%.*}.chd"
+    if [[ "$f" = "none" ]]; then
+	local __f="none"
+        local input="none"
+        local __input="$input"
+	local output="$romdir/blank.chd"
+	local __output="$output"
     else
         local __input="$f"
-	local __output="${f%.*}.chd"
+	local __output="$output"
     fi
-    local __input_bn_ext="${__input##*/}"
-    local __input_bn="${__input_bn_ext%.*}"
-
     local output_parent="none"
+    local __output_parent="$output_parent"
+    local ident="none"
+    local __ident="$ident"
     local force="0"
     local input_start_byte="auto"
     local input_start_hunk="auto"
     local input_bytes="auto"
     local input_hunks="auto"
     local hunk_size="auto"
-    local template="5"
-    local ident="none"
-    if [[ -z "$f" ]]; then
-        local c="none" # cyls (CHS)
-        local h="none" # heads (CHS)
-        local s="none" # sectors (CHS)
-    else
-        local c="auto" # cyls (CHS)
-        local h="auto" # heads (CHS)
-        local s="auto" # sectors (CHS)
-    fi
-    local chs="$c,$h,$s"
+    local template="0"
     local size="auto"
     local sector_size="auto"
-    local compression="0"
+    if [[ "$f" = "none" ]]; then
+	local warning="Optional parameters (Warning: CHS is required)"
+        local c="required"
+        local h="required"
+        local s="required"
+        local compression="1"
+    else
+	local warning="Optional parameters"
+        local c="auto"
+        local h="auto"
+        local s="auto"
+        local compression="0"
+    fi
+    local chs="$c,$h,$s"
     local num_processors=`nproc`
 
-    local default
-    while true
-    do
-        local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $__input_bn_ext\nOutput file: ${__output##*/}\nParent output file: $output_parent\nIdent File: $ident\n\nOptional parameters (Warning: CHS is required):" 28 76 16)
-        local options=()
+    if [[ -n $aux_input ]] || [[ "$f" = "none" ]]; then
+    	local default
+    	while true
+    	do
+            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $__f\nOutput file: $__output\nParent output file: $__output_parent\nIdent File: $__ident\n\n$warning:" 28 76 16)
+            local options=()
 
-        options+=(- "Exit")
-        if [[ -z "$f" ]]; then
-            options+=(Y "Input file: $input")
-        fi   
-        options+=(X "Output file: $output")
-        options+=(O "Parent output file: $output_parent")
-        options+=(I "Ident File: $ident")
-        if [[ "$force" -eq 1 ]]; then
-            options+=(F "Overwrite existing files (Enabled)")
-        else
-            options+=(F "Overwrite existing files (Disabled)")
-        fi
-        options+=(1 "Input start byte ($input_start_byte)")
-        options+=(2 "Input start hunk ($input_start_hunk)")
-        options+=(3 "Input byte ($input_bytes)")
-        options+=(4 "Input hunk ($input_hunks)")
-        options+=(5 "Hunk size ($hunk_size)")
-	if [[ "$template" -eq 0 ]]; then
-            templ="Conner CFA170A"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 1 ]]; then
-            templ="Rodime R0201"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 2 ]]; then
-            templ="Rodime R0202"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 3 ]]; then
-            templ="Rodime R0203"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 4 ]]; then
-            templ="Rodime R0204"
-            options+=(6 "Template: $templ")
-        elif [[ "$template" -eq 5 ]]; then
-	    templ="none"
-            options+=(6 "Template: $templ")
-        fi
-        options+=(7 "Cyls ($c) Heads ($h) Sectors ($s)")
-        options+=(8 "Size ($size)")
-        options+=(9 "Sector size ($sector_size)")
-	if [[ "$compression" -eq 0 ]]; then
-            compr="default"
-            options+=(10 "Compression: $compr")
-        elif [[ "$compression" -eq 1 ]]; then
-            compr="none"
-            options+=(10 "Compression: $compr")
-        elif [[ "$compression" -eq 2 ]]; then
-            compr="avhu"
-            options+=(10 "Compression: $compr (A/V Huffman)")
-        elif [[ "$compression" -eq 3 ]]; then
-            compr="cdfl"
-            options+=(10 "Compression: $compr (CD FLAC)")
-        elif [[ "$compression" -eq 4 ]]; then
-            compr="cdlz"
-            options+=(10 "Compression: $compr (CD LZMA)")
-        elif [[ "$compression" -eq 5 ]]; then
-            compr="cdzl"
-            options+=(10 "Compression: $compr (CD Deflate)")
-        elif [[ "$compression" -eq 6 ]]; then
-            compr="flac"
-            options+=(10 "Compression: $compr (FLAC)")
-        elif [[ "$compression" -eq 7 ]]; then
-            compr="huff"
-            options+=(10 "Compression: $compr (Huffman)")
-        elif [[ "$compression" -eq 8 ]]; then
-            compr="lzma"
-            options+=(10 "Compression: $compr (LZMA)")
-        elif [[ "$compression" -eq 9 ]]; then
-            compr="zlib"
-            options+=(10 "Compression: $compr (Deflate)")
-        fi
-        options+=(11 "Number of CPUs ($num_processors)")
+            options+=(- "Exit")
+            if [[ "$f" = "none" ]]; then
+            	options+=(I "Input file: ${input##*/}")
+	    else
+            	options+=(I "Input file: $input")
+	    fi
+	    options+=(O "Output file: ${output##*/}")
+	    options+=(X "Parent output file: ${output_parent##*/}")
+            options+=(D "Ident File: ${ident##*/}")
+            if [[ "$force" -eq 1 ]]; then
+            	options+=(F "Overwrite existing files (Enabled)")
+            else
+            	options+=(F "Overwrite existing files (Disabled)")
+            fi
+            options+=(1 "Input start byte ($input_start_byte)")
+            options+=(2 "Input start hunk ($input_start_hunk)")
+            options+=(3 "Input byte ($input_bytes)")
+            options+=(4 "Input hunk ($input_hunks)")
+            options+=(5 "Hunk size ($hunk_size)")
+            if [[ "$template" -eq 0 ]]; then
+	    	templ="none"
+            	options+=(6 "Template: $templ")
+	    elif [[ "$template" -eq 1 ]]; then
+            	templ="Conner CFA170A"
+            	options+=(6 "Template: $templ")
+            elif [[ "$template" -eq 2 ]]; then
+            	templ="Rodime R0201"
+            	options+=(6 "Template: $templ")
+            elif [[ "$template" -eq 3 ]]; then
+            	templ="Rodime R0202"
+            	options+=(6 "Template: $templ")
+            elif [[ "$template" -eq 4 ]]; then
+            	templ="Rodime R0203"
+            	options+=(6 "Template: $templ")
+            elif [[ "$template" -eq 5 ]]; then
+            	templ="Rodime R0204"
+            	options+=(6 "Template: $templ")
+            fi
+            options+=(7 "Cyls ($c) Heads ($h) Sectors ($s)")
+            options+=(8 "Size ($size)")
+            options+=(9 "Sector size ($sector_size)")
+	    if [[ "$compression" -eq 0 ]]; then
+            	compr="default"
+            	options+=(10 "Compression: $compr")
+            elif [[ "$compression" -eq 1 ]]; then
+            	compr="none"
+            	options+=(10 "Compression: $compr")
+            elif [[ "$compression" -eq 2 ]]; then
+            	compr="avhu"
+            	options+=(10 "Compression: $compr (A/V Huffman)")
+            elif [[ "$compression" -eq 3 ]]; then
+            	compr="cdfl"
+            	options+=(10 "Compression: $compr (CD FLAC)")
+            elif [[ "$compression" -eq 4 ]]; then
+            	compr="cdlz"
+            	options+=(10 "Compression: $compr (CD LZMA)")
+            elif [[ "$compression" -eq 5 ]]; then
+            	compr="cdzl"
+            	options+=(10 "Compression: $compr (CD Deflate)")
+            elif [[ "$compression" -eq 6 ]]; then
+            	compr="flac"
+            	options+=(10 "Compression: $compr (FLAC)")
+            elif [[ "$compression" -eq 7 ]]; then
+            	compr="huff"
+            	options+=(10 "Compression: $compr (Huffman)")
+            elif [[ "$compression" -eq 8 ]]; then
+            	compr="lzma"
+            	options+=(10 "Compression: $compr (LZMA)")
+            elif [[ "$compression" -eq 9 ]]; then
+            	compr="zlib"
+            	options+=(10 "Compression: $compr (Deflate)")
+            fi
+            options+=(11 "Number of CPUs ($num_processors)")
 
-        local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
-        if [[ -n "$choice" ]]; then
-            default="$choice"
-            case "$choice" in
-                1)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
-                    input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                2)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
-                    input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                3)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
-                    input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                4)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
-                    input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                5)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
-                    hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                6)
-                    template="$((( template + 1) % 6))"
-                    ;;
-                7)
-                    cmd_1=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Cylinders values directly:" 10 60 "$c")
-                    c=$("${cmd_1[@]}" 2>&1 >/dev/tty)
-
-   		    cmd_2=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Heads values directly:" 10 60 "$h")
-                    h=$("${cmd_2[@]}" 2>&1 >/dev/tty)
-
-		    cmd_3=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Sectors values directly:" 10 60 "$s")
-                    s=$("${cmd_3[@]}" 2>&1 >/dev/tty)
-                
-		    if [[ -n $c ]] && [[ $c != "auto" ]]; then
-			if [[ -z $h ]] || [[ $h = "auto" ]]; then
-			    h="1"
-			fi 
-                        if [[ -z $s ]] || [[ $s = "auto" ]]; then
-			    s="1"
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    1)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
+                    	input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_byte" = "auto" ]] || [[ -z "$input_start_byte" ]]; then
+                            input_start_byte="auto"
+                    	else
+                            input_start_byte="$input_start_byte"
+                    	fi
+                    	;;
+                    2)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
+                    	input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_hunk" = "auto" ]] || [[ -z "$input_start_hunk" ]]; then
+                            input_start_hunk="auto"
+                    	else
+                            input_start_hunk="$input_start_hunk"
+                    	fi
+                    	;;
+                    3)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
+                    	input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_bytes" = "auto" ]] || [[ -z "$input_bytes" ]]; then
+                            input_bytes="auto"
+                    	else
+                            input_bytes="$input_bytes"
+                    	fi
+                    	;;
+                    4)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
+                    	input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_hunks" = "auto" ]] || [[ -z "$input_hunks" ]]; then
+                            input_hunks="auto"
+                    	else
+                            input_hunks="$input_hunks"
+                    	fi
+                    	;;
+                    5)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
+                    	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
+                            hunk_size="auto"
+                    	else
+                            hunk_size="$hunk_size"
+                    	fi
+                    	;;
+                    6)
+                    	template="$((( template + 1) % 6))"
+                    	;;
+                    7)
+                    	cmd_1=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Cylinders values directly:" 10 60 "$c")
+                    	c=$("${cmd_1[@]}" 2>&1 >/dev/tty)
+			if [[ "$f" = "none" ]]; then
+			    if [[ "$c" = "required" ]] || [[ -z "$c" ]]; then
+                            	c="required"
+                  	    else
+                            	c="$c"
+			    	if [[ "$h" = "required" ]] || [[ -z "$h" ]]; then
+				    h="1"
+			    	fi
+			    	if [[ "$s" = "required" ]] || [[ -z "$s" ]]; then
+				    s="1"
+			    	fi
+                    	    fi
+			else
+                    	    if [[ "$c" = "auto" ]] || [[ -z "$c" ]]; then
+                            	c="auto"
+                    	    else
+                            	c="$c"
+			    	if [[ "$h" = "auto" ]] || [[ -z "$h" ]]; then
+				    h="1"
+			    	fi
+			    	if [[ "$s" = "auto" ]] || [[ -z "$s" ]]; then
+				    s="1"
+			    	fi
+                    	    fi
 			fi
-                    fi
-		    if [[ -n $h ]] && [[ $h != "auto" ]]; then
-			if [[ -z $c ]] || [[ $c = "auto" ]]; then
-			    c="1"
-			fi 
-                        if [[ -z $s ]] || [[ $s = "auto" ]]; then
-			    s="1"
-			fi
-                    fi
-		    if [[ -n $s ]] && [[ $s != "auto" ]]; then
-			if [[ -z $c ]] || [[ $c = "auto" ]]; then
-			    c="1"
-			fi 
-                        if [[ -z $h ]] || [[ $h = "auto" ]]; then
-			    h="1"
-			fi
-                    fi
 
-                    chs="$c,$h,$s"
-                    ;;
-                8)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of the output file in bytes:" 10 60 "$size")
-                    size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                9)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hard disk sector in bytes:" 10 60 "$sector_size")
-                    sector_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                10)
-                    compression="$((( compression + 1) % 10))"
-                    ;;
-                11)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
-                    num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                I)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the name of ident file to provide CHS information:" 10 60 "$ident")
-                    ident=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                Y)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for input CHD:" 10 60 "$input")
-                    input=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    if [[ "$input" = "default" ]]; then
-                        __input="none"
-                    else
-                        __input="$input"
-                    fi
-                    ;;
-                X)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for output CHD:" 10 60 "$output")
-                    output=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    if [[ "$output" = "default" ]]; then
-                        if [[ -z "$f" ]]; then
-			    __output="$romdir/blank.chd"
-		        else
-                            __output="${f%.*}.chd"
+   		    	cmd_2=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Heads values directly:" 10 60 "$h")
+                    	h=$("${cmd_2[@]}" 2>&1 >/dev/tty)
+			if [[ "$f" = "none" ]]; then
+			    if [[ "$h" = "required" ]] || [[ -z "$h" ]]; then
+                            	h="required"
+                  	    else
+                            	h="$h"
+			    	if [[ "$c" = "required" ]] || [[ -z "$c" ]]; then
+				    c="1"
+			    	fi
+			    	if [[ "$s" = "required" ]] || [[ -z "$s" ]]; then
+				    s="1"
+			    	fi
+                    	    fi
+			else
+                    	    if [[ "$h" = "auto" ]] || [[ -z "$h" ]]; then
+                            	h="auto"
+                    	    else
+                            	h="$h"
+			    	if [[ "$c" = "auto" ]] || [[ -z "$c" ]]; then
+				    c="1"
+			    	fi
+			    	if [[ "$s" = "auto" ]] || [[ -z "$s" ]]; then
+				    s="1"
+			    	fi
+                    	    fi
 			fi
-                    else
-                        __output="$output"
-                    fi
-                    ;;
-                O)
-                    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for output CHD:" 10 60 "$output_parent")
-                    output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    ;;
-                F)
-                    force="$((force ^ 1))"
-                    ;;
-		-)
-		    return 0
-		    ;;
-            esac
-        else
-            break
-        fi
-    done
 
-    if [ -f "$f" ] || [ -z "$f" ]; then
+		    	cmd_3=(dialog --backtitle "$__backtitle" --inputbox "Please type the specifies Sectors values directly:" 10 60 "$s")
+                    	s=$("${cmd_3[@]}" 2>&1 >/dev/tty)
+			if [[ "$f" = "none" ]]; then
+                    	    if [[ "$s" = "required" ]] || [[ -z "$s" ]]; then
+                            	s="required"
+			    	if [[ $c != "required" ]] || [[ $h != "required" ]]; then
+                            	    s="1"
+			    	fi
+                    	    else
+                            	s="$s"
+			    	if [[ "$c" = "required" ]] || [[ -z "$c" ]]; then
+				    c="1"
+			    	fi
+			    	if [[ "$h" = "required" ]] || [[ -z "$h" ]]; then
+				    h="1"
+			    	fi
+                    	    fi
+			else
+                    	    if [[ "$s" = "auto" ]] || [[ -z "$s" ]]; then
+                            	s="auto"
+			    	if [[ $c != "auto" ]] || [[ $h != "auto" ]]; then
+                            	    s="1"
+			    	fi
+                    	    else
+                            	s="$s"
+			    	if [[ "$c" = "auto" ]] || [[ -z "$c" ]]; then
+				    c="1"
+			    	fi
+			    	if [[ "$h" = "auto" ]] || [[ -z "$h" ]]; then
+				    h="1"
+			    	fi
+                    	    fi
+			fi
+
+                    	chs="$c,$h,$s"
+                    	;;
+                    8)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of the output file in bytes:" 10 60 "$size")
+                    	size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$size" = "auto" ]] || [[ -z "$size" ]]; then
+                            size="auto"
+                    	else
+                            size="$size"
+                    	fi
+                    	;;
+                    9)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hard disk sector in bytes:" 10 60 "$sector_size")
+                    	sector_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$sector_size" = "auto" ]] || [[ -z "$sector_size" ]]; then
+                            sector_size="auto"
+                    	else
+                            sector_size="$sector_size"
+                    	fi
+                    	;;
+                    10)
+                    	compression="$((( compression + 1) % 10))"
+                    	;;
+                    11)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
+                    	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                            num_processors=`nproc`
+                    	else
+                            num_processors="$num_processors"
+                    	fi
+                    	;;
+                    D)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the name of ident file to provide CHS information:" 10 60 "$ident")
+                    	ident=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$ident" = "none" ]] || [[ -z "$ident" ]]; then
+                            __ident="none"
+			    ident="$__ident"
+                    	else
+                            __ident="$ident"
+                    	fi
+                    	;;
+                    I)
+			if [[ "$f" = "none" ]]; then
+                    	    cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD input:" 10 60 "$input")
+                    	    input=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	    if [[ "$input" = "none" ]] || [[ -z "$input" ]]; then
+                            	__input="none"
+			    	input="$__input"
+			    	__f="$__input"
+			    elif  [[ "${input}" = */* ]]; then
+			    	__input="$input"
+			    	__f="$__input"
+                    	    fi	
+			fi
+			;;
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${f%.*}.chd" ]] || [[ -z "$output" ]]; then
+                            if [[ "$f" = "none" ]]; then
+			    	__output="$romdir/blank.chd"
+		            else
+                            	__output="${f%.*}.chd"
+			    fi
+			    output="$__output"
+			elif  [[ "${output}" = */* ]]; then
+			    __output="$output"
+                    	fi
+                    	;;
+                    X)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD output:" 10 60 "$output_parent")
+                    	output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output_parent" = "none" ]] || [[ -z "$output_parent" ]]; then
+                            __output_parent="none"
+			    output_parent="$__output_parent"
+			elif  [[ "${output_parent}" = */* ]]; then
+			    __output_parent="$output_parent"
+                    	else
+                            __output_parent="$DIR/$output_parent"
+                    	fi
+                    	;;
+                    F)
+                    	force="$((force ^ 1))"
+                    	;;
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
+
         clear
 	cd && cd "$DIR"
 	if [[ -n `find -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
@@ -3277,22 +4004,27 @@ function createhd_chdman_mame-tools(){
 		7z e "$i"
 	    done 2>/dev/null >/dev/null
 	fi
-        chown $user:$user *
+        chown $user:$user ${_ext[@]} 2>/dev/null
 
 	local params=()
         if [[ "$force" -eq 1 ]]; then
             params+=(-f)
         fi
-        if [[ -z "$f" ]]; then
-            if [[ -n "$input" ]] && [[ "$input" != "default" ]]; then
+        if [[ "$f" = "none" ]]; then
+            if [[ -n "$input" ]] && [[ "$input" != "none" ]]; then
                 params+=(-i "$__input")
             fi
+	elif [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
+	    enter="$DIR/$aux_input"
+	    params+=(-i "$enter")
+	else
+	    params+=(-i "$f")
         fi
         if [[ -n "$output" ]]; then
             params+=(-o "$__output")
         fi
         if [[ -n "$output_parent" ]] && [[ "$output_parent" != "none" ]]; then
-            params+=(-op "$output_parent")
+            params+=(-op "$__output_parent")
         fi
         if [[ -n "$input_start_byte" ]] && [[ "$input_start_byte" != "auto" ]]; then
             params+=(-isb "$input_start_byte")
@@ -3309,15 +4041,23 @@ function createhd_chdman_mame-tools(){
         if [[ -n "$hunk_size" ]] && [[ "$hunk_size" != "auto" ]]; then
             params+=(-hs "$hunk_size")
         fi
-        if [[ "$template" -lt 5 ]]; then
+        if [[ "$template" -ne 0 ]]; then
             params+=(-tp "$template")
         fi
         if [[ -n "$ident" ]] && [[ "$ident" != "none" ]]; then
             params+=(-id "$ident")
-        fi
-        if [[ "$chs" != ",," ]] && [[ "$chs" != "auto,auto,auto" ]]; then
-            params+=(-chs "$chs")
-        fi
+        fi 	
+	if [[ "$f" = "none" ]]; then
+	    if [[ "$chs" = ",," ]] || [[ "$chs" = "required,required,required" ]]; then
+	    	dialog --stdout --clear --msgbox "Required Parameters missing (CHS)" 10 50
+	    else
+	    	params+=(-chs "$chs")		
+	    fi
+	else
+	    if [[ "$chs" != ",," ]] && [[ "$chs" != "auto,auto,auto" ]]; then
+	    	params+=(-chs "$chs")
+	    fi
+	fi
         if [[ -n "$size" ]] && [[ "$size" != "auto" ]]; then
             params+=(-s "$size")
         fi
@@ -3331,83 +4071,43 @@ function createhd_chdman_mame-tools(){
             params+=(-np "$num_processors")
         fi
 
-	if [[ -n `find -maxdepth 1 -regextype posix-egrep -iregex '.*\.*'` ]]; then
-	    echo $'Converting file ...\n'
-	    # raw disk image (*.img)
-	    if [[ -f "${f%.*}.img" ]]; then 
-	        ext="img"
-	    # Mac disk image (*.dmg)
-	    elif [[ -f "${f%.*}.dmg" ]]; then 
-	        ext="dmg"
-	    # Apple IIgs disk image (*.2mg)
-	    elif [[ -f "${f%.*}.2mg" ]]; then  
-	        ext="2mg"
-	    # FM-Towns disk image (*.h[0,1,2,3,4])
-	    elif [[ -f "${f%.*}.h0" ]]; then
-	        ext="h0"
-	    elif [[ -f "${f%.*}.h1" ]]; then
-	        ext="h1"
-	    elif [[ -f "${f%.*}.h2" ]]; then
-	        ext="h2"
-	    elif [[ -f "${f%.*}.h3" ]]; then
-	        ext="h3"
-	    elif [[ -f "${f%.*}.h4" ]]; then
-	        ext="h4"
-	    # IDE64 disk image (*.hdd)
-	    elif [[ -f "${f%.*}.hdd" ]]; then
-	        ext="hdd"
-	    # X68k SASI disk image (*.hdf)
-	    elif [[ -f "${f%.*}.hdf" ]]; then
-	        ext="hdf"
-	    # X68k SCSI disk image (*.hds)
-	    elif [[ -f "${f%.*}.hds" ]]; then
-	        ext="hds"
-	    fi
-            if [[ -z "$f" ]]; then
-		$md_inst/chdman createhd ${params[@]}
-	    else
-	        $md_inst/chdman createhd -i "${f%.*}.$ext" ${params[@]}
-	    fi
- 	    chown $user:$user "$__output"  
+	echo $'Converting files ...\n'
+	$md_inst/chdman createhd ${params[@]} 
+	chown $user:$user "$__output"
+	if [[ -f "$__output_parent" ]]; then
+	    chown $user:$user "$__output_parent"
 	fi
 
 	if [[ -f "$__output" ]]; then
             if [[ -n "$f" ]]; then
-		if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
-		    m="$__input_bn_ext#$__input_bn.$ext to ${__output##*/} successfully converted."
-                    dialog --stdout --defaultno --yesno "Would you like to delete $__input_bn_ext#$__input_bn.$ext and keep only ${__output##*/}?" 8 50
-		else
-	  	    m="$__input_bn_ext to ${__output##*/} successfully converted."
-		    dialog --stdout --defaultno --yesno "Would you like to delete $__input_bn_ext and keep only ${__output##*/}?" 8 50
-		fi
-                if [[ $? = 0 ]]; then
+		m="$input to ${__output##*/} successfully converted."
+	    	dialog --stdout --defaultno --yesno "Would you like to delete $input and keep only ${__output##*/}?" 10 50
+            	if [[ $? = 0 ]]; then
                     if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
-	                rm -rf "${f%.*}".{dmg,img,2mg,hdd,h0,h1,h2,h3,h4,hdf,hds} && rm -rf "$f"
-	                dialog --stdout --msgbox "$__input_bn_ext#$__input_bn.$ext have been deleted!" 10 50
+	            	rm -rf "$aux_input" && rm -rf "$f"
 	            else
-	                rm -rf "$f"
-	                dialog --stdout --msgbox "$__input_bn_ext has been deleted!" 12 50
+	            	rm -rf "$f"
 	            fi
-                fi
+		   dialog --stdout --clear --msgbox "$input has been deleted!" 10 50
+            	fi
 	    else
 		m="${__output##*/} successfully created."
 	    fi  
-        else
-	    m="ERROR: Conversion Failed !!!"
-        fi
+	else
+	    m="ERROR: Conversion Failed."
+	fi
     else
         m="$m"
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
 }
 
 function batch_createraw_chdman_mame-tools() {
     d="$1"
     local m="ERROR: There aren't valid extensions in ${d%/} directory."
 
+    local output="${d%/}"
+    local __output="$output"
     local force="0"
     local input_start_byte="auto"
     local input_start_hunk="auto"
@@ -3418,14 +4118,16 @@ function batch_createraw_chdman_mame-tools() {
     local compression="0"
     local num_processors=`nproc`
 
-    if [[ -n `find $d -mindepth 1 -prune -name '*.*'` ]]; then
+    if [[ -n `find $d -mindepth 1 -prune -iname '*.*'` ]]; then
     	local default
     	while true
     	do
-            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/*.*\nOutput dir: ${d%/}/*.chd\n\nOptional parameters\n(Warning: Hunk size and Unit size are required):" 25 76 16)
+            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/*.{*}\nOutput dir: $__output/*.chd\n\nOptional parameters\n(Warning: Hunk size and Unit size are required):" 25 76 16)
             local options=()
 
             options+=(- "Exit")
+            options+=(I "Input file: ./*.*")
+            options+=(O "Output file: ./*.chd")
             if [[ "$force" -eq 1 ]]; then
             	options+=(F "Overwrite existing files (Enabled)")
             else
@@ -3477,26 +4179,56 @@ function batch_createraw_chdman_mame-tools() {
                     1)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
                     	input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_byte" = "auto" ]] || [[ -z "$input_start_byte" ]]; then
+                            input_start_byte="auto"
+                    	else
+                            input_start_byte="$input_start_byte"
+                    	fi
                     	;;
                     2)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
                     	input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_hunk" = "auto" ]] || [[ -z "$input_start_hunk" ]]; then
+                            input_start_hunk="auto"
+                    	else
+                            input_start_hunk="$input_start_hunk"
+                    	fi
                     	;;
                     3)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
                     	input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_bytes" = "auto" ]] || [[ -z "$input_bytes" ]]; then
+                            input_bytes="auto"
+                    	else
+                            input_bytes="$input_bytes"
+                    	fi
                     	;;
                     4)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
                     	input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_hunks" = "auto" ]] || [[ -z "$input_hunks" ]]; then
+                            input_hunks="auto"
+                    	else
+                            input_hunks="$input_hunks"
+                    	fi
                     	;;
                     5)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
                     	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$hunk_size" = "required" ]] || [[ -z "$hunk_size" ]]; then
+                            hunk_size="required"
+                    	else
+                            hunk_size="$hunk_size"
+                    	fi
                     	;;
                     6)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each unit, in bytes:" 10 60 "$unit_size")
                     	unit_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$unit_size" = "required" ]] || [[ -z "$unit_size" ]]; then
+                            unit_size="required"
+                    	else
+                            unit_size="$unit_size"
+                    	fi
                     	;;
                     7)
 		    	compression="$((( compression + 1) % 10))"
@@ -3504,6 +4236,20 @@ function batch_createraw_chdman_mame-tools() {
                     8)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
                     	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                            num_processors=`nproc`
+                    	else
+                            num_processors="$num_processors"
+                    	fi
+                    	;;
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for CHD output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${d%/}" ]] || [[ -z "$output" ]]; then
+                            __output="${d%/}"
+                    	else
+                            __output="${output%/}"
+                    	fi
                     	;;
                     F)
                     	force="$((force ^ 1))"
@@ -3535,11 +4281,15 @@ function batch_createraw_chdman_mame-tools() {
         if [[ -n "$input_hunks" ]] && [[ "$input_hunks" != "auto" ]]; then
             params+=(-ih "$input_hunks")
         fi
-        if [[ -n "$hunk_size" ]]; then
+        if [[ -n "$hunk_size" ]] && [[ "$hunk_size" != "required" ]]; then
             params+=(-hs "$hunk_size")
+	else
+	    dialog --stdout --clear --msgbox "Required Parameters missing (Hunk size)" 10 50
         fi
-        if [[ -n "$unit_size" ]]; then
+        if [[ -n "$unit_size" ]] && [[ "$hunk_size" != "required" ]]; then
             params+=(-us "$unit_size")
+	else
+	    dialog --stdout --clear --msgbox "Required Parameters missing (Unit size)" 10 50
         fi
         if [[ "$compression" -ne 0 ]]; then
             params+=(-c "$compr")        
@@ -3548,44 +4298,68 @@ function batch_createraw_chdman_mame-tools() {
             params+=(-np "$num_processors")
         fi
 	
+	remove="remove_files.txt"
+	create="create_files.txt"
 	echo $'Converting files ...\n'
 	for j in `find $d -mindepth 1 -prune -name '*.*'`; do
-	    if [[ "$j" = *.chd ]]; then
-		$md_inst/chdman createraw -i "$j" -o "${j%.*} (1).chd" ${params[@]}
-		chown $user:$user "${j%.*} (1).chd"
+	    if [[ "$output" != ${d%/} ]]; then
+		j_bn="${j##*/}"
+		if [[ "$j" = *.chd ]]; then
+		    $md_inst/chdman createraw -i "$j" -o "$__output/${j_bn%.*} (1).chd" ${params[@]}
+		    chown $user:$user "$__output/${j_bn%.*} (1).chd"
+		else
+		    $md_inst/chdman createraw -i "$j" -o "$__output/${j_bn%.*}.chd" ${params[@]}
+		    chown $user:$user "$__output/${j_bn%.*}.chd"
+		fi
 	    else
-		$md_inst/chdman createraw -i "$j" -o "${j%.*}.chd" ${params[@]}
-		chown $user:$user "${j%.*}.chd"
+	    	if [[ "$j" = *.chd ]]; then
+		    $md_inst/chdman createraw -i "$j" -o "${j%.*} (1).chd" ${params[@]}
+		    chown $user:$user "${j%.*} (1).chd"
+	    	else
+		    $md_inst/chdman createraw -i "$j" -o "${j%.*}.chd" ${params[@]}
+		    chown $user:$user "${j%.*}.chd"
+		fi
 	    fi
-	    if [[ -f "${j%.*} (1).chd" ]] || [[ -f "${j%.*}.chd" ]]; then
-		echo $j >> "$HOME/list.txt"
+	    if [[ -f "$__output/${j_bn%.*}.chd" ]] || [[ -f "$__output/${j_bn%.*} (1).chd" ]] || [[ -f "${j%.*}.chd" ]] || [[ -f "${j%.*} (1).chd" ]]; then
+		echo $j >> $remove
+		if [[ -f "$__output/${j_bn%.*}.chd" ]]; then
+		    echo "${j_bn%.*}.chd" >> $create
+		elif [[ -f "$__output/${j_bn%.*} (1).chd" ]]; then
+		    echo "${j_bn%.*} (1).chd" >> $create
+		elif [[ -f "${j%.*}.chd" ]]; then
+		    echo "${j%.*}.chd" >> $create
+		elif [[ -f "${j%.*} (1).chd" ]]; then
+		    echo "${j%.*} (1).chd" >> $create
+		fi
 	    fi
-	done  	  
-        
-	if [[ -e "list.txt" ]]; then
-            dialog --stdout --defaultno --yesno "Would you like to delete 'all' files in this directory, keeping only CHD files?" 8 50
+	done
+
+	if [[ -e "$create" ]]; then
+	    sort -u $remove -o $remove && sort -u $create -o $create
+            dialog --stdout --defaultno --yesno "Would you like to delete original files and keep only *.chd files?" 8 50
             if [[ $? = 0 ]]; then
-		xargs -i rm -f {} < "$HOME/list.txt"
+		xargs -d '\n' rm -f {} < $remove
+		dialog --stdout --title "Removed files" --clear --textbox $remove 15 63
 	        dialog --stdout --msgbox "All original files have been deleted!" 8 50
             fi
-            rm -rf "$HOME/list.txt"
-	    m="All files to CHDs successfully converted."
+	    dialog --stdout --title "Created files" --clear --textbox $create 15 63
+	    m="All files to *.chd successfully converted."
 	else
-	    m="ERROR: Conversion Failed !!!"
+	    m="ERROR: Conversion Failed."
         fi
+	rm -rf $remove $create
     else
         m="$m"
     fi
     dialog --stdout --clear --msgbox "$m" 10 50
-
-    clear
-    return 1
 }
 
 function createraw_chdman_mame-tools(){
     local f="$1"
     local input="${f##*/}"
     local m="ERROR: Invalid extension to $input"
+
+    local DIR=`dirname $f`
 
     local output="${f%.*}.chd"
     local __output="$output"
@@ -3663,26 +4437,56 @@ function createraw_chdman_mame-tools(){
                     1)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
                     	input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_byte" = "auto" ]] || [[ -z "$input_start_byte" ]]; then
+                            input_start_byte="auto"
+                    	else
+                            input_start_byte="$input_start_byte"
+                    	fi
                     	;;
                     2)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
                     	input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_start_hunk" = "auto" ]] || [[ -z "$input_start_hunk" ]]; then
+                            input_start_hunk="auto"
+                    	else
+                            input_start_hunk="$input_start_hunk"
+                    	fi
                     	;;
                     3)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
                     	input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_bytes" = "auto" ]] || [[ -z "$input_bytes" ]]; then
+                            input_bytes="auto"
+                    	else
+                            input_bytes="$input_bytes"
+                    	fi
                     	;;
                     4)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
                     	input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$input_hunks" = "auto" ]] || [[ -z "$input_hunks" ]]; then
+                            input_hunks="auto"
+                    	else
+                            input_hunks="$input_hunks"
+                    	fi
                     	;;
                     5)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
                     	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$hunk_size" = "required" ]] || [[ -z "$hunk_size" ]]; then
+                            hunk_size="required"
+                    	else
+                            hunk_size="$hunk_size"
+                    	fi
                     	;;
                     6)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each unit, in bytes:" 10 60 "$unit_size")
                     	unit_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$unit_size" = "required" ]] || [[ -z "$unit_size" ]]; then
+                            unit_size="required"
+                    	else
+                            unit_size="$unit_size"
+                    	fi
                     	;;
                     7)
 		    	compression="$((( compression + 1) % 10))"
@@ -3690,12 +4494,17 @@ function createraw_chdman_mame-tools(){
                     8)
                     	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
                     	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                            num_processors=`nproc`
+                    	else
+                            num_processors="$num_processors"
+                    	fi
                     	;;
                     F)
                     	force="$((force ^ 1))"
                     	;;
                     O)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for output CHD:" 10 60 "$output")
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
                     	output=$("${cmd[@]}" 2>&1 >/dev/tty)
                     	if [[ "$output" = "${f%.*}.chd" ]] || [[ -z "$output" ]]; then
                             __output="${f%.*}.chd"
@@ -3703,11 +4512,11 @@ function createraw_chdman_mame-tools(){
 			elif  [[ "${output}" = */* ]]; then
 			    __output="$output"
                     	else
-                            __output="`dirname $f`/$output"
+                            __output="$DIR/$output"
                     	fi
                     	;;
                     X)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for output CHD:" 10 60 "$output_parent")
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD output:" 10 60 "$output_parent")
                     	output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
                     	if [[ "$output_parent" = "none" ]] || [[ -z "$output_parent" ]]; then
                             __output_parent="none"
@@ -3715,7 +4524,7 @@ function createraw_chdman_mame-tools(){
 			elif  [[ "${output_parent}" = */* ]]; then
 			    __output_parent="$output_parent"
                     	else
-                            __output_parent="`dirname $f`/$output_parent"
+                            __output_parent="$DIR/$output_parent"
                     	fi
                     	;;
 		    -)
@@ -3752,15 +4561,15 @@ function createraw_chdman_mame-tools(){
         if [[ -n "$input_hunks" ]] && [[ "$input_hunks" != "auto" ]]; then
             params+=(-ih "$input_hunks")
         fi
-        if [[ -n "$hunk_size" ]] && [[ "$hunk_size" != "none" ]]; then
+        if [[ -n "$hunk_size" ]] && [[ "$hunk_size" != "required" ]]; then
             params+=(-hs "$hunk_size")
 	else
-	    dialog --stdout --msgbox "Required Parameters missing (Hunk size)" 10 50
+	    dialog --stdout --clear --msgbox "Required Parameters missing (Hunk size)" 10 50
         fi
-        if [[ -n "$unit_size" ]] && [[ "$unit_size" != "none" ]]; then
+        if [[ -n "$unit_size" ]] && [[ "$unit_size" != "required" ]]; then
             params+=(-us "$unit_size")
 	else
-	    dialog --stdout --msgbox "Required Parameters missing (Unit size)" 10 50
+	    dialog --stdout --clear --msgbox "Required Parameters missing (Unit size)" 10 50
         fi
         if [[ "$compression" -ne 0 ]]; then
             params+=(-c "$compr")        
@@ -3791,15 +4600,14 @@ function createraw_chdman_mame-tools(){
         m="$m"
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
 }
 
 function verify_chdman_mame-tools(){
     local f="$1"
     local input="${f##*/}"
     local m="ERROR: Invalid extension to $input"
+
+    local DIR=`dirname $f`
 
     local input_parent="none"
     local __input_parent="$input_parent"
@@ -3820,7 +4628,7 @@ function verify_chdman_mame-tools(){
             	default="$choice"
             	case "$choice" in
                     Y)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for input CHD:" 10 60 "$input_parent")
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD input:" 10 60 "$input_parent")
                     	input_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
                     	if [[ "$input_parent" = "none" ]] || [[ -z "$input_parent" ]]; then
                             __input_parent="none"
@@ -3828,7 +4636,7 @@ function verify_chdman_mame-tools(){
 			elif  [[ "${input_parent}" = */* ]]; then
 			    __input_parent="$input_parent"
                     	else
-                            __input_parent="`dirname $f`/$input_parent"
+                            __input_parent="$DIR/$input_parent"
                     	fi
                     	;;
 		    -)
@@ -3856,9 +4664,6 @@ function verify_chdman_mame-tools(){
         m="$m"
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
 }
 
 function info_chdman_mame-tools(){
@@ -3919,9 +4724,6 @@ function info_chdman_mame-tools(){
         m="$m"
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
-
-    clear
-    return 1
 }
 
 function __aux_chdman_mame-tools(){
@@ -3969,17 +4771,16 @@ function aux_chdman_mame-tools() {
     local opt="$1"
     local format="$2"
     local manager=`$md_inst/chdman | awk '/manager/' | awk '{print $10}'`
-    local ver="v$manager"
 
     export IFS='
 '
-
     if [[ "$opt" = "createhd" ]]; then
-	FILE=$(dialog --stdout --cancel-label "No input" --extra-button --extra-label "Back" --title "CHDMAN $ver: ${opt^} - ROM supported ($format)" --fselect "$romdir/" 13 105)
+	FILE=$(dialog --stdout --cancel-label "No Input" --extra-button --extra-label "Back" --title "ROM supported ($format)" --fselect "$romdir/" 13 105)
     
-        [ -z $FILE ] || [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
+        [ $? = 1 ] && FILE="none"
+        [ $FILE = "none" ] || [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
     else
-        FILE=$(dialog --stdout --title "CHDMAN $ver: ${opt^} - ROM supported ($format)" --fselect "$romdir/" 13 105)
+        FILE=$(dialog --stdout --title "ROM supported ($format)" --fselect "$romdir/" 13 105)
     
         [ ! -z $FILE ] && [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
     fi
@@ -4033,7 +4834,7 @@ function chdman_mame-tools() {
                     _aux_chdman_mame-tools "createraw" "any file"
                     ;;
                 4)
-                    _aux_chdman_mame-tools "createhd" "any image disk|zip|7z|no input file"
+                    _aux_chdman_mame-tools "createhd" "any HD image|zip|7z|no input"
                     ;;
                 5)
                     _aux_chdman_mame-tools "createcd" "cue|gdi|toc|zip|7z"
@@ -4042,16 +4843,16 @@ function chdman_mame-tools() {
                     _aux_chdman_mame-tools "createld" "avi|zip|7z" 
                     ;;
                 7)
-                    _aux_chdman_mame-tools "extractraw" "chd"
+                    _aux_chdman_mame-tools "extractraw" "chd|zip|7z"
                     ;;
                 8)
-                    _aux_chdman_mame-tools "extracthd" "chd"
+                    _aux_chdman_mame-tools "extracthd" "chd|zip|7z"
                     ;;
                 9)
-                    _aux_chdman_mame-tools "extractcd" "chd"
+                    _aux_chdman_mame-tools "extractcd" "chd|zip|7z"
                     ;;
                 10)
-                    _aux_chdman_mame-tools "extractld" "chd"
+                    _aux_chdman_mame-tools "extractld" "chd|zip|7z"
                     ;;
                 11)
                     aux_chdman_mame-tools "copy" "chd"
