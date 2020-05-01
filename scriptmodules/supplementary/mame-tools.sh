@@ -2001,14 +2001,13 @@ function batch_extractraw_chdman_mame-tools() {
         m="$m"
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
-
-
 }
 
 function extractraw_chdman_mame-tools(){
     local f="$1"
     local f_bn_ext="${f##*/}"
     local f_bn="${f_bn_ext%.*}"
+
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
 	if [[ "$f" = *.[zZ][iI][pP] ]]; then
 	    aux_input=`zipinfo -1 $f *.chd`
@@ -2164,7 +2163,6 @@ function extractraw_chdman_mame-tools(){
         fi
     else
         m="$m"
-	rm -rf out_*
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 }
@@ -2395,6 +2393,7 @@ function batch_createld_chdman_mame-tools() {
 	rm -rf $remove $create
     else
         m="$m"
+	rm -rf out_*
     fi
     dialog --stdout --clear --msgbox "$m" 10 50
 }
@@ -2633,7 +2632,6 @@ function createld_chdman_mame-tools(){
         fi
     else
         m="$m"
-	rm -rf out_*
     fi
     dialog --stdout --clear --msgbox "$m" 8 50
 }
@@ -3339,7 +3337,7 @@ function batch_createhd_chdman_mame-tools() {
 	fi
     else
 	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed CD file"
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file"
 	else
 	    if [[ ${out_ext_2} = ?? ]] || [[ ${out_ext_2} = ??? ]]; then
 		aux_input="*.$out_ext_2"
@@ -3718,7 +3716,7 @@ function createhd_chdman_mame-tools(){
     local f="$1"
     local __f="$f"
     local input="${f##*/}"
-    local m="ERROR: $input isn't a disk image file"
+    local m="ERROR: $input isn't a HD file"
 
     local ext=('img' 'dmg' '2mg' 'h0' 'h1' 'h2' 'h3' 'h4' 'hdd' 'hdf' 'hds')
     local aux_input=""
@@ -3739,7 +3737,7 @@ function createhd_chdman_mame-tools(){
 	    aux_input="$out"
 	fi
 	if [[ -z $aux_input ]]; then
-	    m="ERROR: $input doesn't have a compressed disk image file" 
+	    m="ERROR: $input doesn't have a compressed HD file" 
 	fi
 	input="$input#$aux_input"
 	__f="$__f#$aux_input"
