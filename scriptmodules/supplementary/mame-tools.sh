@@ -1145,10 +1145,14 @@ function extractld_chdman_mame-tools(){
 	fi
 	input="$input#$aux_input"
 	__f="$__f#$aux_input"
+    elif [[ "$f" = *.[cC][hH][dD] ]]; then
+	aux_input="$input"
+    else
+	aux_input=""
     fi
     local DIR=`dirname $f`
 
-    local output="$DIR/${aux_input%.*}.avi"
+    local output="$DIR/${aux_input%.chd}.avi"
     local __output="$output"
     local input_parent="none"
     local __input_parent="$input_parent"
@@ -1156,7 +1160,7 @@ function extractld_chdman_mame-tools(){
     local input_start_frame="auto"
     local input_frames="auto"
 
-    if [[ -n $aux_input ]] || [[ "${input}" = *.[cC][hH][dD] ]]; then
+    if [[ -n $aux_input ]]; then
 	local default
 	while true
 	do
@@ -1293,7 +1297,7 @@ function extractld_chdman_mame-tools(){
     else
         m="$m"
     fi
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
 function batch_extractcd_chdman_mame-tools() {
@@ -1404,14 +1408,13 @@ function batch_extractcd_chdman_mame-tools() {
     else
         m="$m"
     fi
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
 function extractcd_chdman_mame-tools(){
-   local f="$1" 
+    local f="$1" 
     local __f="$f"
     local input="${f##*/}"
-    local aux_input="$input"
     local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n- CHD files (*.chd)"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
@@ -1429,6 +1432,10 @@ function extractcd_chdman_mame-tools(){
 	fi
 	input="$input#$aux_input"
 	__f="$__f#$aux_input"
+    elif [[ "$f" = *.[cC][hH][dD] ]]; then
+	aux_input="$input"
+    else
+	aux_input=""
     fi
     local DIR=`dirname $f`
 
@@ -1438,7 +1445,7 @@ function extractcd_chdman_mame-tools(){
     local __input_parent="$input_parent"
     local force="0"
 
-    if [[ -n $aux_input ]] || [[ "${input}" = *.[cC][hH][dD] ]]; then
+    if [[ -n $aux_input ]]; then
 	local default
 	while true
 	do
@@ -1560,7 +1567,7 @@ function extractcd_chdman_mame-tools(){
     else
         m="$m"
     fi
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 12 50
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
 function batch_extracthd_chdman_mame-tools() {
@@ -1822,7 +1829,6 @@ function extracthd_chdman_mame-tools(){
     local f="$1" 
     local __f="$f"
     local input="${f##*/}"
-    local aux_input="$input"
     local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n- CHD files (*.chd)"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
@@ -1840,6 +1846,10 @@ function extracthd_chdman_mame-tools(){
 	fi
 	input="$input#$aux_input"
 	__f="$__f#$aux_input"
+    elif [[ "$f" = *.[cC][hH][dD] ]]; then
+	aux_input="$input"
+    else
+	aux_input=""
     fi
     local DIR=`dirname $f`
 
@@ -1853,7 +1863,7 @@ function extracthd_chdman_mame-tools(){
     local input_bytes="auto"
     local input_hunks="auto"
 
-    if [[ -n $aux_input ]] || [[ "${input}" = *.[cC][hH][dD] ]]; then
+    if [[ -n $aux_input ]]; then
 	local default
 	while true
 	do
@@ -2015,7 +2025,7 @@ function extracthd_chdman_mame-tools(){
     else
         m="$m"
     fi
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
 function batch_extractraw_chdman_mame-tools() {
@@ -2236,7 +2246,6 @@ function extractraw_chdman_mame-tools(){
     local f="$1" 
     local __f="$f"
     local input="${f##*/}"
-    local aux_input="$input"
     local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n- CHD files (*.chd)"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
@@ -2254,6 +2263,10 @@ function extractraw_chdman_mame-tools(){
 	fi
 	input="$input#$aux_input"
 	__f="$__f#$aux_input"
+    elif [[ "$f" = *.[cC][hH][dD] ]]; then
+	aux_input="$input"
+    else
+	aux_input=""
     fi
     local DIR=`dirname $f`
 
@@ -2267,7 +2280,7 @@ function extractraw_chdman_mame-tools(){
     local input_bytes="auto"
     local input_hunks="auto"
 
-    if [[ -n $aux_input ]] || [[ "${input}" = *.[cC][hH][dD] ]]; then
+    if [[ -n $aux_input ]]; then
 	local default
 	while true
 	do
@@ -2430,7 +2443,7 @@ function extractraw_chdman_mame-tools(){
     else
         m="$m"
     fi
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
 function batch_createld_chdman_mame-tools() {
