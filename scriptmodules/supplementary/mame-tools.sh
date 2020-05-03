@@ -62,7 +62,10 @@ function batch_convert_castool_mame-tools() {
     local sys="$2"
     local ext_form="$3"
 
-    local ext=(${ext_form[@]})
+    echo ${ext_form} | sed 's/ /\n/g' > ext_form.txt
+    set -- "`cat ext_form.txt`"; IFS=$'\n'; declare -a ext=($*)
+    rm -rf ext_form.txt
+
     for ((a=0; a<${#ext[@]}; a++)); do
 	_ext=(${_ext[@]} \*.${ext[a]})
     done
@@ -94,7 +97,7 @@ function batch_convert_castool_mame-tools() {
     done < ext.txt
     rm -rf ext.txt
 
-    #### only for system with more one extension ####
+    #### only for system with support to more one extension ####
     for i in a b; do
     	while read -r g; do
 	    if [[ "$sys" = atom ]] || [[ "$sys" = fmsx ]] || [[ "$sys" = kc85 ]] || [[ "$sys" = pmd85 ]] || [[ "$sys" = spc1000 ]] || [[ "$sys" = tzx ]]; then
@@ -361,10 +364,10 @@ function batch_convert_castool_mame-tools() {
 	    ls -1 -A > out.txt
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]]; then
+    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]] && [[ ${i} = *.zip ]]; then
 		    ls "$i" >> $remove
 		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]]; then
+    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]] && [[ ${i} = *.7z ]]; then
 		    ls "$i" >> $remove
 		    7z e "$i" 
     	    	fi 2>/dev/null >/dev/null
@@ -398,14 +401,14 @@ function batch_convert_castool_mame-tools() {
 
 	if [[ -e "$create" ]]; then
 	    sort -u $remove -o $remove && sort -u $create -o $create
-            dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete $aux_input files and keep only ${_ext[@]} files?" 8 50
+            dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete $aux_input files and keep only *.wav files?" 8 50
             if [[ $? = 0 ]]; then
 		xargs -d '\n' rm -f {} < $remove
 		dialog --backtitle "$__backtitle" --stdout --title "Removed files" --clear --textbox $remove 15 63
 	        dialog --backtitle "$__backtitle" --stdout --msgbox "$aux_input files have been deleted!" 8 50
             fi
 	    dialog --backtitle "$__backtitle" --stdout --title "Created files" --clear --textbox $create 15 63
-	    m="$aux_input to ${_ext[@]} successfully converted."
+	    m="$aux_input to *.wav successfully converted."
 	else
 	    m="ERROR: Conversion Failed."
         fi
@@ -1523,10 +1526,10 @@ function batch_extractld_chdman_mame-tools() {
 	    #IFS=''
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]]; then
+    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]] && [[ ${i} = *.zip ]]; then
 		    ls "$i" >> $remove
 		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]]; then
+    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]] && [[ ${i} = *.7z ]]; then
 		    ls "$i" >> $remove
 		    7z e "$i" 
     	    	fi 2>/dev/null >/dev/null
@@ -1888,10 +1891,10 @@ function batch_extractcd_chdman_mame-tools() {
 	    ls -1 -A > out.txt
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]]; then
+    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]] && [[ ${i} = *.zip ]]; then
 		    ls "$i" >> $remove
 		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]]; then
+    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]] && [[ ${i} = *.7z ]]; then
 		    ls "$i" >> $remove
 		    7z e "$i" 
     	    	fi 2>/dev/null >/dev/null
@@ -2320,10 +2323,10 @@ function batch_extracthd_chdman_mame-tools() {
 	    ls -1 -A > out.txt
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]]; then
+    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]] && [[ ${i} = *.zip ]]; then
 		    ls "$i" >> $remove
 		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]]; then
+    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]] && [[ ${i} = *.7z ]]; then
 		    ls "$i" >> $remove
 		    7z e "$i" 
     	    	fi 2>/dev/null >/dev/null
@@ -2737,10 +2740,10 @@ function batch_extractraw_chdman_mame-tools() {
 	    ls -1 -A > out.txt
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]]; then
+    	    	if [[ -n `zipinfo -1 $i '*.chd'` ]] && [[ ${i} = *.zip ]]; then
 		    ls "$i" >> $remove
 		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]]; then
+    	    	elif [[ -n `7z l -ba $i '*.chd' -r-` ]] && [[ ${i} = *.7z ]]; then
 		    ls "$i" >> $remove
 		    7z e "$i" 
     	    	fi 2>/dev/null >/dev/null
@@ -3191,10 +3194,10 @@ function batch_createld_chdman_mame-tools() {
 	    #IFS=''
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i '*.avi'` ]]; then
+    	    	if [[ -n `zipinfo -1 $i '*.avi'` ]] && [[ ${i} = *.zip ]]; then
 		    ls "$i" >> $remove
 		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i '*.avi' -r-` ]]; then
+    	    	elif [[ -n `7z l -ba $i '*.avi' -r-` ]] && [[ ${i} = *.7z ]]; then
 		    ls "$i" >> $remove
 		    7z e "$i" 
     	    	fi 2>/dev/null >/dev/null
@@ -3750,10 +3753,10 @@ function batch_createcd_chdman_mame-tools() {
 	    #IFS=''
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]]; then
+    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]] && [[ ${i} = *.zip ]]; then
 		    ls "$i" >> $remove
 		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]]; then
+    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]] && [[ ${i} = *.7z ]]; then
 		    ls "$i" >> $remove
 		    7z e "$i" 
     	    	fi 2>/dev/null >/dev/null
@@ -4491,10 +4494,10 @@ function batch_createhd_chdman_mame-tools() {
 	    #IFS=''
 	    echo $'Extracting files ...\nThis may take several minutes ...\n'
 	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]]; then
+    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]] && [[ ${i} = *.zip ]]; then
 		    ls "$i" >> $remove
 		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]]; then
+    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]] && [[ ${i} = *.7z ]]; then
 		    ls "$i" >> $remove
 		    7z e "$i" 
     	    	fi 2>/dev/null >/dev/null
