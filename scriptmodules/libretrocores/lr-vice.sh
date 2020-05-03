@@ -21,21 +21,15 @@ function sources_lr-vice() {
 }
 
 function build_lr-vice() {
-<<<<<<< HEAD
     mkdir -p "vice-cores"
     local params=()
     for i in x64 x64sc xcbm2 xpet xplus4 xvic x128; do
         params+=(EMUTYPE=$i)
-        make -f Makefile.libretro "${params[@]}" clean
-        make -f Makefile.libretro "${params[@]}" -j`nproc`
+        make "${params[@]}" clean
+        make "${params[@]}" -j`nproc`
         mv "vice_"$i"_libretro.so" "vice-cores"
         md_ret_require="$md_build/vice-cores/vice_"$i"_libretro.so"
     done
-=======
-    make clean
-    make
-    md_ret_require="$md_build/vice_x64_libretro.so"
->>>>>>> upstream/master
 }
 
 function install_lr-vice() {
