@@ -60,49 +60,493 @@ function install_mame-tools() {
 function batch_convert_castool_mame-tools() {
     d="$1"
     local sys="$2"
-    local m="ERROR: Input invalid !!!"
-    if [ -d "$d" ]; then
+    local ext_form="$3"
+
+    local ext=(${ext_form[@]})
+    for ((a=0; a<${#ext[@]}; a++)); do
+	_ext=(${_ext[@]} \*.${ext[a]})
+    done
+
+    for ((b=0; b<${#ext[@]}; b++)); do
+	if [ "$b" = 0 ]; then
+	    __ext=(${__ext[@]}${ext[b]})
+	else 
+	    __ext=(${__ext[@]}\|${ext[b]})
+	fi
+    done
+
+    local m="ERROR: There aren't ${_ext[@]} extensions in ${d%/} directory."
+    
+    cd && cd $d
+    echo "Reading directory ..."
+    ls -1 -A $d > ext.txt
+    while read -r f; do
+	if [[ "$f" = *.[zZ][iI][pP] ]]; then
+	    zipinfo -1 "$f" "${_ext[@]}" >> out_1.txt
+	    cat out_1.txt >> out_merge_a.txt
+	elif [[ "$f" = *.7[zZ] ]]; then 
+	    7z l -ba "$f" "${_ext[@]}" -r- | cut -c54- >> out_2.txt
+	    cat out_2.txt >> out_merge_a.txt
+	else 
+	    find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.(${__ext[@]})" >> out_3.txt
+	    cat out_3.txt > out_merge_b.txt
+	fi 2>/dev/null >/dev/null
+    done < ext.txt
+    rm -rf ext.txt
+
+    #### only for system with more one extension ####
+    for i in a b; do
+    	while read -r g; do
+	    if [[ "$sys" = atom ]] || [[ "$sys" = fmsx ]] || [[ "$sys" = kc85 ]] || [[ "$sys" = pmd85 ]] || [[ "$sys" = spc1000 ]] || [[ "$sys" = tzx ]]; then
+		if [[ "$g" = *.[tT][aA][pP] ]]; then 
+		    echo "tap" >> out_$i.txt
+		fi
+	    fi
+	    if [[ "$sys" = apf ]] || [[ "$sys" = fmsx ]] || [[ "$sys" = spc1000 ]] || [[ "$sys" = x07 ]]; then
+		if [[ "$g" = *.[cC][aA][sS] ]]; then
+		    echo "cas" >> out_$i.txt
+		fi
+	    fi
+	    if [[ "$sys" = hector ]] || [[ "$sys" = mo5 ]] || [[ "$sys" = x07 ]]; then
+		if [[ "$g" = *.[kK]7 ]]; then
+		    echo "k7" >> out_$i.txt
+		fi
+	    fi
+	    if [[ "$sys" = apf ]]; then
+		if [[ "$g" = *.[cC][pP][fF] ]]; then 
+	    	    echo "cpf" >> out_$i.txt
+		elif [[ "$g" = *.[aA][pP][tT] ]]; then 
+	    	    echo "apt" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = atom ]] || [[ "$sys" = bbc ]]; then
+		if [[ "$g" = *.[cC][sS][wW] ]]; then 
+	    	    echo "csw" >> out_$i.txt
+		elif [[ "$g" = *.[uU][eE][fF] ]]; then 
+	    	    echo "uef" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = hector ]]; then
+		if [[ "$g" = *.[cC][iI][nN] ]]; then 
+	    	    echo "cin" >> out_$i.txt
+		elif [[ "$g" = *.[fF][oO][rR] ]]; then 
+	    	    echo "for" >> out_$i.txt
+		fi		
+	    elif [[ "$sys" = kc85 ]]; then
+		if [[ "$g" = *.[kK][cC][cC] ]]; then 
+	    	    echo "kcc" >> out_$i.txt
+		elif [[ "$g" = *.[kK][cC][bB] ]]; then 
+	    	    echo "kcb" >> out_$i.txt
+		elif [[ "$g" = *.853 ]]; then 
+	    	    echo "853" >> out_$i.txt
+		elif [[ "$g" = *.854 ]]; then 
+	    	    echo "854" >> out_$i.txt
+		elif [[ "$g" = *.855 ]]; then 
+	    	    echo "855" >> out_$i.txt
+		elif [[ "$g" = *.[tT][pP]2 ]]; then 
+	    	    echo "tp2" >> out_$i.txt
+		elif [[ "$g" = *.[kK][cC][mM] ]]; then 
+	    	    echo "kcm" >> out_$i.txt
+		elif [[ "$g" = *.[sS][sS][sS] ]]; then 
+	    	    echo "sss" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = kim ]]; then
+		if [[ "$g" = *.[kK][iI][mM]1 ]]; then 
+	    	    echo "kim1" >> out_$i.txt
+		elif [[ "$g" = *.[kK][iI][mM] ]]; then 
+	    	    echo "kim" >> out_$i.txt
+		fi	  
+	    elif [[ "$sys" = lviv ]]; then
+		if [[ "$g" = *.[lL][vV][tT] ]]; then 
+	    	    echo "lvt" >> out_$i.txt
+		elif [[ "$g" = *.[lL][vV][rR] ]]; then 
+	    	    echo "lvr" >> out_$i.txt
+		elif [[ "$g" = *.[lL][vV]0 ]]; then 
+	    	    echo "lv0" >> out_$i.txt
+		elif [[ "$g" = *.[lL][vV]1 ]]; then 
+	    	    echo "lv1" >> out_$i.txt
+		elif [[ "$g" = *.[lL][vV]2 ]]; then 
+	    	    echo "lv2" >> out_$i.txt
+		elif [[ "$g" = *.[lL][vV]3 ]]; then 
+	    	    echo "lv3" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = mo5 ]]; then
+		if [[ "$g" = *.[kK]5 ]]; then 
+	    	    echo "k5" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = mz ]]; then
+		if [[ "$g" = *.[mM]12 ]]; then 
+	    	    echo "m12" >> out_$i.txt
+		elif [[ "$g" = *.[mM][zZ][fF] ]]; then 
+	    	    echo "mzf" >> out_$i.txt
+		elif [[ "$g" = *.[mM][zZ][tT] ]]; then 
+	    	    echo "mzt" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = pmd85 ]]; then
+		if [[ "$g" = *.[pP][mM][dD] ]]; then 
+	    	    echo "pmd" >> out_$i.txt
+		elif [[ "$g" = *.[pP][tT][pP] ]]; then 
+	    	    echo "ptp" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = rkr ]]; then
+		if [[ "$g" = *.[rR][kK] ]]; then 
+	    	    echo "rk" >> out_$i.txt
+		elif [[ "$g" = *.[rR][kK][rR] ]]; then 
+	    	    echo "rkr" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = tzx ]]; then
+		if [[ "$g" = *.[bB][lL][kK] ]]; then 
+	    	    echo "blk" >> out_$i.txt
+		elif [[ "$g" = *.[tT][zZ][xX] ]]; then 
+	    	    echo "tzx" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = x07 ]]; then 
+		if [[ "$g" = *.[lL][sS][tT] ]]; then 
+	    	    echo "lst" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = zx80_o ]]; then
+		if [[ "$g" = *.[oO] ]]; then 
+	    	    echo "o" >> out_$i.txt
+		elif [[ "$g" = *.80 ]]; then 
+	    	    echo "80" >> out_$i.txt
+		fi
+	    elif [[ "$sys" = zx81_p ]]; then
+		if [[ "$g" = *.[pP] ]]; then 
+	    	    echo "p" >> out_$i.txt
+		elif [[ "$g" = *.81 ]]; then 
+	    	    echo "81" >> out_$i.txt
+		fi
+	    fi
+	done < out_merge_$i.txt
+	sort -u out_$i.txt -o out_$i.txt
+	awk 'BEGIN { ORS="" } { print p$0; p="," } END { print "\n" }' \
+	out_$i.txt > out_end_$i.txt
+    done 2>/dev/null >/dev/null
+    out_ext_1=`cat out_end_a.txt`
+    out_ext_2=`cat out_end_b.txt`
+    #####
+    if [[ -z `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	if [[ -z `cat out_3.txt` ]]; then
+	    if [[ ${out_ext_1} = ??? ]]; then
+		aux_input="*.zip#*.$out_ext_1"
+	    elif [[ -z ${out_ext_1} ]]; then
+		aux_input="*.zip#$_ext"
+	    else
+		aux_input="*.zip#*.{$out_ext_1}"
+	    fi
+	else
+	    if [[ ${out_ext_2} = ??? ]]; then
+		if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.zip#*.$out_ext_1, *.$out_ext_2"
+		else
+		    aux_input="*.zip#*.{$out_ext_1}, *.$out_ext_2"
+		fi
+	    elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
+		aux_input="*.zip#$_ext, $_ext"
+	    else
+		if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.zip#*.$out_ext_1, *.{$out_ext_2}"
+		else
+		    aux_input="*.zip#*.{$out_ext_1}, *.{$out_ext_2}"
+		fi
+	    fi		
+	fi
+    elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
+	if [[ -z `cat out_3.txt` ]]; then
+	    if [[ ${out_ext_1} = ??? ]]; then
+		aux_input="*.7z#*.$out_ext_1"
+	    elif [[ -z ${out_ext_1} ]]; then
+		aux_input="*.7z#$_ext"
+	    else
+		aux_input="*.7z#*.{$out_ext_1}"
+	    fi
+	else
+	    if [[ ${out_ext_2} = ??? ]]; then
+		if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.7z#*.$out_ext_1, *.$out_ext_2"
+		else
+		    aux_input="*.7z#*.{$out_ext_1}, *.$out_ext_2"
+		fi
+	    elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
+		aux_input="*.7z#$_ext, $_ext"
+	    else
+		if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.7z#*.$out_ext_1, *.{$out_ext_2}"
+		else
+		    aux_input="*.7z#*.{$out_ext_1},*.{$out_ext_2}"
+		fi
+	    fi		
+	fi
+    elif [[ -n `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
+	if [[ -z `cat out_3.txt` ]]; then
+	    if [[ ${out_ext_1} = ??? ]]; then
+		aux_input="*.{zip,7z}#*.$out_ext_1"
+	    elif [[ -z ${out_ext_1} ]]; then
+		aux_input="*.{zip,7z}#$_ext"
+	    else
+		aux_input="*.{zip,7z}#*.{$out_ext_1}"
+	    fi
+	else
+	    if [[ ${out_ext_2} = ??? ]]; then
+		if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.{zip,7z}#*.$out_ext_1, *.$out_ext_2"
+		else
+		    aux_input="*.{zip,7z}#*.{$out_ext_1}, *.$out_ext_2"
+		fi
+	    elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
+		aux_input="*.{zip,7z}#$_ext, $_ext"
+	    else
+		if [[ ${out_ext_1} = ??? ]]; then
+		    aux_input="*.{zip,7z}#*.$out_ext_1, *.{$out_ext_2}"
+		else
+		    aux_input="*.{zip,7z}#*.{$out_ext_1}, *.{$out_ext_2}"
+		fi
+	    fi		
+	fi
+    else
+	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed ${_ext[@]} file."
+	else
+	    if [[ ${out_ext_2} = ??? ]]; then
+		aux_input="*.$out_ext_2"
+	    elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]] ; then
+		aux_input="$_ext"
+	    else
+		aux_input="*.{$out_ext_2}"
+	    fi	
+	fi    
+    fi 2>/dev/null >/dev/null
+
+    local output="${d%/}"
+    local __output="$output"
+
+    if [[ -n `cat out_1.txt` ]] || [[ -n `cat out_2.txt` ]] || [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"` ]]; then
+	rm -rf out_*
+
+    	local default
+    	while true
+    	do
+            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/$aux_input\nOutput dir: $__output/*.wav\n\nOptional parameters:" 25 76 16)
+            local options=()
+
+            options+=(- "Exit")
+            options+=(I "Input file: ./$aux_input")
+            options+=(O "Output file: ./*.wav")
+
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for WAV output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "${d%/}" ]] || [[ -z "$output" ]]; then
+                            __output="${d%/}"
+                    	else
+                            __output="${output%/}"
+                    	fi
+                    	;;
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
+
         clear
 	cd && cd "$d"
-        for j in *.*; do
-	    > castool.rp
-	    $md_inst/castool convert $sys "$j" "${j%.*}.wav"
-        done
-        chown $user:$user *".wav"
+	remove="remove_files.txt"
+	create="create_files.txt"
+	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	    ls -1 -A > out.txt
+	    echo $'Extracting files ...\nThis may take several minutes ...\n'
+	    while read -r i; do
+    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]]; then
+		    ls "$i" >> $remove
+		    unzip "$i"
+    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]]; then
+		    ls "$i" >> $remove
+		    7z e "$i" 
+    	    	fi 2>/dev/null >/dev/null
+	    done < out.txt 
+            chown $user:$user ${_ext[@]} 2>/dev/null
+	    rm -rf out.txt
+	fi
 
-	if [[ -f "castool.rp" ]]; then
-	    rm -rf castool.rp
-	    m="Files successfully converted."
-        else
-	    m="ERROR: Conversion Failed !!!"
+	extensions=`find . -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"`
+	if [[ -n $extensions ]]; then
+	    echo $'Converting files ...\n'
+            for j in $extensions; do
+        	if [[ "$output" != ${d%/} ]]; then
+	    	    j_bn="${j##*/}"
+            	    $md_inst/castool convert $sys "$j" "$__output/${j_bn%.*}.wav"
+		    chown $user:$user "$__output/${j_bn%.*}.wav"
+		else
+      	            $md_inst/castool convert $sys "$j" "${j%.*}.wav"
+		    chown $user:$user "${j%.*}.wav"
+		fi
+	    	if [[ -f "$__output/${j_bn%.*}.wav" ]] || [[ -f "${j%.*}.wav" ]]; then
+		    echo "$j" >> $remove
+		    if [[ -f "$__output/${j_bn%.*}.wav" ]]; then
+			echo "${j_bn%.*}".wav | cut --complement -d "/" -f 1 >> $create
+		    elif [[ -f "${j%.*}.wav" ]]; then
+			echo "${j%.*}".wav >> $create
+		    fi
+	    	fi
+	    done    	  
+	fi
+
+	if [[ -e "$create" ]]; then
+	    sort -u $remove -o $remove && sort -u $create -o $create
+            dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete $aux_input files and keep only ${_ext[@]} files?" 8 50
+            if [[ $? = 0 ]]; then
+		xargs -d '\n' rm -f {} < $remove
+		dialog --backtitle "$__backtitle" --stdout --title "Removed files" --clear --textbox $remove 15 63
+	        dialog --backtitle "$__backtitle" --stdout --msgbox "$aux_input files have been deleted!" 8 50
+            fi
+	    dialog --backtitle "$__backtitle" --stdout --title "Created files" --clear --textbox $create 15 63
+	    m="$aux_input to ${_ext[@]} successfully converted."
+	else
+	    m="ERROR: Conversion Failed."
         fi
+	rm -rf $remove $create
     else
         m="$m"
+	rm -rf out_*
     fi
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
-
-
+    _ext=""
+    __ext=""
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
 function convert_castool_mame-tools(){
     local f="$1"
+    local __f="$f"
     local sys="$2"
-    local m="ERROR: Input invalid !!!"
-    if [ -f "$f" ]; then
-        $md_inst/castool convert $sys "$FILE" "${FILE%.*}.wav"
-        cd && cd `dirname "$FILE"`
-        if [[ -f "${FILE%.*}.wav" ]]; then
-            m="File successfully converted."
-        else
-	    m="ERROR: Invalid input file."
+    local ext_form="$3"
+    local input="${f##*/}"
+
+    local ext=(${ext_form[@]})
+    local aux_input=""
+    for ((a=0; a<${#ext[@]}; a++)); do
+	_ext=(${_ext[@]} \*.${ext[a]})
+	if [[ "$f" = "${f%.*}.${ext[a]}" ]]; then
+	    aux_input="$input"
+	fi
+    done
+
+    for ((b=0; b<${#ext[@]}; b++)); do
+	if [ "$b" = 0 ]; then
+	    __ext=(${__ext[@]}${ext[b]})
+	else 
+	    __ext=(${__ext[@]}\|${ext[b]})
+	fi
+    done
+
+    local m="ERROR: $input isn't a valid file.\n\nSupported extensions:\n- ${_ext[@]}"
+
+    if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
+	if [[ "$f" = *.[zZ][iI][pP] ]]; then
+	    aux_input=`zipinfo -1 $f "${_ext[@]}"`
+	elif [[ "$f" = *.7[zZ] ]]; then
+	    7z l -ba $f "${_ext[@]}" -r- | cut -c54- > out.txt
+	    out=`cat out.txt`
+	    rm -rf "out.txt"
+	    aux_input="$out"
+	fi
+	if [[ -z $aux_input ]]; then
+	    m="ERROR: $input doesn't have a compressed valid file.\n\nSupported compressed extensions:\n- ${_ext[@]}" 
+	fi
+	input="$input#$aux_input"
+	__f="$__f#$aux_input"
+    fi
+    local DIR=`dirname $f`
+
+    local output="$DIR/${aux_input%.*}.wav"
+    local __output="$output"
+
+    if [[ -n $aux_input ]]; then
+    	local default
+    	while true
+    	do
+            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $__f\nOutput file: $__output\nOptional parameters:" 22 76 16)
+            local options=()
+
+            options+=(I "Input file: $input (fixed)")
+            options+=(O "Output file: ${output##*/}")
+
+            local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
+            if [[ -n "$choice" ]]; then
+            	default="$choice"
+            	case "$choice" in
+                    O)
+                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for WAV output:" 10 60 "$output")
+                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                    	if [[ "$output" = "$DIR/${aux_input%.*}.wav" ]] || [[ -z "$output" ]]; then
+                            __output="$DIR/${aux_input%.*}.wav"
+			    output="$__output"
+		    	elif  [[ "${output}" = */* ]]; then
+			    __output="$output"
+                    	else
+                            __output="$DIR/$output"
+                    	fi
+		    	;;
+
+		    -)
+		    	return 0
+		    	;;
+            	esac
+            else
+            	break
+            fi
+    	done
+
+        clear
+	cd && cd "$DIR"
+	if [[ -n `find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+	    echo $'Extracting files ...\nThis may take several minutes ...\n'
+	    for i in ${f%.*}.[zZ][iI][pP]; do 
+		unzip "$i"
+	    done 2>/dev/null >/dev/null
+ 	    for i in ${f%.*}.7[zZ]; do 
+		7z e "$i"
+	    done 2>/dev/null >/dev/null
+	fi
+        chown $user:$user ${_ext[@]} 2>/dev/null >/dev/null
+
+	if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
+	    enter="$DIR/$aux_input"
+	    params+=("$enter")
+	else
+	    params+=("$f")
         fi
-        chown $user:$user "${FILE%.*}.wav"
+        if [[ -n "$output" ]]; then
+            params+=("$__output")
+        fi
+
+	echo $'Converting file ...\n'
+	$md_inst/castool convert $sys ${params[@]}
+	chown $user:$user "$__output"
+
+	if [[ -f "$__output" ]]; then
+	    m="$input to ${__output##*/} successfully converted."
+	    dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete $input and keep only ${__output##*/}?" 17 54
+            if [[ $? = 0 ]]; then
+                if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
+	            rm -rf "$enter" && rm -rf "$f"
+	        else
+	            rm -rf "$f"
+	        fi
+		dialog --backtitle "$__backtitle" --stdout --msgbox "$input has been deleted!" 10 50
+            fi
+        else
+	    m="ERROR: Conversion Failed."
+        fi
     else
-	m="$m"
-    fi 
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
-
-
+        m="$m"
+    fi
+    _ext=""
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
 function __aux_castool_mame-tools(){
@@ -111,7 +555,7 @@ function __aux_castool_mame-tools(){
     export IFS='
 '
     __DIR=$(dialog --backtitle "$__backtitle" --stdout --title "Castool - Choose a ROM Directory" --dselect "$romdir/" 10 70)
-    [ ! -z $__DIR ] && batch_convert_castool_mame-tools "$__DIR" "$system"
+    [ ! -z $__DIR ] && batch_convert_castool_mame-tools "$__DIR" "$system" "$format"
 }
 
 function _aux_castool_mame-tools() {
@@ -119,8 +563,8 @@ function _aux_castool_mame-tools() {
     local system="$2"
     export IFS='
 '
-    FILE=$(dialog --backtitle "$__backtitle" --stdout --title "Castool - ROM supported ($format)" --fselect "$romdir/" 13 105)
-    [ ! -z $FILE ] && convert_castool_mame-tools "$FILE" "$system"
+    FILE=$(dialog --backtitle "$__backtitle" --stdout --title "Castool - Choose a ROM" --fselect "$romdir/" 13 105)
+    [ ! -z $FILE ] && convert_castool_mame-tools "$FILE" "$system" "$format"
 }
 
 function aux_castool_mame-tools(){
@@ -220,16 +664,16 @@ function castool_mame-tools() {
                     rm -rf man.txt
                     ;;
                 1)
-                    aux_castool_mame-tools 'a26 (supercharger)' 'a26'
+                    aux_castool_mame-tools 'a26' 'a26'
                     ;;
                 2)
-                    aux_castool_mame-tools 'cas|cpf|apt' 'apf'
+                    aux_castool_mame-tools 'cas cpf apt' 'apf'
                     ;;
                 3)
-                    aux_castool_mame-tools 'tap|csw|uef' 'atom'
+                    aux_castool_mame-tools 'tap csw uef' 'atom'
                     ;;
                 4)
-                    aux_castool_mame-tools 'csw|uef' 'bbc'
+                    aux_castool_mame-tools 'csw uef' 'bbc'
                     ;;
                 5)
                     aux_castool_mame-tools 'tap' 'cbm'
@@ -253,31 +697,31 @@ function castool_mame-tools() {
                     aux_castool_mame-tools 't77' 'fm7'
                     ;;
                 12)
-                    aux_castool_mame-tools 'tap|cas' 'fmsx'
+                    aux_castool_mame-tools 'tap cas' 'fmsx' 
                     ;;
                 13)
                     aux_castool_mame-tools 'gtp' 'gtp'
                     ;;
                 14)
-                    aux_castool_mame-tools 'k7|cin|for' 'hector'
+                    aux_castool_mame-tools 'k7 cin for' 'hector'
                     ;;
                 15)
                     aux_castool_mame-tools 'tap' 'jupiter'
                     ;;
                 16)
-                    aux_castool_mame-tools 'kcc|kcb|tap|853|854|855|tp2|kcm|sss' 'kc85'
+                    aux_castool_mame-tools 'kcc kcb tap 853 854 855 tp2 kcm sss' 'kc85'
                     ;;
                 17)
-                    aux_castool_mame-tools 'kim|kim1' 'kim'
+                    aux_castool_mame-tools 'kim kim1' 'kim'
                     ;;
                 18)
-                    aux_castool_mame-tools 'lvt|lvr|lv0|lv1|lv2|lv3' 'lviv'
+                    aux_castool_mame-tools 'lvt lvr lv0 lv1 lv2 lv3' 'lviv'
                     ;;
                 19)
-                    aux_castool_mame-tools 'k5|k7' 'mo5'
+                    aux_castool_mame-tools 'k5 k7' 'mo5' 
                     ;;
                 20)
-                    aux_castool_mame-tools 'm12|mzf|mzt' 'mz'
+                    aux_castool_mame-tools 'm12 mzf mzt' 'mz'
                     ;;
                 21)
                     aux_castool_mame-tools 'tap' 'orao'
@@ -292,7 +736,7 @@ function castool_mame-tools() {
                     aux_castool_mame-tools 'phc' 'phc25'
                     ;;
                 25)
-                    aux_castool_mame-tools 'pmd|tap|ptp' 'pmd85'
+                    aux_castool_mame-tools 'pmd tap ptp' 'pmd85'
                     ;;
                 26)
                     aux_castool_mame-tools 'ptp' 'primo'
@@ -310,7 +754,7 @@ function castool_mame-tools() {
                     aux_castool_mame-tools 'rko' 'rko'
                     ;;
                 31)
-                    aux_castool_mame-tools 'rk|rkr' 'rkr'
+                    aux_castool_mame-tools 'rk rkr' 'rkr'
                     ;;
                 32)
                     aux_castool_mame-tools 'rka' 'rka'
@@ -334,7 +778,7 @@ function castool_mame-tools() {
                     aux_castool_mame-tools 'cas' 'sordm5'
                     ;;
                 39)
-                    aux_castool_mame-tools 'tap|cas' 'spc1000'
+                    aux_castool_mame-tools 'tap cas' 'spc1000' 
                     ;;
                 40)
                     aux_castool_mame-tools 'cas' 'svi'
@@ -349,7 +793,7 @@ function castool_mame-tools() {
                     aux_castool_mame-tools 'cas' 'tvc64'
                     ;;
                 44)
-                    aux_castool_mame-tools 'tzx|tap|blk' 'tzx'
+                    aux_castool_mame-tools 'tzx tap blk' 'tzx'
                     ;;
                 45)
                     aux_castool_mame-tools 'k7' 'vg5k'
@@ -361,16 +805,16 @@ function castool_mame-tools() {
                     aux_castool_mame-tools 'cas' 'vtech2'
                     ;;
                 48)
-                    aux_castool_mame-tools 'k7|lst|cas' 'x07'
+                    aux_castool_mame-tools 'k7 lst cas' 'x07' 
                     ;;
                 49)
                     aux_castool_mame-tools 'tap' 'x1'
                     ;;
                 50)
-                    aux_castool_mame-tools 'o|80' 'zx80_o'
+                    aux_castool_mame-tools 'o 80' 'zx80_o'
                     ;;
                 51)
-                    aux_castool_mame-tools 'p|81' 'zx81_p'
+                    aux_castool_mame-tools 'p 81' 'zx81_p'
                     ;;
             esac
         else
@@ -406,7 +850,7 @@ function dumpmeta_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output: ${output##*/}")
             if [[ "$force" -eq 1 ]]; then
             	options+=(F "Overwrite existing files (Enabled)")
@@ -529,7 +973,7 @@ function delmeta_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(1 "tag: $tag")
             options+=(2 "Index ($index)")
 
@@ -615,7 +1059,7 @@ function addmeta_chdman_mame-tools(){
             local options=()
 
 	    options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(1 "Metadata value file: ${value_file##*/}")
             options+=(2 "Metadata value text: $value_text")
             options+=(3 "tag: $tag")
@@ -751,7 +1195,7 @@ function copy_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
             options+=(Y "Parent input file: ${input_parent##*/}")
             options+=(X "Parent output file: ${output_parent##*/}")
@@ -1191,7 +1635,7 @@ function extractld_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
             options+=(Y "Parent input file: ${input_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -1296,7 +1740,7 @@ function extractld_chdman_mame-tools(){
             params+=(-if "$input_frames")
 	fi
 
-	echo $'Converting files ...\n'
+	echo $'Converting file ...\n'
 	$md_inst/chdman extractld ${params[@]}
 	chown $user:$user "$__output" 
 	if [[ -f "$__input_parent" ]]; then
@@ -1560,7 +2004,7 @@ function extractcd_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
 	    options+=(B "Binary Output file: $binary")
             options+=(Y "Parent input file: ${input_parent##*/}")
@@ -1642,7 +2086,7 @@ function extractcd_chdman_mame-tools(){
             params+=(-ip "$__input_parent")
         fi
 
-	echo $'Converting files ...\n'
+	echo $'Converting file ...\n'
 	$md_inst/chdman extractcd ${params[@]}
 	chown $user:$user "$__output" "${__output%.???}"*{bin,raw} 2>/dev/null >/dev/null
 	if [[ -n `ls ${__output%.???}*raw` ]]; then
@@ -1995,7 +2439,7 @@ function extracthd_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
             options+=(Y "Parent input file: ${input_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -2125,7 +2569,7 @@ function extracthd_chdman_mame-tools(){
             params+=(-ih "$input_hunks")
         fi
 
-	echo $'Converting files ...\n'
+	echo $'Converting file ...\n'
 	$md_inst/chdman extracthd ${params[@]}
 	chown $user:$user "$__output" 
 	if [[ -f "$__input_parent" ]]; then
@@ -2412,7 +2856,7 @@ function extractraw_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
             options+=(Y "Parent input file: ${input_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -2543,7 +2987,7 @@ function extractraw_chdman_mame-tools(){
             params+=(-ih "$input_hunks")
         fi
 
-	echo $'Converting files ...\n'
+	echo $'Converting file ...\n'
 	$md_inst/chdman extractraw ${params[@]}
 	chown $user:$user "$__output" 
 	if [[ -f "$__input_parent" ]]; then
@@ -2870,7 +3314,7 @@ function createld_chdman_mame-tools(){
 	    local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
             options+=(X "Parent output file: ${output_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -3038,7 +3482,7 @@ function createld_chdman_mame-tools(){
             params+=(-np "$num_processors")
         fi
 
-	echo $'Converting files ...\n'
+	echo $'Converting file ...\n'
 	$md_inst/chdman createld ${params[@]} 
 	chown $user:$user "$__output" 
 	if [[ -f "$__output_parent" ]]; then
@@ -3145,9 +3589,9 @@ function batch_createcd_chdman_mame-tools() {
     elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
 	if [[ -z `cat out_3.txt` ]]; then
 	    if [[ ${out_ext_1} = ??? ]]; then
-		    aux_input="*.7z#*.$out_ext_1"
+		aux_input="*.7z#*.$out_ext_1" 
 	    else
-		    aux_input="*.7z#*.{$out_ext_1}"
+		aux_input="*.7z#*.{$out_ext_1}"
 	    fi
 	else
 	    if [[ ${out_ext_2} = ??? ]]; then
@@ -3391,6 +3835,8 @@ function batch_createcd_chdman_mame-tools() {
         m="$m"
 	rm -rf out_*
     fi
+    _ext=""
+    __ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -3447,7 +3893,7 @@ function createcd_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
             options+=(X "Parent Output file: ${output_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -3600,7 +4046,7 @@ function createcd_chdman_mame-tools(){
             params+=(-np "$num_processors")
         fi
 
-	echo $'Converting files ...\n'
+	echo $'Converting file ...\n'
 	$md_inst/chdman createcd ${params[@]} 
 	chown $user:$user "$__output"
 	if [[ -f "$__output_parent" ]]; then
@@ -3628,6 +4074,7 @@ function createcd_chdman_mame-tools(){
     else
         m="$m"
     fi
+    _ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -3723,9 +4170,9 @@ function batch_createhd_chdman_mame-tools() {
     elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
 	if [[ -z `cat out_3.txt` ]]; then
 	    if [[ ${out_ext_1} = ??? ]]; then
-		    aux_input="*.7z#*.$out_ext_1"
+		aux_input="*.7z#*.$out_ext_1"
 	    else
-		    aux_input="*.7z#*.{$out_ext_1}"
+		aux_input="*.7z#*.{$out_ext_1}"
 	    fi
 	else
 	    if [[ ${out_ext_2} = ??? ]]; then
@@ -4138,6 +4585,8 @@ function batch_createhd_chdman_mame-tools() {
         m="$m"
 	rm -rf out_*
     fi
+    _ext=""
+    __ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -4224,7 +4673,7 @@ function createhd_chdman_mame-tools(){
             if [[ "$f" = "none" ]]; then
             	options+=(I "Input file: ${input##*/}")
 	    else
-            	options+=(I "Input file: $input")
+            	options+=(I "Input file: $input (fixed)")
 	    fi
 	    options+=(O "Output file: ${output##*/}")
 	    options+=(X "Parent output file: ${output_parent##*/}")
@@ -4609,7 +5058,7 @@ function createhd_chdman_mame-tools(){
             params+=(-np "$num_processors")
         fi
 
-	echo $'Converting files ...\n'
+	echo $'Converting file ...\n'
 	$md_inst/chdman createhd ${params[@]} 
 	chown $user:$user "$__output"
 	if [[ -f "$__output_parent" ]]; then
@@ -4637,6 +5086,7 @@ function createhd_chdman_mame-tools(){
     else
         m="$m"
     fi
+    _ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -4921,7 +5371,7 @@ function createraw_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
             options+=(X "Parent output file: ${output_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -5158,7 +5608,7 @@ function verify_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             options+=(Y "Parent input file: ${input_parent##*/}")
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -5220,7 +5670,7 @@ function info_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input")
+            options+=(I "Input file: $input (fixed)")
             if [[ "$verbose" -eq 1 ]]; then
             	options+=(V "Verbose output (Enabled)")
             else
@@ -5266,7 +5716,6 @@ function info_chdman_mame-tools(){
 
 function __aux_chdman_mame-tools(){
     local opt="$1"
-    local format="$2"
     local manager=`$md_inst/chdman | awk '/manager/' | awk '{print $10}'`
     local ver="v$manager"
     export IFS='
@@ -5313,22 +5762,18 @@ function aux_chdman_mame-tools() {
     export IFS='
 '
     if [[ "$opt" = "createhd" ]]; then
-	FILE=$(dialog --backtitle "$__backtitle" --default-item "$default" --stdout --cancel-label "No Input" --extra-button --extra-label "Back" --title "ROM supported ($format)" --fselect "$romdir/" 13 105)
+	FILE=$(dialog --backtitle "$__backtitle" --default-item "$default" --stdout --cancel-label "No Input" --extra-button --extra-label "Back" --title "CHDMAN $ver: ${opt^} - Choose a ROM ($format)" --fselect "$romdir/" 13 105)
     
         [ $? = 1 ] && FILE="none"
         [ $FILE = "none" ] || [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
     else
-        FILE=$(dialog --backtitle "$__backtitle" --default-item "$default" --stdout --title "ROM supported ($format)" --fselect "$romdir/" 13 105)
+        FILE=$(dialog --backtitle "$__backtitle" --default-item "$default" --stdout --title "CHDMAN $ver: ${opt^} - Choose a ROM ($format)" --fselect "$romdir/" 13 105)
     
         [ ! -z $FILE ] && [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
     fi
 }
 
 function chdman_mame-tools() {
-    if [[ ! -d $configdir/all/chdman.cfg ]]; then
-        mkdir -p "$configdir/all/chdman.cfg"
-	chown $user:$user "$configdir/all/chdman.cfg"
-    fi
     local default
     while true; do
 	local manager=`$md_inst/chdman | awk '/manager/' | awk '{print $10}'`
@@ -8441,9 +8886,11 @@ function gui_mame-tools() {
                 14)
                     unidasm_mame-tools
                     ;;
+
             esac
         else
             break
         fi
     done
 }
+
