@@ -564,7 +564,7 @@ function convert_castool_mame-tools(){
 function __aux_castool_mame-tools(){
     local format="$1"
     local system="$2"
-    export IFS='\n'
+    export IFS=$'\n'
     __DIR=$(dialog --backtitle "$__backtitle" --stdout --title "Castool - Choose a ROM Directory" --dselect "$romdir/" 10 70)
     [ ! -z $__DIR ] && batch_convert_castool_mame-tools "$__DIR" "$system" "$format"
 }
@@ -572,7 +572,7 @@ function __aux_castool_mame-tools(){
 function _aux_castool_mame-tools() {
     local format="$1"
     local system="$2"
-    export IFS='\n'
+    export IFS=$'\n'
     FILE=$(dialog --backtitle "$__backtitle" --stdout --title "Castool - Choose a ROM" --fselect "$romdir/" 13 105)
     [ ! -z $FILE ] && convert_castool_mame-tools "$FILE" "$system" "$format"
 }
