@@ -964,7 +964,6 @@ function dumpmeta_chdman_mame-tools(){
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
 }
 
-
 function delmeta_chdman_mame-tools(){
     local f="$1"
     local input="${f##*/}"
