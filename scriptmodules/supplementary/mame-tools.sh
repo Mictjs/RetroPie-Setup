@@ -39,21 +39,21 @@ function build_mame-tools() {
 function install_mame-tools() {
     md_ret_files=(
         'castool'
-	'chdman'
-	'floptool'
-	'imgtool'
-	'jedutil'
-	'ldresample'
-	'ldverify'
-	'pngcmp'
-	'regrep'
-	'romcmp'
-	'split'
-	'srcclean'
-	'testkeys'
-	'unidasm'
+        'chdman'
+        'floptool'
+        'imgtool'
+        'jedutil'
+        'ldresample'
+        'ldverify'
+        'pngcmp'
+        'regrep'
+        'romcmp'
+        'split'
+        'srcclean'
+        'testkeys'
+        'unidasm'
         'COPYING'
-  	'docs/man'
+        'docs/man'
     )
 }
 
@@ -70,15 +70,15 @@ function batch_convert_castool_mame-tools() {
     rm -rf ext_form.txt
 
     for ((a=0; a<${#ext[@]}; a++)); do
-	_ext=(${_ext[@]} \*.${ext[a]})
+        _ext=(${_ext[@]} \*.${ext[a]})
     done
 
     for ((b=0; b<${#ext[@]}; b++)); do
-	if [ "$b" = 0 ]; then
-	    __ext=(${__ext[@]}${ext[b]})
-	else 
-	    __ext=(${__ext[@]}\|${ext[b]})
-	fi
+        if [ "$b" = 0 ]; then
+            __ext=(${__ext[@]}${ext[b]})
+	    else 
+            __ext=(${__ext[@]}\|${ext[b]})
+        fi
     done
 
     local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- ${_ext[@]}"
@@ -87,249 +87,249 @@ function batch_convert_castool_mame-tools() {
     echo "Reading directory ..."
     ls -1 -A $d > ext.txt
     while read -r f; do
-	if [[ "$f" = *.[zZ][iI][pP] ]]; then
-	    zipinfo -1 "$f" "${_ext[@]}" >> out_1.txt
-	    cat out_1.txt >> out_merge_a.txt
-	elif [[ "$f" = *.7[zZ] ]]; then 
-	    7z l -ba "$f" "${_ext[@]}" -r- | cut -c54- >> out_2.txt
-	    cat out_2.txt >> out_merge_a.txt
-	else 
-	    find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.(${__ext[@]})" >> out_3.txt
-	    cat out_3.txt > out_merge_b.txt
-	fi 2>/dev/null >/dev/null
+        if [[ "$f" = *.[zZ][iI][pP] ]]; then
+            zipinfo -1 "$f" "${_ext[@]}" >> out_1.txt
+            cat out_1.txt >> out_merge_a.txt
+        elif [[ "$f" = *.7[zZ] ]]; then 
+            7z l -ba "$f" "${_ext[@]}" -r- | cut -c54- >> out_2.txt
+            cat out_2.txt >> out_merge_a.txt
+        else 
+            find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.(${__ext[@]})" >> out_3.txt
+            cat out_3.txt > out_merge_b.txt
+        fi 2>/dev/null >/dev/null
     done < ext.txt
     rm -rf ext.txt
 
     #### only for system with support to more one extension ####
     for i in a b; do
-    	while read -r g; do
-	    if [[ "$sys" = atom ]] || [[ "$sys" = fmsx ]] || [[ "$sys" = kc85 ]] || [[ "$sys" = pmd85 ]] || [[ "$sys" = spc1000 ]] || [[ "$sys" = tzx ]]; then
-		if [[ "$g" = *.[tT][aA][pP] ]]; then 
-		    echo "tap" >> out_$i.txt
-		fi
-	    fi
-	    if [[ "$sys" = apf ]] || [[ "$sys" = fmsx ]] || [[ "$sys" = spc1000 ]] || [[ "$sys" = x07 ]]; then
-		if [[ "$g" = *.[cC][aA][sS] ]]; then
-		    echo "cas" >> out_$i.txt
-		fi
-	    fi
-	    if [[ "$sys" = hector ]] || [[ "$sys" = mo5 ]] || [[ "$sys" = x07 ]]; then
-		if [[ "$g" = *.[kK]7 ]]; then
-		    echo "k7" >> out_$i.txt
-		fi
-	    fi
-	    if [[ "$sys" = apf ]]; then
-		if [[ "$g" = *.[cC][pP][fF] ]]; then 
-	    	    echo "cpf" >> out_$i.txt
-		elif [[ "$g" = *.[aA][pP][tT] ]]; then 
-	    	    echo "apt" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = atom ]] || [[ "$sys" = bbc ]]; then
-		if [[ "$g" = *.[cC][sS][wW] ]]; then 
-	    	    echo "csw" >> out_$i.txt
-		elif [[ "$g" = *.[uU][eE][fF] ]]; then 
-	    	    echo "uef" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = hector ]]; then
-		if [[ "$g" = *.[cC][iI][nN] ]]; then 
-	    	    echo "cin" >> out_$i.txt
-		elif [[ "$g" = *.[fF][oO][rR] ]]; then 
-	    	    echo "for" >> out_$i.txt
-		fi		
-	    elif [[ "$sys" = kc85 ]]; then
-		if [[ "$g" = *.[kK][cC][cC] ]]; then 
-	    	    echo "kcc" >> out_$i.txt
-		elif [[ "$g" = *.[kK][cC][bB] ]]; then 
-	    	    echo "kcb" >> out_$i.txt
-		elif [[ "$g" = *.853 ]]; then 
-	    	    echo "853" >> out_$i.txt
-		elif [[ "$g" = *.854 ]]; then 
-	    	    echo "854" >> out_$i.txt
-		elif [[ "$g" = *.855 ]]; then 
-	    	    echo "855" >> out_$i.txt
-		elif [[ "$g" = *.[tT][pP]2 ]]; then 
-	    	    echo "tp2" >> out_$i.txt
-		elif [[ "$g" = *.[kK][cC][mM] ]]; then 
-	    	    echo "kcm" >> out_$i.txt
-		elif [[ "$g" = *.[sS][sS][sS] ]]; then 
-	    	    echo "sss" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = kim ]]; then
-		if [[ "$g" = *.[kK][iI][mM]1 ]]; then 
-	    	    echo "kim1" >> out_$i.txt
-		elif [[ "$g" = *.[kK][iI][mM] ]]; then 
-	    	    echo "kim" >> out_$i.txt
-		fi	  
-	    elif [[ "$sys" = lviv ]]; then
-		if [[ "$g" = *.[lL][vV][tT] ]]; then 
-	    	    echo "lvt" >> out_$i.txt
-		elif [[ "$g" = *.[lL][vV][rR] ]]; then 
-	    	    echo "lvr" >> out_$i.txt
-		elif [[ "$g" = *.[lL][vV]0 ]]; then 
-	    	    echo "lv0" >> out_$i.txt
-		elif [[ "$g" = *.[lL][vV]1 ]]; then 
-	    	    echo "lv1" >> out_$i.txt
-		elif [[ "$g" = *.[lL][vV]2 ]]; then 
-	    	    echo "lv2" >> out_$i.txt
-		elif [[ "$g" = *.[lL][vV]3 ]]; then 
-	    	    echo "lv3" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = mo5 ]]; then
-		if [[ "$g" = *.[kK]5 ]]; then 
-	    	    echo "k5" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = mz ]]; then
-		if [[ "$g" = *.[mM]12 ]]; then 
-	    	    echo "m12" >> out_$i.txt
-		elif [[ "$g" = *.[mM][zZ][fF] ]]; then 
-	    	    echo "mzf" >> out_$i.txt
-		elif [[ "$g" = *.[mM][zZ][tT] ]]; then 
-	    	    echo "mzt" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = pmd85 ]]; then
-		if [[ "$g" = *.[pP][mM][dD] ]]; then 
-	    	    echo "pmd" >> out_$i.txt
-		elif [[ "$g" = *.[pP][tT][pP] ]]; then 
-	    	    echo "ptp" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = rkr ]]; then
-		if [[ "$g" = *.[rR][kK] ]]; then 
-	    	    echo "rk" >> out_$i.txt
-		elif [[ "$g" = *.[rR][kK][rR] ]]; then 
-	    	    echo "rkr" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = tzx ]]; then
-		if [[ "$g" = *.[bB][lL][kK] ]]; then 
-	    	    echo "blk" >> out_$i.txt
-		elif [[ "$g" = *.[tT][zZ][xX] ]]; then 
-	    	    echo "tzx" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = x07 ]]; then 
-		if [[ "$g" = *.[lL][sS][tT] ]]; then 
-	    	    echo "lst" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = zx80_o ]]; then
-		if [[ "$g" = *.[oO] ]]; then 
-	    	    echo "o" >> out_$i.txt
-		elif [[ "$g" = *.80 ]]; then 
-	    	    echo "80" >> out_$i.txt
-		fi
-	    elif [[ "$sys" = zx81_p ]]; then
-		if [[ "$g" = *.[pP] ]]; then 
-	    	    echo "p" >> out_$i.txt
-		elif [[ "$g" = *.81 ]]; then 
-	    	    echo "81" >> out_$i.txt
-		fi
-	    fi
-	done < out_merge_$i.txt
-	sort -u out_$i.txt -o out_$i.txt
-	awk 'BEGIN { ORS="" } { print p$0; p="," } END { print "\n" }' \
-	out_$i.txt > out_end_$i.txt
+        while read -r g; do
+            if [[ "$sys" = atom ]] || [[ "$sys" = fmsx ]] || [[ "$sys" = kc85 ]] || [[ "$sys" = pmd85 ]] || [[ "$sys" = spc1000 ]] || [[ "$sys" = tzx ]]; then
+                if [[ "$g" = *.[tT][aA][pP] ]]; then 
+                    echo "tap" >> out_$i.txt
+                fi
+            fi
+            if [[ "$sys" = apf ]] || [[ "$sys" = fmsx ]] || [[ "$sys" = spc1000 ]] || [[ "$sys" = x07 ]]; then
+                if [[ "$g" = *.[cC][aA][sS] ]]; then
+                    echo "cas" >> out_$i.txt
+                fi
+            fi
+            if [[ "$sys" = hector ]] || [[ "$sys" = mo5 ]] || [[ "$sys" = x07 ]]; then
+                if [[ "$g" = *.[kK]7 ]]; then
+                    echo "k7" >> out_$i.txt
+                fi
+            fi
+            if [[ "$sys" = apf ]]; then
+                if [[ "$g" = *.[cC][pP][fF] ]]; then 
+                    echo "cpf" >> out_$i.txt
+                elif [[ "$g" = *.[aA][pP][tT] ]]; then 
+                    echo "apt" >> out_$i.txt
+                fi
+            elif [[ "$sys" = atom ]] || [[ "$sys" = bbc ]]; then
+                if [[ "$g" = *.[cC][sS][wW] ]]; then 
+                    echo "csw" >> out_$i.txt
+                elif [[ "$g" = *.[uU][eE][fF] ]]; then 
+                    echo "uef" >> out_$i.txt
+                fi
+            elif [[ "$sys" = hector ]]; then
+                if [[ "$g" = *.[cC][iI][nN] ]]; then 
+                    echo "cin" >> out_$i.txt
+                elif [[ "$g" = *.[fF][oO][rR] ]]; then 
+                    echo "for" >> out_$i.txt
+                fi		
+            elif [[ "$sys" = kc85 ]]; then
+                if [[ "$g" = *.[kK][cC][cC] ]]; then 
+                    echo "kcc" >> out_$i.txt
+                elif [[ "$g" = *.[kK][cC][bB] ]]; then 
+                    echo "kcb" >> out_$i.txt
+                elif [[ "$g" = *.853 ]]; then 
+                    echo "853" >> out_$i.txt
+                elif [[ "$g" = *.854 ]]; then 
+                    echo "854" >> out_$i.txt
+                elif [[ "$g" = *.855 ]]; then 
+                    echo "855" >> out_$i.txt
+                elif [[ "$g" = *.[tT][pP]2 ]]; then 
+                    echo "tp2" >> out_$i.txt
+                elif [[ "$g" = *.[kK][cC][mM] ]]; then 
+                    echo "kcm" >> out_$i.txt
+                elif [[ "$g" = *.[sS][sS][sS] ]]; then 
+                    echo "sss" >> out_$i.txt
+                fi
+            elif [[ "$sys" = kim ]]; then
+                if [[ "$g" = *.[kK][iI][mM]1 ]]; then 
+                    echo "kim1" >> out_$i.txt
+                elif [[ "$g" = *.[kK][iI][mM] ]]; then 
+                    echo "kim" >> out_$i.txt
+                fi	  
+            elif [[ "$sys" = lviv ]]; then
+                if [[ "$g" = *.[lL][vV][tT] ]]; then 
+                    echo "lvt" >> out_$i.txt
+                elif [[ "$g" = *.[lL][vV][rR] ]]; then 
+                    echo "lvr" >> out_$i.txt
+                elif [[ "$g" = *.[lL][vV]0 ]]; then 
+                    echo "lv0" >> out_$i.txt
+                elif [[ "$g" = *.[lL][vV]1 ]]; then 
+                    echo "lv1" >> out_$i.txt
+                elif [[ "$g" = *.[lL][vV]2 ]]; then 
+                    echo "lv2" >> out_$i.txt
+                elif [[ "$g" = *.[lL][vV]3 ]]; then 
+                    echo "lv3" >> out_$i.txt
+                fi
+            elif [[ "$sys" = mo5 ]]; then
+                if [[ "$g" = *.[kK]5 ]]; then 
+                    echo "k5" >> out_$i.txt
+                fi
+            elif [[ "$sys" = mz ]]; then
+                if [[ "$g" = *.[mM]12 ]]; then 
+                    echo "m12" >> out_$i.txt
+                elif [[ "$g" = *.[mM][zZ][fF] ]]; then 
+                    echo "mzf" >> out_$i.txt
+                elif [[ "$g" = *.[mM][zZ][tT] ]]; then 
+                    echo "mzt" >> out_$i.txt
+                fi
+            elif [[ "$sys" = pmd85 ]]; then
+                if [[ "$g" = *.[pP][mM][dD] ]]; then 
+                    echo "pmd" >> out_$i.txt
+                elif [[ "$g" = *.[pP][tT][pP] ]]; then 
+                    echo "ptp" >> out_$i.txt
+                fi
+            elif [[ "$sys" = rkr ]]; then
+                if [[ "$g" = *.[rR][kK] ]]; then 
+                    echo "rk" >> out_$i.txt
+                elif [[ "$g" = *.[rR][kK][rR] ]]; then 
+                    echo "rkr" >> out_$i.txt
+                fi
+            elif [[ "$sys" = tzx ]]; then
+                if [[ "$g" = *.[bB][lL][kK] ]]; then 
+                    echo "blk" >> out_$i.txt
+                elif [[ "$g" = *.[tT][zZ][xX] ]]; then 
+                    echo "tzx" >> out_$i.txt
+                fi
+            elif [[ "$sys" = x07 ]]; then 
+                if [[ "$g" = *.[lL][sS][tT] ]]; then 
+                    echo "lst" >> out_$i.txt
+                fi
+            elif [[ "$sys" = zx80_o ]]; then
+                if [[ "$g" = *.[oO] ]]; then 
+                    echo "o" >> out_$i.txt
+                elif [[ "$g" = *.80 ]]; then 
+                    echo "80" >> out_$i.txt
+                fi
+            elif [[ "$sys" = zx81_p ]]; then
+                if [[ "$g" = *.[pP] ]]; then 
+                    echo "p" >> out_$i.txt
+                elif [[ "$g" = *.81 ]]; then 
+                    echo "81" >> out_$i.txt
+                fi
+            fi
+        done < out_merge_$i.txt
+        sort -u out_$i.txt -o out_$i.txt
+        awk 'BEGIN { ORS="" } { print p$0; p="," } END { print "\n" }' \
+        out_$i.txt > out_end_$i.txt
     done 2>/dev/null >/dev/null
     out_ext_1=`cat out_end_a.txt`
     out_ext_2=`cat out_end_b.txt`
     #####
     if [[ -z `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
-	if [[ -z `cat out_3.txt` ]]; then
-	    if [[ ${out_ext_1} = ??? ]]; then
-		aux_input="*.zip#*.$out_ext_1"
-	    elif [[ -z ${out_ext_1} ]]; then
-		aux_input="*.zip#$_ext"
-	    else
-		aux_input="*.zip#*.{$out_ext_1}"
-	    fi
-	else
-	    if [[ ${out_ext_2} = ??? ]]; then
-		if [[ ${out_ext_1} = ??? ]]; then
-		    aux_input="*.zip#*.$out_ext_1, *.$out_ext_2"
-		else
-		    aux_input="*.zip#*.{$out_ext_1}, *.$out_ext_2"
-		fi
-	    elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
-		aux_input="*.zip#$_ext, $_ext"
-	    else
-		if [[ ${out_ext_1} = ??? ]]; then
-		    aux_input="*.zip#*.$out_ext_1, *.{$out_ext_2}"
-		else
-		    aux_input="*.zip#*.{$out_ext_1}, *.{$out_ext_2}"
-		fi
-	    fi		
-	fi
+        if [[ -z `cat out_3.txt` ]]; then
+            if [[ ${out_ext_1} = ??? ]]; then
+                aux_input="*.zip#*.$out_ext_1"
+            elif [[ -z ${out_ext_1} ]]; then
+                aux_input="*.zip#$_ext"
+            else
+                aux_input="*.zip#*.{$out_ext_1}"
+            fi
+        else
+            if [[ ${out_ext_2} = ??? ]]; then
+                if [[ ${out_ext_1} = ??? ]]; then
+                    aux_input="*.zip#*.$out_ext_1, *.$out_ext_2"
+                else
+                    aux_input="*.zip#*.{$out_ext_1}, *.$out_ext_2"
+                fi
+            elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
+                aux_input="*.zip#$_ext, $_ext"
+            else
+                if [[ ${out_ext_1} = ??? ]]; then
+                    aux_input="*.zip#*.$out_ext_1, *.{$out_ext_2}"
+                else
+                    aux_input="*.zip#*.{$out_ext_1}, *.{$out_ext_2}"
+                fi
+            fi		
+        fi
     elif [[ -n `cat out_2.txt` ]] && [[ -z `cat out_1.txt` ]]; then
-	if [[ -z `cat out_3.txt` ]]; then
-	    if [[ ${out_ext_1} = ??? ]]; then
-		aux_input="*.7z#*.$out_ext_1"
-	    elif [[ -z ${out_ext_1} ]]; then
-		aux_input="*.7z#$_ext"
-	    else
-		aux_input="*.7z#*.{$out_ext_1}"
-	    fi
-	else
-	    if [[ ${out_ext_2} = ??? ]]; then
-		if [[ ${out_ext_1} = ??? ]]; then
-		    aux_input="*.7z#*.$out_ext_1, *.$out_ext_2"
-		else
-		    aux_input="*.7z#*.{$out_ext_1}, *.$out_ext_2"
-		fi
-	    elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
-		aux_input="*.7z#$_ext, $_ext"
-	    else
-		if [[ ${out_ext_1} = ??? ]]; then
-		    aux_input="*.7z#*.$out_ext_1, *.{$out_ext_2}"
-		else
-		    aux_input="*.7z#*.{$out_ext_1},*.{$out_ext_2}"
-		fi
-	    fi		
-	fi
+        if [[ -z `cat out_3.txt` ]]; then
+            if [[ ${out_ext_1} = ??? ]]; then
+                aux_input="*.7z#*.$out_ext_1"
+            elif [[ -z ${out_ext_1} ]]; then
+                aux_input="*.7z#$_ext"
+            else
+                aux_input="*.7z#*.{$out_ext_1}"
+            fi
+        else
+            if [[ ${out_ext_2} = ??? ]]; then
+                if [[ ${out_ext_1} = ??? ]]; then
+                    aux_input="*.7z#*.$out_ext_1, *.$out_ext_2"
+                else
+                    aux_input="*.7z#*.{$out_ext_1}, *.$out_ext_2"
+                fi
+            elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
+                aux_input="*.7z#$_ext, $_ext"
+            else
+                if [[ ${out_ext_1} = ??? ]]; then
+                    aux_input="*.7z#*.$out_ext_1, *.{$out_ext_2}"
+                else
+                    aux_input="*.7z#*.{$out_ext_1},*.{$out_ext_2}"
+                fi
+            fi		
+        fi
     elif [[ -n `cat out_2.txt` ]] && [[ -n `cat out_1.txt` ]]; then
-	if [[ -z `cat out_3.txt` ]]; then
-	    if [[ ${out_ext_1} = ??? ]]; then
-		aux_input="*.{zip,7z}#*.$out_ext_1"
-	    elif [[ -z ${out_ext_1} ]]; then
-		aux_input="*.{zip,7z}#$_ext"
-	    else
-		aux_input="*.{zip,7z}#*.{$out_ext_1}"
-	    fi
-	else
-	    if [[ ${out_ext_2} = ??? ]]; then
-		if [[ ${out_ext_1} = ??? ]]; then
-		    aux_input="*.{zip,7z}#*.$out_ext_1, *.$out_ext_2"
-		else
-		    aux_input="*.{zip,7z}#*.{$out_ext_1}, *.$out_ext_2"
-		fi
-	    elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
-		aux_input="*.{zip,7z}#$_ext, $_ext"
-	    else
-		if [[ ${out_ext_1} = ??? ]]; then
-		    aux_input="*.{zip,7z}#*.$out_ext_1, *.{$out_ext_2}"
-		else
-		    aux_input="*.{zip,7z}#*.{$out_ext_1}, *.{$out_ext_2}"
-		fi
-	    fi		
-	fi
+        if [[ -z `cat out_3.txt` ]]; then
+            if [[ ${out_ext_1} = ??? ]]; then
+                aux_input="*.{zip,7z}#*.$out_ext_1"
+            elif [[ -z ${out_ext_1} ]]; then
+                aux_input="*.{zip,7z}#$_ext"
+            else
+                aux_input="*.{zip,7z}#*.{$out_ext_1}"
+            fi
+        else
+            if [[ ${out_ext_2} = ??? ]]; then
+                if [[ ${out_ext_1} = ??? ]]; then
+                    aux_input="*.{zip,7z}#*.$out_ext_1, *.$out_ext_2"
+                else
+                    aux_input="*.{zip,7z}#*.{$out_ext_1}, *.$out_ext_2"
+                fi
+            elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]]; then
+                aux_input="*.{zip,7z}#$_ext, $_ext"
+            else
+                if [[ ${out_ext_1} = ??? ]]; then
+                    aux_input="*.{zip,7z}#*.$out_ext_1, *.{$out_ext_2}"
+                else
+                    aux_input="*.{zip,7z}#*.{$out_ext_1}, *.{$out_ext_2}"
+                fi
+            fi		
+        fi
     else
-	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed valid file.\n\nSupported compressed extensions:\n- ${_ext[@]}"
-	else
-	    if [[ ${out_ext_2} = ??? ]]; then
-		aux_input="*.$out_ext_2"
-	    elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]] ; then
-		aux_input="$_ext"
-	    else
-		aux_input="*.{$out_ext_2}"
-	    fi	
-	fi    
+	    if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
+            m="ERROR: ${d%/} doesn't have a zip or 7z compressed valid file.\n\nSupported compressed extensions:\n- ${_ext[@]}"
+        else
+            if [[ ${out_ext_2} = ??? ]]; then
+                aux_input="*.$out_ext_2"
+            elif [[ -z ${out_ext_2} ]] && [[ -z ${out_ext_1} ]] ; then
+                aux_input="$_ext"
+            else
+                aux_input="*.{$out_ext_2}"
+            fi	
+        fi    
     fi 2>/dev/null >/dev/null
 
     local output="${d%/}"
     local __output="$output"
 
     if [[ -n `cat out_1.txt` ]] || [[ -n `cat out_2.txt` ]] || [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"` ]]; then
-	rm -rf out_*
+        rm -rf out_*
 
-    	local default
-    	while true
-    	do
+        local default
+        while true
+        do
             local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/$aux_input\nOutput dir: $__output/*.wav\n\nOptional parameters:" 25 76 16)
             local options=()
 
@@ -339,86 +339,86 @@ function batch_convert_castool_mame-tools() {
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
             if [[ -n "$choice" ]]; then
-            	default="$choice"
-            	case "$choice" in
+                default="$choice"
+                case "$choice" in
                     O)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for WAV output:" 10 60 "$output")
-                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$output" = "${d%/}" ]] || [[ -z "$output" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for WAV output:" 10 60 "$output")
+                        output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$output" = "${d%/}" ]] || [[ -z "$output" ]]; then
                             __output="${d%/}"
-                    	else
+                        else
                             __output="${output%/}"
-                    	fi
-                    	;;
-		    -)
-		    	return 0
-		    	;;
-            	esac
+                        fi
+                        ;;
+                    -)
+                        return 0
+                        ;;
+                esac
             else
-            	break
+                break
             fi
-    	done
+        done
 
         clear
-	cd && cd "$d"
-	remove="remove_files.txt"
-	create="create_files.txt"
-	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
-	    ls -1 -A > out.txt
-	    echo $'Extracting files ...\nThis may take several minutes ...\n'
-	    while read -r i; do
-    	    	if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]] && [[ ${i} = *.zip ]]; then
-		    ls "$i" >> $remove
-		    unzip "$i"
-    	    	elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]] && [[ ${i} = *.7z ]]; then
-		    ls "$i" >> $remove
-		    7z e "$i" 
-    	    	fi 2>/dev/null >/dev/null
-	    done < out.txt 
+        cd && cd "$d"
+        remove="remove_files.txt"
+        create="create_files.txt"
+        if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+            ls -1 -A > out.txt
+            echo $'Extracting files ...\nThis may take several minutes ...\n'
+            while read -r i; do
+                if [[ -n `zipinfo -1 $i "${_ext[@]}"` ]] && [[ ${i} = *.zip ]]; then
+                    ls "$i" >> $remove
+                    unzip "$i"
+                elif [[ -n `7z l -ba $i "${_ext[@]}" -r-` ]] && [[ ${i} = *.7z ]]; then
+                    ls "$i" >> $remove
+                    7z e "$i" 
+                fi 2>/dev/null >/dev/null
+            done < out.txt 
             chown $user:$user ${_ext[@]} 2>/dev/null
-	    rm -rf out.txt
-	fi
+            rm -rf out.txt
+        fi
 
-	extensions=`find . -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"`
-	if [[ -n $extensions ]]; then
-	    echo $'Converting files ...\n'
+        extensions=`find . -maxdepth 1 -regextype posix-egrep -iregex ".*\.($__ext)"`
+        if [[ -n $extensions ]]; then
+            echo $'Converting files ...\n'
             for j in $extensions; do
-        	if [[ "$output" != ${d%/} ]]; then
-	    	    j_bn="${j##*/}"
-            	    $md_inst/castool convert $sys "$j" "$__output/${j_bn%.*}.wav"
-		    chown $user:$user "$__output/${j_bn%.*}.wav"
-		else
-      	            $md_inst/castool convert $sys "$j" "${j%.*}.wav"
-		    chown $user:$user "${j%.*}.wav"
-		fi
-	    	if [[ -f "$__output/${j_bn%.*}.wav" ]] || [[ -f "${j%.*}.wav" ]]; then
-		    echo "$j" >> $remove
-		    if [[ -f "$__output/${j_bn%.*}.wav" ]]; then
-			echo "${j_bn%.*}".wav | cut --complement -d "/" -f 1 >> $create
-		    elif [[ -f "${j%.*}.wav" ]]; then
-			echo "${j%.*}".wav >> $create
-		    fi
-	    	fi
-	    done    	  
-	fi
+                if [[ "$output" != ${d%/} ]]; then
+                    j_bn="${j##*/}"
+                    $md_inst/castool convert $sys "$j" "$__output/${j_bn%.*}.wav"
+                    chown $user:$user "$__output/${j_bn%.*}.wav"
+                else
+                    $md_inst/castool convert $sys "$j" "${j%.*}.wav"
+                    chown $user:$user "${j%.*}.wav"
+                fi
+                if [[ -f "$__output/${j_bn%.*}.wav" ]] || [[ -f "${j%.*}.wav" ]]; then
+                    echo "$j" >> $remove
+                    if [[ -f "$__output/${j_bn%.*}.wav" ]]; then
+                        echo "${j_bn%.*}".wav | cut --complement -d "/" -f 1 >> $create
+                    elif [[ -f "${j%.*}.wav" ]]; then
+                        echo "${j%.*}".wav >> $create
+                    fi
+                fi
+            done    	  
+        fi
 
-	if [[ -e "$create" ]]; then
-	    sort -u $remove -o $remove && sort -u $create -o $create
+        if [[ -e "$create" ]]; then
+            sort -u $remove -o $remove && sort -u $create -o $create
             dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete $aux_input files and keep only *.wav files?" 8 50
             if [[ $? = 0 ]]; then
-		xargs -d '\n' rm -f {} < $remove
-		dialog --backtitle "$__backtitle" --stdout --title "Removed files" --clear --textbox $remove 15 63
-	        dialog --backtitle "$__backtitle" --stdout --msgbox "$aux_input files have been deleted!" 8 50
+                xargs -d '\n' rm -f {} < $remove
+                dialog --backtitle "$__backtitle" --stdout --title "Removed files" --clear --textbox $remove 15 63
+                dialog --backtitle "$__backtitle" --stdout --msgbox "$aux_input files have been deleted!" 8 50
             fi
-	    dialog --backtitle "$__backtitle" --stdout --title "Created files" --clear --textbox $create 15 63
-	    m="$aux_input to *.wav successfully converted."
-	else
-	    m="ERROR: Conversion Failed."
+            dialog --backtitle "$__backtitle" --stdout --title "Created files" --clear --textbox $create 15 63
+            m="$aux_input to *.wav successfully converted."
+        else
+            m="ERROR: Conversion Failed."
         fi
-	rm -rf $remove $create
+        rm -rf $remove $create
     else
         m="$m"
-	rm -rf out_*
+        rm -rf out_*
     fi
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
@@ -433,42 +433,43 @@ function convert_castool_mame-tools(){
     local ext=""
     local _ext=""
     local __ext=""
+    
     echo ${ext_form} | sed 's/ /\n/g' > ext_form.txt
     set -- "`cat ext_form.txt`"; IFS=$'\n'; declare -a ext=($*)
     rm -rf ext_form.txt
 
     local aux_input=""
     for ((a=0; a<${#ext[@]}; a++)); do
-	_ext=(${_ext[@]} \*.${ext[a]})
-	if [[ "$f" = "${f%.*}.${ext[a]}" ]]; then
-	    aux_input="$input"
-	fi
+        _ext=(${_ext[@]} \*.${ext[a]})
+        if [[ "$f" = "${f%.*}.${ext[a]}" ]]; then
+            aux_input="$input"
+        fi
     done
 
     for ((b=0; b<${#ext[@]}; b++)); do
-	if [ "$b" = 0 ]; then
-	    __ext=(${__ext[@]}${ext[b]})
-	else 
-	    __ext=(${__ext[@]}\|${ext[b]})
-	fi
+        if [ "$b" = 0 ]; then
+            __ext=(${__ext[@]}${ext[b]})
+        else 
+            __ext=(${__ext[@]}\|${ext[b]})
+        fi
     done
 
     local m="ERROR: $input isn't a valid file.\n\nSupported extensions:\n- ${_ext[@]}"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
-	if [[ "$f" = *.[zZ][iI][pP] ]]; then
-	    aux_input=`zipinfo -1 $f "${_ext[@]}"`
-	elif [[ "$f" = *.7[zZ] ]]; then
-	    7z l -ba $f "${_ext[@]}" -r- | cut -c54- > out.txt
-	    out=`cat out.txt`
-	    rm -rf "out.txt"
-	    aux_input="$out"
-	fi
-	if [[ -z $aux_input ]]; then
-	    m="ERROR: $input doesn't have a compressed valid file.\n\nSupported compressed extensions:\n- ${_ext[@]}" 
-	fi
-	input="$input#$aux_input"
-	__f="$__f#$aux_input"
+        if [[ "$f" = *.[zZ][iI][pP] ]]; then
+            aux_input=`zipinfo -1 $f "${_ext[@]}"`
+        elif [[ "$f" = *.7[zZ] ]]; then
+            7z l -ba $f "${_ext[@]}" -r- | cut -c54- > out.txt
+            out=`cat out.txt`
+            rm -rf "out.txt"
+            aux_input="$out"
+        fi
+        if [[ -z $aux_input ]]; then
+            m="ERROR: $input doesn't have a compressed valid file.\n\nSupported compressed extensions:\n- ${_ext[@]}" 
+        fi
+        input="$input#$aux_input"
+        __f="$__f#$aux_input"
     fi
     local DIR=`dirname $f`
 
@@ -476,9 +477,9 @@ function convert_castool_mame-tools(){
     local __output="$output"
 
     if [[ -n $aux_input ]]; then
-    	local default
-    	while true
-    	do
+        local default
+        while true
+        do
             local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $__f\nOutput file: $__output\nOptional parameters:" 22 76 16)
             local options=()
 
@@ -488,71 +489,71 @@ function convert_castool_mame-tools(){
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
             if [[ -n "$choice" ]]; then
-            	default="$choice"
-            	case "$choice" in
+                default="$choice"
+                case "$choice" in
                     O)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for WAV output:" 10 60 "$output")
-                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$output" = "$DIR/${aux_input%.*}.wav" ]] || [[ -z "$output" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for WAV output:" 10 60 "$output")
+                        output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$output" = "$DIR/${aux_input%.*}.wav" ]] || [[ -z "$output" ]]; then
                             __output="$DIR/${aux_input%.*}.wav"
-			    output="$__output"
-		    	elif  [[ "${output}" = */* ]]; then
-			    __output="$output"
-                    	else
+                            output="$__output"
+                        elif  [[ "${output}" = */* ]]; then
+                            __output="$output"
+                        else
                             __output="$DIR/$output"
-                    	fi
-		    	;;
+                        fi
+                        ;;
 
-		    -)
-		    	return 0
-		    	;;
-            	esac
+                    -)
+                        return 0
+                        ;;
+                esac
             else
-            	break
+                break
             fi
-    	done
+        done
 
         clear
-	cd && cd "$DIR"
-	if [[ -n `find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
-	    echo $'Extracting files ...\nThis may take several minutes ...\n'
-	    for i in ${f%.*}.[zZ][iI][pP]; do 
-		unzip "$i"
-	    done 2>/dev/null >/dev/null
- 	    for i in ${f%.*}.7[zZ]; do 
-		7z e "$i"
-	    done 2>/dev/null >/dev/null
-	fi
+        cd && cd "$DIR"
+        if [[ -n `find . -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]]; then
+            echo $'Extracting files ...\nThis may take several minutes ...\n'
+            for i in ${f%.*}.[zZ][iI][pP]; do 
+                unzip "$i"
+            done 2>/dev/null >/dev/null
+            for i in ${f%.*}.7[zZ]; do 
+                7z e "$i"
+            done 2>/dev/null >/dev/null
+        fi
         chown $user:$user ${_ext[@]} 2>/dev/null >/dev/null
 
-    	local params=()
-	if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
-	    enter="$DIR/$aux_input"
-	    params+=("$enter")
-	else
-	    params+=("$f")
+        local params=()
+        if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
+            enter="$DIR/$aux_input"
+            params+=("$enter")
+        else
+            params+=("$f")
         fi
         if [[ -n "$output" ]]; then
             params+=("$__output")
         fi 
 
-	echo $'Converting file ...\n'
-	$md_inst/castool convert $sys ${params[@]}
-	chown $user:$user "$__output"
+        echo $'Converting file ...\n'
+        $md_inst/castool convert $sys ${params[@]}
+        chown $user:$user "$__output"
 
-	if [[ -f "$__output" ]]; then
-	    m="$input to ${__output##*/} successfully converted."
-	    dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete $input and keep only ${__output##*/}?" 17 54
+        if [[ -f "$__output" ]]; then
+            m="$input to ${__output##*/} successfully converted."
+            dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete $input and keep only ${__output##*/}?" 17 54
             if [[ $? = 0 ]]; then
                 if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
-	            rm -rf "$enter" && rm -rf "$f"
-	        else
-	            rm -rf "$f"
-	        fi
-		dialog --backtitle "$__backtitle" --stdout --msgbox "$input has been deleted!" 10 50
+                    rm -rf "$enter" && rm -rf "$f"
+                else
+                    rm -rf "$f"
+                fi
+                dialog --backtitle "$__backtitle" --stdout --msgbox "$input has been deleted!" 10 50
             fi
         else
-	    m="ERROR: Conversion Failed."
+            m="ERROR: Conversion Failed."
         fi
     else
         m="$m"
@@ -587,18 +588,18 @@ function aux_castool_mame-tools(){
         local options=(
             1 "single conversion"
             2 "batch conversion"
-	)
+        )
 	
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
         if [[ -n "$choice" ]]; then
             default="$choice"
             case "$choice" in
-		1)
-		    _aux_castool_mame-tools "$cmd_1" "$cmd_2"
-		    ;;
-		2)
-	            __aux_castool_mame-tools "$cmd_1" "$cmd_2"
-		    ;;
+                1)
+                    _aux_castool_mame-tools "$cmd_1" "$cmd_2"
+                    ;;
+                2)
+                    __aux_castool_mame-tools "$cmd_1" "$cmd_2"
+                    ;;
             esac
         else
             break
@@ -614,27 +615,27 @@ function castool_mame-tools() {
             S "see manual"
             1 "a26 - Atari 2600 SuperCharger"
             2 "apf - APF Imagination Machine"
-	    3 "atom - Acorn Atom"
-	    4 "bbc - Acorn BBC & Electron"
-	    5 "cbm - Commodore 8-bit series"
-	    6 "cdt - Amstrad CPC"
-	    7 "cgenie - EACA Colour Genie"
-	    8 "coco - Tandy Radio Shack Color Computer"
-	    9 "csw - Compressed Square Wave"
-	    10 "ddp - Coleco ADAM"
-	    11 "fm7 - Fujitsu FM-7"
-	    12 "fmsx - MSX"
-	    13 "gtp - Elektronika inzenjering Galaksija"
-	    14 "hector - Micronique Hector & Interact Family Computer"
-	    15 "jupiter - Jupiter Cantab Jupiter Ace"
-	    16 "kc85 - VEB Mikroelektronik KC 85"
-	    17 "kim1 - MOS KIM-1"
-	    18 "lviv - PK-01 Lviv"
-	    19 "mo5 - Thomson MO-series"
-	    20 "mz - Sharp MZ-700"
-	    21 "orao - PEL Varazdin Orao"
-	    22 "oric - Tangerine Oric"
-	    23 "pc6001 - NEC PC-6001"
+            3 "atom - Acorn Atom"
+            4 "bbc - Acorn BBC & Electron"
+            5 "cbm - Commodore 8-bit series"
+            6 "cdt - Amstrad CPC"
+            7 "cgenie - EACA Colour Genie"
+            8 "coco - Tandy Radio Shack Color Computer"
+            9 "csw - Compressed Square Wave"
+            10 "ddp - Coleco ADAM"
+            11 "fm7 - Fujitsu FM-7"
+            12 "fmsx - MSX"
+            13 "gtp - Elektronika inzenjering Galaksija"
+            14 "hector - Micronique Hector & Interact Family Computer"
+            15 "jupiter - Jupiter Cantab Jupiter Ace"
+            16 "kc85 - VEB Mikroelektronik KC 85"
+            17 "kim1 - MOS KIM-1"
+            18 "lviv - PK-01 Lviv"
+            19 "mo5 - Thomson MO-series"
+            20 "mz - Sharp MZ-700"
+            21 "orao - PEL Varazdin Orao"
+            22 "oric - Tangerine Oric"
+            23 "pc6001 - NEC PC-6001"
             24 "phc25 - Sanyo PHC-25"
             25 "pmd85 - Tesla PMD-85"
             26 "primo - Microkey Primo"
@@ -671,7 +672,7 @@ function castool_mame-tools() {
             case "$choice" in
                 S)
                     man "$md_inst/man/castool.1" > man.txt
- 		    dialog --backtitle "$__backtitle" --stdout --title "CASTOOL - MANUAL" --clear --textbox man.txt 0 0
+                    dialog --backtitle "$__backtitle" --stdout --title "CASTOOL - MANUAL" --clear --textbox man.txt 0 0
                     rm -rf man.txt
                     ;;
                 1)
