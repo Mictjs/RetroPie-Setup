@@ -62,6 +62,9 @@ function batch_convert_castool_mame-tools() {
     local sys="$2"
     local ext_form="$3"
 
+    local ext=""
+    local _ext=""
+    local __ext=""
     echo ${ext_form} | sed 's/ /\n/g' > ext_form.txt
     set -- "`cat ext_form.txt`"; IFS=$'\n'; declare -a ext=($*)
     rm -rf ext_form.txt
@@ -78,7 +81,7 @@ function batch_convert_castool_mame-tools() {
 	fi
     done
 
-    local m="ERROR: There aren't ${_ext[@]} extensions in ${d%/} directory."
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- ${_ext[@]}"
     
     cd && cd $d
     echo "Reading directory ..."
@@ -306,7 +309,7 @@ function batch_convert_castool_mame-tools() {
 	fi
     else
 	if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed ${_ext[@]} file."
+	    m="ERROR: ${d%/} doesn't have a zip or 7z compressed valid file.\n\nSupported compressed extensions:\n- ${_ext[@]}"
 	else
 	    if [[ ${out_ext_2} = ??? ]]; then
 		aux_input="*.$out_ext_2"
@@ -331,7 +334,7 @@ function batch_convert_castool_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input")
+            options+=(I "Input file: ./$aux_input (fixed)")
             options+=(O "Output file: ./*.wav")
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -417,8 +420,6 @@ function batch_convert_castool_mame-tools() {
         m="$m"
 	rm -rf out_*
     fi
-    _ext=""
-    __ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -429,7 +430,13 @@ function convert_castool_mame-tools(){
     local ext_form="$3"
     local input="${f##*/}"
 
-    local ext=(${ext_form[@]})
+    local ext=""
+    local _ext=""
+    local __ext=""
+    echo ${ext_form} | sed 's/ /\n/g' > ext_form.txt
+    set -- "`cat ext_form.txt`"; IFS=$'\n'; declare -a ext=($*)
+    rm -rf ext_form.txt
+
     local aux_input=""
     for ((a=0; a<${#ext[@]}; a++)); do
 	_ext=(${_ext[@]} \*.${ext[a]})
@@ -475,6 +482,7 @@ function convert_castool_mame-tools(){
             local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $__f\nOutput file: $__output\nOptional parameters:" 22 76 16)
             local options=()
 
+            options+=(- "Exit")
             options+=(I "Input file: $input (fixed)")
             options+=(O "Output file: ${output##*/}")
 
@@ -517,6 +525,7 @@ function convert_castool_mame-tools(){
 	fi
         chown $user:$user ${_ext[@]} 2>/dev/null >/dev/null
 
+    	local params=()
 	if [[ "${f}" = *.[zZ][iI][pP] ]] || [[ "${f}" = *.7[zZ] ]]; then
 	    enter="$DIR/$aux_input"
 	    params+=("$enter")
@@ -525,7 +534,7 @@ function convert_castool_mame-tools(){
         fi
         if [[ -n "$output" ]]; then
             params+=("$__output")
-        fi
+        fi 
 
 	echo $'Converting file ...\n'
 	$md_inst/castool convert $sys ${params[@]}
@@ -548,7 +557,6 @@ function convert_castool_mame-tools(){
     else
         m="$m"
     fi
-    _ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -1464,7 +1472,7 @@ function batch_extractld_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input")
+            options+=(I "Input file: ./$aux_input (fixed)")
             options+=(O "Output file: ./*.avi")
             if [[ "$force" -eq 1 ]]; then
             	options+=(F "Overwrite existing files (Enabled)")
@@ -1829,7 +1837,7 @@ function batch_extractcd_chdman_mame-tools() {
 	    local options=()
 
 	    options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input")
+            options+=(I "Input file: ./$aux_input (fixed)")
             options+=(O "Output file: ./*.$exts")
 	    if [[ "$form" -eq 0 ]]; then
 		ext="toc"
@@ -2185,7 +2193,7 @@ function batch_extracthd_chdman_mame-tools() {
 	    local options=()
 
 	    options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input")
+            options+=(I "Input file: ./$aux_input (fixed)")
             options+=(O "Output file: ./*.$exts")
 	    if [[ "$form" -eq 0 ]]; then
 		ext="img"
@@ -2659,7 +2667,7 @@ function batch_extractraw_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input")
+            options+=(I "Input file: ./$aux_input (fixed)")
             options+=(O "Output file: ./*.raw")
             if [[ "$force" -eq 1 ]]; then
             	options+=(F "Overwrite existing files (Enabled)")
@@ -3078,7 +3086,7 @@ function batch_createld_chdman_mame-tools() {
 	    local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input")
+            options+=(I "Input file: ./$aux_input (fixed)")
             options+=(O "Output file: ./*.chd")
             if [[ "$force" -eq 1 ]]; then
             	options+=(F "Overwrite existing files (Enabled)")
@@ -3516,7 +3524,10 @@ function batch_createcd_chdman_mame-tools() {
     d="$1"
     local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- CUE files (*.cue)\n- GDI files (*.gdi)\n- TOC files (*.toc)"
 
-    local ext=('cue' 'gdi' 'toc' 'bin' 'raw')
+    local ext=""
+    local _ext=""
+    local __ext=""
+    ext=('cue' 'gdi' 'toc' 'bin' 'raw')
     for ((a=0; a<3; a++)); do
 	_ext=(${_ext[@]} \*.${ext[a]})
     done
@@ -3662,7 +3673,7 @@ function batch_createcd_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input")
+            options+=(I "Input file: ./$aux_input (fixed)")
             options+=(O "Output file: ./*.chd")
             if [[ "$force" -eq 1 ]]; then
             	options+=(F "Overwrite existing files (Enabled)")
@@ -3838,8 +3849,6 @@ function batch_createcd_chdman_mame-tools() {
         m="$m"
 	rm -rf out_*
     fi
-    _ext=""
-    __ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -3849,7 +3858,9 @@ function createcd_chdman_mame-tools(){
     local input="${f##*/}"
     local m="ERROR: $input isn't a CD image file.\n\nSupported extensions:\n- CUE files (*.cue)\n- GDI files (*.gdi)\n- TOC files (*.toc)"
 
-    local ext=('cue' 'gdi' 'toc' 'bin' 'raw')
+    local ext=""
+    local _ext=""
+    ext=('cue' 'gdi' 'toc' 'bin' 'raw')
     local aux_input=""
     for ((a=0; a<3; a++)); do
 	_ext=(${_ext[@]} \*.${ext[a]})
@@ -4077,7 +4088,6 @@ function createcd_chdman_mame-tools(){
     else
         m="$m"
     fi
-    _ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -4085,7 +4095,10 @@ function batch_createhd_chdman_mame-tools() {
     d="$1"
     local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- raw disk image (*.img)\n- Mac disk image (*.dmg)\n- Apple IIgs disk image (*.2mg)\n- FM-Towns disk image (*.h0,*.h1,*.h2,*.h3,*.h4)\n- IDE64 disk image (*.hdd)\n- X68k SASI disk image (*.hdf)\n- X68k SCSI disk image (*.hds)"
 
-    local ext=('img' 'dmg' '2mg' 'h0' 'h1' 'h2' 'h3' 'h4' 'hdd' 'hdf' 'hds')
+    local ext=""
+    local _ext=""
+    local __ext=""
+    ext=('img' 'dmg' '2mg' 'h0' 'h1' 'h2' 'h3' 'h4' 'hdd' 'hdf' 'hds')
     for ((a=0; a<${#ext[@]}; a++)); do
 	_ext=(${_ext[@]} \*.${ext[a]})
     done
@@ -4256,7 +4269,7 @@ function batch_createhd_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input")
+            options+=(I "Input file: ./$aux_input (fixed)")
             options+=(O "Output file: ./*.chd")
             options+=(D "Ident File: ${ident##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -4588,8 +4601,6 @@ function batch_createhd_chdman_mame-tools() {
         m="$m"
 	rm -rf out_*
     fi
-    _ext=""
-    __ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
@@ -4599,7 +4610,9 @@ function createhd_chdman_mame-tools(){
     local input="${f##*/}"
     local m="ERROR: $input isn't a HD file.\n\nSupported extensions:\n- raw disk image (*.img)\n- Mac disk image (*.dmg)\n- Apple IIgs disk image (*.2mg)\n- FM-Towns disk image (*.h0,*.h1,*.h2,*.h3,*.h4)\n- IDE64 disk image (*.hdd)\n- X68k SASI disk image (*.hdf)\n- X68k SCSI disk image (*.hds)"
 
-    local ext=('img' 'dmg' '2mg' 'h0' 'h1' 'h2' 'h3' 'h4' 'hdd' 'hdf' 'hds')
+    local ext=""
+    local _ext=""
+    ext=('img' 'dmg' '2mg' 'h0' 'h1' 'h2' 'h3' 'h4' 'hdd' 'hdf' 'hds')
     local aux_input=""
     for ((a=0; a<${#ext[@]}; a++)); do
 	_ext=(${_ext[@]} \*.${ext[a]})
@@ -5089,7 +5102,6 @@ function createhd_chdman_mame-tools(){
     else
         m="$m"
     fi
-    _ext=""
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
 }
 
