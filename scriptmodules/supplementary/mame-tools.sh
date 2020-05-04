@@ -853,9 +853,9 @@ function dumpmeta_chdman_mame-tools(){
     local index="auto"
 
     if [[ "${input}" = *.chd ]]; then
-    	local default
-    	while true
-    	do
+        local default
+        while true
+        do
             local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $f\nOutput file: $__output\n\nOptional parameters (Warning: tag is required):" 22 76 16)
             local options=()
 
@@ -863,107 +863,105 @@ function dumpmeta_chdman_mame-tools(){
             options+=(I "Input file: $input (fixed)")
             options+=(O "Output: ${output##*/}")
             if [[ "$force" -eq 1 ]]; then
-            	options+=(F "Overwrite existing files (Enabled)")
+                options+=(F "Overwrite existing files (Enabled)")
             else
-            	options+=(F "Overwrite existing files (Disabled)")
+                options+=(F "Overwrite existing files (Disabled)")
             fi
             options+=(1 "tag: $tag")
             options+=(2 "Index ($index)")
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
             if [[ -n "$choice" ]]; then
-            	default="$choice"
-            	case "$choice" in
+                default="$choice"
+                case "$choice" in
                     1)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
-                    	tag=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
+                        tag=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
                             tag="required"
-                    	else
+                        else
                             tag="$tag"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     2)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
-                    	index=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
+                        index=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
                             index="auto"
-                    	else
+                        else
                             index="$index"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     O)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
-                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$output" = "default" ]] || [[ -z "$output" ]]; then
-			    __output="none"
-			    output="$__output"
-			elif  [[ "${output}" = */* ]]; then
-			    __output="$output"
-			    output="${__output##*/}"
-                    	else
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
+                        output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$output" = "default" ]] || [[ -z "$output" ]]; then
+                            __output="none"
+                            output="$__output"
+                        elif  [[ "${output}" = */* ]]; then
+                            __output="$output"
+                            output="${__output##*/}"
+                        else
                             __output="$DIR/$output"
-			    output="${__output##*/}"
-                    	fi
-                    	;;
+                            output="${__output##*/}"
+                        fi
+                        ;;
                     F)
-                    	force="$((force ^ 1))"
-                    	;;
-		    -)
-		    	return 0
-		    	;;
-            	esac
+                        force="$((force ^ 1))"
+                        ;;
+                    -)
+                        return 0
+                        ;;
+                esac
             else
-            	break
+                break
             fi
-    	done
+        done
 
-    	local params=()
-    	if [[ -n "$output" ]] && [[ "$output" != "none" ]]; then
+        local params=()
+        if [[ -n "$output" ]] && [[ "$output" != "none" ]]; then
             params+=(-o "$__output")
-    	fi
-    	if [[ "$force" -eq 1 ]]; then
+        fi
+        if [[ "$force" -eq 1 ]]; then
             params+=(-f)
-    	fi
-    	if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
+        fi
+        if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
             params+=(-t "$tag")
-	else
-	    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "Required Parameters missing (Tag)" 17 54
-    	fi
-    	if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
+        else
+            dialog --backtitle "$__backtitle" --stdout --clear --msgbox "Required Parameters missing (Tag)" 17 54
+        fi
+        if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
             params+=(-ix "$index")
-    	fi
+        fi
 
         clear
         $md_inst/chdman dumpmeta -i "$f" ${params[@]} > "${f%.*}_info.dumpmeta" 2> "${f%.*}.dumpmeta"
-	if [ `awk 'NR == 1{print $1}' ${f%.*}.dumpmeta` = "Error" ]; then
-	    m=`sed 's/([^>]*)/'$input'/g' ${f%.*}.dumpmeta`	    	
+        if [ `awk 'NR == 1{print $1}' ${f%.*}.dumpmeta` = "Error" ]; then
+            m=`sed 's/([^>]*)/'$input'/g' ${f%.*}.dumpmeta`	    	
         elif [ `awk 'NR == 1{print $1}' ${f%.*}.dumpmeta` = "Error:" ]; then
-	    m=`cat ${f%.*}.dumpmeta`	
-	else
-	    sed '1d' ${f%.*}_info.dumpmeta > "${f%.*}-info.dumpmeta"
-	    n=`sed 's/([^>]*)/'$input'/g' ${f%.*}-info.dumpmeta`
-	    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$n" 8 53
-	    if [[ -f $__output ]]; then
-		m="Metadata dumped for $input"
-		dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to save the ${__output##*/} file?" 8 50
-            	if [[ $? = 0 ]]; then
-	            chown $user:$user "$__output"
-		    dialog --backtitle "$__backtitle" --stdout --msgbox "${__output##*/} has been saved!" 17 54
-            	else
-		    rm -rf "$__output"
-            	fi	
-	    else
-		m="Metadata dumped for $input (no 'output' parameters)"	
-	    fi
+            m=`cat ${f%.*}.dumpmeta`	
+        else
+            sed '1d' ${f%.*}_info.dumpmeta > "${f%.*}-info.dumpmeta"
+            n=`sed 's/([^>]*)/'$input'/g' ${f%.*}-info.dumpmeta`
+            dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$n" 8 53
+            if [[ -f $__output ]]; then
+                m="Metadata dumped for $input"
+                dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to save the ${__output##*/} file?" 8 50
+                if [[ $? = 0 ]]; then
+                    chown $user:$user "$__output"
+                    dialog --backtitle "$__backtitle" --stdout --msgbox "${__output##*/} has been saved!" 17 54
+                else
+                    rm -rf "$__output"
+                fi	
+            else
+            m="Metadata dumped for $input (no 'output' parameters)"	
+            fi
         fi
-	rm -rf "${f%.*}.dumpmeta" rm -rf "${f%.*}_info.dumpmeta" "${f%.*}-info.dumpmeta"
+        rm -rf "${f%.*}.dumpmeta" rm -rf "${f%.*}_info.dumpmeta" "${f%.*}-info.dumpmeta"
     else
         m="$m"
     fi
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
-
-
 }
 
 
@@ -976,9 +974,9 @@ function delmeta_chdman_mame-tools(){
     local index="auto"
 
     if [[ "${input}" = *.chd ]]; then
-    	local default
-    	while true
-    	do
+        local default
+        while true
+        do
             local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $f\n\nOptional parameters (Warning: tag is required)" 22 76 16)
             local options=()
 
@@ -989,63 +987,60 @@ function delmeta_chdman_mame-tools(){
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
             if [[ -n "$choice" ]]; then
-            	default="$choice"
-            	case "$choice" in
+                default="$choice"
+                case "$choice" in
                     1)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
-                    	tag=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
+                        tag=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
                             tag="required"
-                    	else
+                        else
                             tag="$tag"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     2)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
-                    	index=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
+                        index=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
                             index="auto"
-                    	else
+                        else
                             index="$index"
-                    	fi
-                    	;;
-		    -)
-		    	return 0
-		    	;;
-            	esac
+                        fi
+                        ;;
+                    -)
+                        return 0
+                        ;;
+                esac
             else
-            	break
+                break
             fi
-    	done
+        done
 
-    	local params=()
-    	if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
+        local params=()
+        if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
             params+=(-t "$tag")
-	else
-	    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "Required Parameters missing (Tag)" 17 54
-    	fi
-    	if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
+        else
+            dialog --backtitle "$__backtitle" --stdout --clear --msgbox "Required Parameters missing (Tag)" 17 54
+        fi
+        if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
             params+=(-ix "$index")
-    	fi
+        fi
 
         clear
         $md_inst/chdman delmeta -i "$f" ${params[@]} 2> "${f%.*}.delmeta"
-	if [ `awk 'NR == 1{print $1}' ${f%.*}.delmeta` = "Error" ]; then
-	    m=`sed 's/([^>]*)/'$input'/g' ${f%.*}.delmeta`	    	
+        if [ `awk 'NR == 1{print $1}' ${f%.*}.delmeta` = "Error" ]; then
+            m=`sed 's/([^>]*)/'$input'/g' ${f%.*}.delmeta`	    	
         elif [ `awk 'NR == 1{print $1}' ${f%.*}.delmeta` = "Error:" ]; then
-	    m=`cat ${f%.*}.delmeta`	
-	else
-	    m="Metadata deleted for $input"
+            m=`cat ${f%.*}.delmeta`	
+        else
+            m="Metadata deleted for $input"
         fi
-	rm -rf "${f%.*}.delmeta"
+        rm -rf "${f%.*}.delmeta"
     else
         m="$m"
     fi
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
-
-
 }
-
 
 function addmeta_chdman_mame-tools(){
     local f="$1"
@@ -1062,115 +1057,112 @@ function addmeta_chdman_mame-tools(){
     local no_checksum="0"
 
     if [[ "${input}" = *.chd ]]; then
-	local default
-	while true
-	do
+        local default
+        while true
+        do
             local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $f\nMetadata value file: $__value_file\nMetadata value text: $value_text\n\nOptional parameters (Warning: tag is required)" 22 76 16)
             local options=()
 
-	    options+=(- "Exit")
+            options+=(- "Exit")
             options+=(I "Input file: $input (fixed)")
             options+=(1 "Metadata value file: ${value_file##*/}")
             options+=(2 "Metadata value text: $value_text")
             options+=(3 "tag: $tag")
             options+=(4 "Index ($index)")
             if [[ "$no_checksum" -eq 1 ]]; then
-            	options+=(5 "Don't include in SHA-1 check-sum (Enabled)")
+                options+=(5 "Don't include in SHA-1 check-sum (Enabled)")
             else
-            	options+=(5 "Don't include in SHA-1 check-sum (Disabled)")
+                options+=(5 "Don't include in SHA-1 check-sum (Disabled)")
             fi
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
             if [[ -n "$choice" ]]; then
-            	default="$choice"
-            	case "$choice" in
+                default="$choice"
+                case "$choice" in
                     1)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file containing data to add:" 10 60 "$value_file")
-                    	value_file=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$value_file" = "none" ]] || [[ -z "$value_file" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file containing data to add:" 10 60 "$value_file")
+                        value_file=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$value_file" = "none" ]] || [[ -z "$value_file" ]]; then
                             __value_file="none"
-			    value_file="$__value_file"
-			elif  [[ "${value_file}" = */* ]]; then
-			    __value_file="$value_file"
-                    	else
+                            value_file="$__value_file"
+                        elif  [[ "${value_file}" = */* ]]; then
+                            __value_file="$value_file"
+                        else
                             __value_file="$DIR/$value_file"
-                    	fi
-                    	;;
-
+                        fi
+                        ;;
                     2)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the text for the metadata:" 10 60 "$value_text")
-                    	value_text=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$value_text" = "none" ]] || [[ -z "$value_text" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the text for the metadata:" 10 60 "$value_text")
+                        value_text=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$value_text" = "none" ]] || [[ -z "$value_text" ]]; then
                             value_text="none"
-                    	else
+                        else
                             value_text="$value_text"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     3)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
-                    	tag=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the 4-character tag for metadata:" 10 60 "$tag")
+                        tag=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$tag" = "required" ]] || [[ -z "$tag" ]]; then
                             tag="required"
-                    	else
+                        else
                             tag="$tag"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     4)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
-                    	index=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the indexed instance of this metadata tag:" 10 60 "$index")
+                        index=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$index" = "auto" ]] || [[ -z "$index" ]]; then
                             index="auto"
-                    	else
+                        else
                             index="$index"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     5)
-                    	no_checksum="$((no_checksum ^ 1))"
-                    	;;
-		    -)
-		    	return 0
-		    	;;
-            	esac
+                        no_checksum="$((no_checksum ^ 1))"
+                        ;;
+                    -)
+                        return 0
+                        ;;
+                esac
             else
-            	break
+                break
             fi
-    	done
+        done
 
-    	local params=()
-    	if [[ -n "$value_file" ]] && [[ "$value_file" != "none" ]]; then
+        local params=()
+        if [[ -n "$value_file" ]] && [[ "$value_file" != "none" ]]; then
             params+=(-vf "$__value_file")
-    	fi
-    	if [[ -n "$value_text" ]] && [[ "$value_text" != "none" ]]; then
+        fi
+        if [[ -n "$value_text" ]] && [[ "$value_text" != "none" ]]; then
             params+=(-vt "$value_text")
-    	fi
-    	if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
+        fi
+        if [[ -n "$tag" ]] && [[ "$tag" != "required" ]]; then
             params+=(-t "$tag")
-	else
-	    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "Required Parameters missing (Tag)" 17 54
-    	fi
-    	if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
+        else
+            dialog --backtitle "$__backtitle" --stdout --clear --msgbox "Required Parameters missing (Tag)" 17 54
+        fi
+        if [[ -n "$index" ]] && [[ "$index" != "auto" ]]; then
             params+=(-ix "$index")
-    	fi
-    	if [[ "$no_checksum" -eq 1 ]]; then
+        fi
+        if [[ "$no_checksum" -eq 1 ]]; then
             params+=(-nocs)
-    	fi
+        fi
    
         clear
         $md_inst/chdman addmeta -i "$f" ${params[@]} 2> "${f%.*}.addmeta"
-	if [ `awk 'NR == 1{print $1}' ${f%.*}.addmeta` = "Error" ]; then
-	    m=`sed 's/([^>]*)/'$input'/g' ${f%.*}.addmeta`	    	
+        if [ `awk 'NR == 1{print $1}' ${f%.*}.addmeta` = "Error" ]; then
+            m=`sed 's/([^>]*)/'$input'/g' ${f%.*}.addmeta`	    	
         elif [ `awk 'NR == 1{print $1}' ${f%.*}.addmeta` = "Error:" ]; then
-	    m=`cat ${f%.*}.addmeta`	
-	else
-	    m="Metadata added for $input"
+            m=`cat ${f%.*}.addmeta`	
+        else
+            m="Metadata added for $input"
         fi
-	rm -rf "${f%.*}.addmeta"
+        rm -rf "${f%.*}.addmeta"
     else
         m="$m"
     fi
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
-
-
 }
 
 function copy_chdman_mame-tools(){
@@ -1198,9 +1190,9 @@ function copy_chdman_mame-tools(){
     local num_processors="`nproc`"
 
     if [[ "${input}" = *.chd ]]; then
-    	local default
-    	while true
-    	do
+        local default
+        while true
+        do
             local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input file: $f\nOutput file: $__output\nParent input file: $__input_parent\nParent output file: $__output_parent\n\nOptional parameters:" 25 76 16)
             local options=()
 
@@ -1210,9 +1202,9 @@ function copy_chdman_mame-tools(){
             options+=(Y "Parent input file: ${input_parent##*/}")
             options+=(X "Parent output file: ${output_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
-            	options+=(F "Overwrite existing files (Enabled)")
+                options+=(F "Overwrite existing files (Enabled)")
             else
-            	options+=(F "Overwrite existing files (Disabled)")
+                options+=(F "Overwrite existing files (Disabled)")
             fi
             options+=(1 "Input start byte ($input_start_byte)")
             options+=(2 "Input start hunk ($input_start_hunk)")
@@ -1220,197 +1212,196 @@ function copy_chdman_mame-tools(){
             options+=(4 "Input hunks ($input_hunks)")
             options+=(5 "Hunk size ($hunk_size)")
             if [[ "$compression" -eq 0 ]]; then
-            	compr="default"
-            	options+=(6 "Compression: $compr")
+                compr="default"
+                options+=(6 "Compression: $compr")
             elif [[ "$compression" -eq 1 ]]; then
-            	compr="none"
-            	options+=(6 "Compression: $compr")
+                compr="none"
+                options+=(6 "Compression: $compr")
             elif [[ "$compression" -eq 2 ]]; then
-            	compr="avhu"
-            	options+=(6 "Compression: $compr (A/V Huffman)")
+                compr="avhu"
+                options+=(6 "Compression: $compr (A/V Huffman)")
             elif [[ "$compression" -eq 3 ]]; then
-            	compr="cdfl"
-            	options+=(6 "Compression: $compr (CD FLAC)")
+                compr="cdfl"
+                options+=(6 "Compression: $compr (CD FLAC)")
             elif [[ "$compression" -eq 4 ]]; then
-            	compr="cdlz"
-            	options+=(6 "Compression: $compr (CD LZMA)")
+                compr="cdlz"
+                options+=(6 "Compression: $compr (CD LZMA)")
             elif [[ "$compression" -eq 5 ]]; then
-            	compr="cdzl"
-            	options+=(6 "Compression: $compr (CD Deflate)")
+                compr="cdzl"
+                options+=(6 "Compression: $compr (CD Deflate)")
             elif [[ "$compression" -eq 6 ]]; then
-            	compr="flac"
-            	options+=(6 "Compression: $compr (FLAC)")
+                compr="flac"
+                options+=(6 "Compression: $compr (FLAC)")
             elif [[ "$compression" -eq 7 ]]; then
-            	compr="huff"
-            	options+=(6 "Compression: $compr (Huffman)")
+                compr="huff"
+                options+=(6 "Compression: $compr (Huffman)")
             elif [[ "$compression" -eq 8 ]]; then
-            	compr="lzma"
-            	options+=(6 "Compression: $compr (LZMA)")
+                compr="lzma"
+                options+=(6 "Compression: $compr (LZMA)")
             elif [[ "$compression" -eq 9 ]]; then
-            	compr="zlib"
-            	options+=(6 "Compression: $compr (Deflate)")
+                compr="zlib"
+                options+=(6 "Compression: $compr (Deflate)")
             fi
             options+=(7 "Number of CPUs ($num_processors)")
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
             if [[ -n "$choice" ]]; then
-            	default="$choice"
-            	case "$choice" in
+                default="$choice"
+                case "$choice" in
                     1)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
-                    	input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$input_start_byte" = "auto" ]] || [[ -z "$input_start_byte" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting byte offset within the input:" 10 60 "$input_start_byte")
+                        input_start_byte=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$input_start_byte" = "auto" ]] || [[ -z "$input_start_byte" ]]; then
                             input_start_byte="auto"
-                    	else
+                        else
                             input_start_byte="$input_start_byte"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     2)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
-                    	input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$input_start_hunk" = "auto" ]] || [[ -z "$input_start_hunk" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the starting hunk offset within the input:" 10 60 "$input_start_hunk")
+                        input_start_hunk=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$input_start_hunk" = "auto" ]] || [[ -z "$input_start_hunk" ]]; then
                             input_start_hunk="auto"
-                    	else
+                        else
                             input_start_hunk="$input_start_hunk"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     3)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
-                    	input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$input_bytes" = "auto" ]] || [[ -z "$input_bytes" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in bytes:" 10 60 "$input_bytes")
+                        input_bytes=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$input_bytes" = "auto" ]] || [[ -z "$input_bytes" ]]; then
                             input_bytes="auto"
-                    	else
+                        else
                             input_bytes="$input_bytes"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     4)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
-                    	input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$input_hunks" = "auto" ]] || [[ -z "$input_hunks" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the effective length of input in hunks:" 10 60 "$input_hunks")
+                        input_hunks=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$input_hunks" = "auto" ]] || [[ -z "$input_hunks" ]]; then
                             input_hunks="auto"
-                    	else
+                        else
                             input_hunks="$input_hunks"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     5)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
-                    	hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the size of each hunk, in bytes:" 10 60 "$hunk_size")
+                        hunk_size=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$hunk_size" = "auto" ]] || [[ -z "$hunk_size" ]]; then
                             hunk_size="auto"
-                    	else
+                        else
                             hunk_size="$hunk_size"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     6)
-                    	compression="$((( compression + 1 ) % 10))"
-                    	;;
+                        compression="$((( compression + 1 ) % 10))"
+                        ;;
                     7)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
-                    	num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the number of processors to use during compression:" 10 60 "$num_processors")
+                        num_processors=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$num_processors" = `nproc` ]] || [[ -z "$num_processors" ]]; then
                             num_processors=`nproc`
-                    	else
+                        else
                             num_processors="$num_processors"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     O)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
-                    	output=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$output" = "${f%.*} (copy).chd" ]] || [[ -z "$output" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the file name for CHD output:" 10 60 "$output")
+                        output=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$output" = "${f%.*} (copy).chd" ]] || [[ -z "$output" ]]; then
                             __output="${f%.*} (copy).chd"
-			    output="$__output"
-			elif  [[ "${output}" = */* ]]; then
-			    __output="$output"
+                            output="$__output"
+                        elif  [[ "${output}" = */* ]]; then
+                            __output="$output"
                     	else
                             __output="$DIR/$output"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     Y)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD input:" 10 60 "$input_parent")
-                    	input_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$input_parent" = "none" ]] || [[ -z "$input_parent" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD input:" 10 60 "$input_parent")
+                        input_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$input_parent" = "none" ]] || [[ -z "$input_parent" ]]; then
                             __input_parent="none"
-			    input_parent="$__input_parent"
-			elif  [[ "${input_parent}" = */* ]]; then
-			    __input_parent="$input_parent"
-                    	else
+                            input_parent="$__input_parent"
+                        elif  [[ "${input_parent}" = */* ]]; then
+                            __input_parent="$input_parent"
+                        else
                             __input_parent="$DIR/$input_parent"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     X)
-                    	cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD output:" 10 60 "$output_parent")
-                    	output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
-                    	if [[ "$output_parent" = "none" ]] || [[ -z "$output_parent" ]]; then
+                        cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the parent file name for CHD output:" 10 60 "$output_parent")
+                        output_parent=$("${cmd[@]}" 2>&1 >/dev/tty)
+                        if [[ "$output_parent" = "none" ]] || [[ -z "$output_parent" ]]; then
                             __output_parent="none"
-			    output_parent="$__output_parent"
-			elif  [[ "${output_parent}" = */* ]]; then
-			    __output_parent="$output_parent"
-                    	else
+                            output_parent="$__output_parent"
+                        elif  [[ "${output_parent}" = */* ]]; then
+                            __output_parent="$output_parent"
+                        else
                             __output_parent="$DIR/$output_parent"
-                    	fi
-                    	;;
+                        fi
+                        ;;
                     F)
-                    	force="$((force ^ 1))"
-                    	;;
-		    -)
-		    	return 0
-		    	;;
-            	esac
+                        force="$((force ^ 1))"
+                        ;;
+                    -)
+                        return 0
+                        ;;
+                esac
             else
-            	break
+                break
             fi
-    	done
+        done
 
-    	local params=()
-    	if [[ "$force" -eq 1 ]]; then
-	    params+=(-f)
-    	fi
-    	if [[ -n "$output" ]]; then
+        local params=()
+        if [[ "$force" -eq 1 ]]; then
+            params+=(-f)
+        fi
+        if [[ -n "$output" ]]; then
             params+=(-o "$__output")
-    	fi
-    	if [[ -n "$input_parent" ]] && [[ "$input_parent" != "none" ]]; then
+        fi
+        if [[ -n "$input_parent" ]] && [[ "$input_parent" != "none" ]]; then
             params+=(-ip "$__input_parent")
-    	fi
-    	if [[ -n "$output_parent" ]] && [[ "$output_parent" != "none" ]]; then
+        fi
+        if [[ -n "$output_parent" ]] && [[ "$output_parent" != "none" ]]; then
             params+=(-op "$__output_parent")
-    	fi
-    	if [[ -n "$input_start_byte" ]] && [[ "$input_start_byte" != "auto" ]]; then
+        fi
+        if [[ -n "$input_start_byte" ]] && [[ "$input_start_byte" != "auto" ]]; then
             params+=(-isb "$input_start_byte")
-    	fi
-    	if [[ -n "$input_start_hunk" ]] && [[ "$input_start_hunk" != "auto" ]]; then
+        fi
+        if [[ -n "$input_start_hunk" ]] && [[ "$input_start_hunk" != "auto" ]]; then
             params+=(-ish "$input_start_hunk")
-    	fi
-    	if [[ -n "$input_bytes" ]] && [[ "$input_bytes" != "auto" ]]; then
+        fi
+        if [[ -n "$input_bytes" ]] && [[ "$input_bytes" != "auto" ]]; then
             params+=(-ib "$input_bytes")
-    	fi
-    	if [[ -n "$input_hunks" ]] && [[ "$input_hunks" != "auto" ]]; then
+        fi
+        if [[ -n "$input_hunks" ]] && [[ "$input_hunks" != "auto" ]]; then
             params+=(-ih "$input_hunks")
-    	fi
-    	if [[ -n "$hunk_size" ]] && [[ "$hunk_size" != "auto" ]]; then
+        fi
+        if [[ -n "$hunk_size" ]] && [[ "$hunk_size" != "auto" ]]; then
             params+=(-hs "$hunk_size")
-    	fi
-    	if [[ "$compression" -ne 0 ]]; then
+        fi
+        if [[ "$compression" -ne 0 ]]; then
             params+=(-c "$compr")        
-    	fi
-    	if [[ -n "$num_processors" ]]; then
+        fi
+        if [[ -n "$num_processors" ]]; then
             params+=(-np "$num_processors")
-    	fi
+        fi
 
-	clear
+        clear
         echo $'Copying file ...\n'
         $md_inst/chdman copy -i "$f" ${params[@]}
-	chown $user:$user "$__output"
+        chown $user:$user "$__output"
+        
         if [[ -f "$__output" ]]; then
             m="Copy completed. ${__output##*/} have been created."
         else
-	    m="ERROR: Copy Failed."
+            m="ERROR: Copy Failed."
         fi
     else
         m="$m"
     fi
     dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 8 50
-
-
 }
 
 function batch_extractld_chdman_mame-tools() {
@@ -8840,18 +8831,18 @@ function gui_mame-tools() {
         local options=(
             1 "castool - Generic cassette manipulation tool" # done
             2 "chdman - Compressed Hunks of Data (CHD) manager" # done
-	    3 "floptool - Generic floppy image manipulation tool" # done
-	    4 "imgtool - Generic image manipulation tool"
-	    5 "jedutil - Binary to/from JEDEC file converter" # done
-	    6 "ldresample - Laserdisc audio synchronizer and resampler" # done
-	    7 "ldverify - Laserdisc AVI/CHD verifier" # done
-	    8 "pngcmp - PNG comparison utility program" # done
-	    9 "regrep - Regression test report generator"
-	    10 "romcmp - ROM and ROMsets check and comparison" # done
-	    11 "split - Simple file splitter/joiner with hashes" # done
-	    12 "srcclean - Basic source code cleanear" # done
-	    13 "testkeys - Keyboard code viewer (SDL keycode scanner)" # done
-	    14 "unidasm - Universal disassembler for several systems supported" # done
+            3 "floptool - Generic floppy image manipulation tool" # done
+            4 "imgtool - Generic image manipulation tool"
+            5 "jedutil - Binary to/from JEDEC file converter" # done
+            6 "ldresample - Laserdisc audio synchronizer and resampler" # done
+            7 "ldverify - Laserdisc AVI/CHD verifier" # done
+            8 "pngcmp - PNG comparison utility program" # done
+            9 "regrep - Regression test report generator"
+            10 "romcmp - ROM and ROMsets check and comparison" # done
+            11 "split - Simple file splitter/joiner with hashes" # done
+            12 "srcclean - Basic source code cleanear" # done
+            13 "testkeys - Keyboard code viewer (SDL keycode scanner)" # done
+            14 "unidasm - Universal disassembler for several systems supported" # done
         )
 
         local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -8900,11 +8891,9 @@ function gui_mame-tools() {
                 14)
                     unidasm_mame-tools
                     ;;
-
             esac
         else
             break
         fi
     done
 }
-
