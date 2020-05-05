@@ -1573,7 +1573,6 @@ function batch_extractld_chdman_mame-tools() {
             dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete $aux_input files and keep only *.avi files?" 8 50
             if [[ $? = 0 ]]; then
                 xargs -d '\n' rm -f {} < $remove
-                #IFS=""; while read -r i; do rm -- $i; done < $remove
                 dialog --backtitle "$__backtitle" --stdout --title "Removed files" --clear --textbox $remove 15 63
                 dialog --backtitle "$__backtitle" --stdout --msgbox "$aux_input files have been deleted!" 8 50
             fi
@@ -1921,23 +1920,27 @@ function batch_extractcd_chdman_mame-tools() {
                 fi
                 if [[ -f "$__output/${j_bn%.*}.$ext" ]] || [[ -f "${j%.*}.$ext" ]]; then
                     echo "$j" >> $remove
-                    if [[ -f "$__output/${j_bn%.*}.$ext" ]]; then
-                        J="${__output##*/}/${j_bn%.*}"
-                        ls "$J".$ext | cut --complement -d "/" -f 1 >> $create
-                        ls "$J"*bin | cut --complement -d "/" -f 1 >> $create
-                        ls "$J"*raw | cut --complement -d "/" -f 1 >> $create
+                    if [[ -f "${__output}/${j_bn%.*}.$ext" ]]; then
+                        cd && cd "$__output"
+                        ls "${j_bn%.*}".$ext >> $create
+                        ls "${j_bn%.*}"*bin >> $create
+                        ls "${j_bn%.*}"*raw >> $create
+                        cd && cd "$d"
                     elif [[ -f "${j%.*}.$ext" ]]; then
                         ls "${j%.*}"*$ext >> $create
                         ls "${j%.*}"*bin >> $create
                         ls "${j%.*}"*raw >> $create
                     fi
                 fi 2>/dev/null >/dev/null
-            done 
-            if [[ -n `grep .raw $create` ]]; then
-                r=",*.raw"
-            else
-                r=""
-            fi   	  
+            done 	  
+        fi
+        if [[ -e "$__output/$create" ]]; then
+            mv "$__output/$create" "$d"
+        fi 2>/dev/null >/dev/null
+        if [[ -n `grep .raw $create` ]]; then
+            r=",*.raw"
+        else
+            r=""
         fi
 
         if [[ -e "$create" ]]; then
@@ -3524,9 +3527,9 @@ function batch_createcd_chdman_mame-tools() {
 
     for ((c=0; c<3; c++)); do
 	if [ "$c" = 0 ]; then
-        __ext=(${__ext[@]}${ext[c]})
+	    __ext=(${__ext[@]}${ext[c]})
 	else 
-        __ext=(${__ext[@]}\|${ext[c]})
+	    __ext=(${__ext[@]}\|${ext[c]})
 	fi
     done
     
