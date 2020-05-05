@@ -334,7 +334,7 @@ function batch_convert_castool_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input (fixed)")
+            options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.wav")
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -484,7 +484,7 @@ function convert_castool_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -860,7 +860,7 @@ function dumpmeta_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output: ${output##*/}")
             if [[ "$force" -eq 1 ]]; then
                 options+=(F "Overwrite existing files (Enabled)")
@@ -980,7 +980,7 @@ function delmeta_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(1 "tag: $tag")
             options+=(2 "Index ($index)")
 
@@ -1063,7 +1063,7 @@ function addmeta_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(1 "Metadata value file: ${value_file##*/}")
             options+=(2 "Metadata value text: $value_text")
             options+=(3 "tag: $tag")
@@ -1196,7 +1196,7 @@ function copy_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
             options+=(Y "Parent input file: ${input_parent##*/}")
             options+=(X "Parent output file: ${output_parent##*/}")
@@ -1461,7 +1461,7 @@ function batch_extractld_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input (fixed)")
+            options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.avi")
             if [[ "$force" -eq 1 ]]; then
                 options+=(F "Overwrite existing files (Enabled)")
@@ -1633,7 +1633,7 @@ function extractld_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
             options+=(Y "Parent input file: ${input_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -1824,7 +1824,7 @@ function batch_extractcd_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input (fixed)")
+            options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.$exts")
             if [[ "$form" -eq 0 ]]; then
                 ext="toc"
@@ -2001,9 +2001,9 @@ function extractcd_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
-            options+=(B "Binary Output file: $binary (fixed)")
+            options+=(B "Binary Output file (fix): $binary")
             options+=(Y "Parent input file: ${input_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
                 options+=(F "Overwrite existing files (Enabled)")
@@ -2179,7 +2179,7 @@ function batch_extracthd_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input (fixed)")
+            options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.$exts")
             if [[ "$form" -eq 0 ]]; then
                 ext="img"
@@ -2435,7 +2435,7 @@ function extracthd_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
             options+=(Y "Parent input file: ${input_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -2652,7 +2652,7 @@ function batch_extractraw_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input (fixed)")
+            options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.raw")
             if [[ "$force" -eq 1 ]]; then
                 options+=(F "Overwrite existing files (Enabled)")
@@ -2851,7 +2851,7 @@ function extractraw_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
             options+=(Y "Parent input file: ${input_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -3070,7 +3070,7 @@ function batch_createld_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input (fixed)")
+            options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.chd")
             if [[ "$force" -eq 1 ]]; then
                 options+=(F "Overwrite existing files (Enabled)")
@@ -3307,7 +3307,7 @@ function createld_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
             options+=(X "Parent output file: ${output_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -3655,7 +3655,7 @@ function batch_createcd_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input (fixed)")
+            options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.chd")
             if [[ "$force" -eq 1 ]]; then
                 options+=(F "Overwrite existing files (Enabled)")
@@ -3893,7 +3893,7 @@ function createcd_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
             options+=(X "Parent Output file: ${output_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -4255,7 +4255,7 @@ function batch_createhd_chdman_mame-tools() {
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: ./$aux_input (fixed)")
+            options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.chd")
             options+=(D "Ident File: ${ident##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -4674,7 +4674,7 @@ function createhd_chdman_mame-tools(){
             if [[ "$f" = "none" ]]; then
                 options+=(I "Input file: ${input##*/}")
             else
-                options+=(I "Input file: $input (fixed)")
+                options+=(I "Input file (fix): $input")
             fi
             options+=(O "Output file: ${output##*/}")
             options+=(X "Parent output file: ${output_parent##*/}")
@@ -5371,7 +5371,7 @@ function createraw_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(O "Output file: ${output##*/}")
             options+=(X "Parent output file: ${output_parent##*/}")
             if [[ "$force" -eq 1 ]]; then
@@ -5608,7 +5608,7 @@ function verify_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             options+=(Y "Parent input file: ${input_parent##*/}")
 
             local choice=$("${cmd[@]}" "${options[@]}" 2>&1 >/dev/tty)
@@ -5636,6 +5636,7 @@ function verify_chdman_mame-tools(){
             fi
         done
 
+        local params=()
         if [[ -n "$input_parent" ]] && [[ "$input_parent" != "none" ]]; then
             params+=(-ip "$__input_parent")
         fi
@@ -5670,7 +5671,7 @@ function info_chdman_mame-tools(){
             local options=()
 
             options+=(- "Exit")
-            options+=(I "Input file: $input (fixed)")
+            options+=(I "Input file (fix): $input")
             if [[ "$verbose" -eq 1 ]]; then
                 options+=(V "Verbose output (Enabled)")
             else
@@ -5693,6 +5694,7 @@ function info_chdman_mame-tools(){
             fi
         done
 
+        local params=()
         if [[ "$verbose" -eq 1 ]]; then
             params+=(-v)
         fi
@@ -5741,12 +5743,12 @@ function _aux_chdman_mame-tools(){
         if [[ -n "$choice" ]]; then
             default="$choice"
             case "$choice" in
-		1)
-		    aux_chdman_mame-tools "$cmd_1" "$cmd_2"
-		    ;;
-		2)
-            __aux_chdman_mame-tools "$cmd_1" "$cmd_2"
-            ;;
+                1)
+                    aux_chdman_mame-tools "$cmd_1" "$cmd_2"
+                    ;;
+                2)
+                    __aux_chdman_mame-tools "$cmd_1" "$cmd_2"
+                    ;;
             esac
         else
             break
