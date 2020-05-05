@@ -5291,6 +5291,7 @@ function batch_createraw_chdman_mame-tools() {
         fi
 	
         remove="remove_files.txt"
+        remove_show="remove_show_files.txt"
         create="create_files.txt"
         echo $'Converting files ...\n'
         for j in `find $d -mindepth 1 -prune -name '*.*'`; do
@@ -5313,7 +5314,7 @@ function batch_createraw_chdman_mame-tools() {
                 fi
             fi
             if [[ -f "$__output/${j_bn%.*}.chd" ]] || [[ -f "$__output/${j_bn%.*} (1).chd" ]] || [[ -f "${j%.*}.chd" ]] || [[ -f "${j%.*} (1).chd" ]]; then
-                echo $j >> $remove
+                echo "$j" >> $remove && echo "${j##*/}" >> $remove_show
                 if [[ -f "$__output/${j_bn%.*}.chd" ]]; then
                     echo "${j_bn%.*}.chd" >> $create
                 elif [[ -f "$__output/${j_bn%.*} (1).chd" ]]; then
@@ -5331,7 +5332,7 @@ function batch_createraw_chdman_mame-tools() {
             dialog --backtitle "$__backtitle" --stdout --defaultno --yesno "Would you like to delete original files and keep only *.chd files?" 8 50
             if [[ $? = 0 ]]; then
                 xargs -d '\n' rm -f {} < $remove
-                dialog --backtitle "$__backtitle" --stdout --title "Removed files" --clear --textbox $remove 15 63
+                dialog --backtitle "$__backtitle" --stdout --title "Removed files" --clear --textbox $remove_show 15 63
                 dialog --backtitle "$__backtitle" --stdout --msgbox "All original files have been deleted!" 8 50
             fi
             dialog --backtitle "$__backtitle" --stdout --title "Created files" --clear --textbox $create 15 63
@@ -5339,7 +5340,7 @@ function batch_createraw_chdman_mame-tools() {
         else
             m="ERROR: Conversion Failed."
         fi
-        rm -rf $remove $create
+        rm -rf $remove $remove_show $create
     else
         m="$m"
     fi
