@@ -81,7 +81,7 @@ function batch_convert_castool_mame-tools() {
         fi
     done
 
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- ${_ext[@]}"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n ${_ext[@]}\nSupport *.zip *.7z"
     
     cd && cd $d
     echo "Reading directory ..."
@@ -454,7 +454,7 @@ function convert_castool_mame-tools(){
         fi
     done
 
-    local m="ERROR: $input isn't a valid file.\n\nSupported extensions:\n- ${_ext[@]}"
+    local m="ERROR: $input isn't a valid file.\n\nSupported extensions:\n ${_ext[@]}\nSupport *.zip *.7z"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
         if [[ "$f" = *.[zZ][iI][pP] ]]; then
@@ -1407,7 +1407,7 @@ function batch_extractld_chdman_mame-tools() {
     d="$1"
     _aux_input="chd"
     aux_input="*.$_aux_input"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- CHD files (*.chd)"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n CHD files (*.chd)\nSupport *.zip *.7z"
 
     cd && cd $d
     echo "Reading directory ..."
@@ -1768,7 +1768,7 @@ function batch_extractcd_chdman_mame-tools() {
     d="$1"
     _aux_input="chd"
     aux_input="*.$_aux_input"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- CHD files (*.chd)"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n CHD files (*.chd)\nSupport *.zip *.7z"
 
     cd && cd $d
     echo "Reading directory ..."
@@ -1968,7 +1968,7 @@ function extractcd_chdman_mame-tools(){
     local f="$1" 
     local __f="$f"
     local input="${f##*/}"
-    local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n- CHD files (*.chd)"
+    local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n CHD files (*.chd)\nSupport *.zip *.7z"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
         if [[ "$f" = *.[zZ][iI][pP] ]]; then
@@ -2127,7 +2127,7 @@ function batch_extracthd_chdman_mame-tools() {
     d="$1"
     _aux_input="chd"
     aux_input="*.$_aux_input"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- CHD files (*.chd)"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n CHD files (*.chd)\nSupport *.zip *.7z"
 
     cd && cd $d
     echo "Reading directory ..."
@@ -2401,7 +2401,7 @@ function extracthd_chdman_mame-tools(){
     local f="$1" 
     local __f="$f"
     local input="${f##*/}"
-    local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n- CHD files (*.chd)"
+    local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n CHD files (*.chd)\nSupport *.zip *.7z"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
         if [[ "$f" = *.[zZ][iI][pP] ]]; then
@@ -2603,7 +2603,7 @@ function batch_extractraw_chdman_mame-tools() {
     d="$1"
     _aux_input="chd"
     aux_input="*.$_aux_input"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- CHD files (*.chd)"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n CHD files (*.chd)\nSupport *.zip *.7z"
 
     cd && cd $d
     echo "Reading directory ..."
@@ -2817,7 +2817,7 @@ function extractraw_chdman_mame-tools(){
     local f="$1" 
     local __f="$f"
     local input="${f##*/}"
-    local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n- CHD files (*.chd)"
+    local m="ERROR: $input isn't a CHD file.\n\nSupported extensions:\n CHD files (*.chd)\nSupport *.zip *.7z"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
         if [[ "$f" = *.[zZ][iI][pP] ]]; then
@@ -3020,7 +3020,7 @@ function batch_createld_chdman_mame-tools() {
     d="$1"
     _aux_input="chd"
     aux_input="*.$_aux_input"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- AVI files (*.avi)"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n AVI files (*.avi)\nSupport *.zip *.7z"
 
     cd && cd $d
     echo "Reading directory ..."
@@ -3272,7 +3272,7 @@ function createld_chdman_mame-tools(){
     local f="$1"
     local __f="$f"
     local input="${f##*/}"
-    local m="ERROR: $input isn't a AVI file.\n\nSupported extensions:\n- AVI files (*.avi)"
+    local m="ERROR: $input isn't a AVI file.\n\nSupported extensions:\n AVI files (*.avi)\nSupport *.zip *.7z"
 
     if [[ "$f" = "${f%.*}.avi" ]]; then
         aux_input="$input"
@@ -3511,7 +3511,7 @@ function createld_chdman_mame-tools(){
 
 function batch_createcd_chdman_mame-tools() {
     d="$1"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- CUE files (*.cue)\n- GDI files (*.gdi)\n- TOC files (*.toc)"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n CUE files (*.cue)\n GDI files (*.gdi)\n TOC files (*.toc)\nSupport *.zip *.7z"
 
     local ext=""
     local _ext=""
@@ -3849,7 +3849,7 @@ function createcd_chdman_mame-tools(){
     local f="$1"
     local __f="$f"
     local input="${f##*/}"
-    local m="ERROR: $input isn't a CD image file.\n\nSupported extensions:\n- CUE files (*.cue)\n- GDI files (*.gdi)\n- TOC files (*.toc)"
+    local m="ERROR: $input isn't a CD image file.\n\nSupported extensions:\n CUE files (*.cue)\n GDI files (*.gdi)\n TOC files (*.toc)\nSupport *.zip *.7z"
 
     local ext=""
     local _ext=""
@@ -4086,7 +4086,7 @@ function createcd_chdman_mame-tools(){
 
 function batch_createhd_chdman_mame-tools() {
     d="$1"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- raw disk image (*.img)\n- Mac disk image (*.dmg)\n- Apple IIgs disk image (*.2mg)\n- FM-Towns disk image (*.h0,*.h1,*.h2,*.h3,*.h4)\n- IDE64 disk image (*.hdd)\n- X68k SASI disk image (*.hdf)\n- X68k SCSI disk image (*.hds)"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n raw disk image (*.img)\n Mac disk image (*.dmg)\n Apple IIgs disk image (*.2mg)\n FM-Towns disk image (*.h0,*.h1,*.h2,*.h3,*.h4)\n IDE64 disk image (*.hdd)\n X68k SASI disk image (*.hdf)\n X68k SCSI disk image (*.hds)\nSupport *.zip *.7z"
 
     local ext=""
     local _ext=""
@@ -4600,7 +4600,7 @@ function createhd_chdman_mame-tools(){
     local f="$1"
     local __f="$f"
     local input="${f##*/}"
-    local m="ERROR: $input isn't a HD file.\n\nSupported extensions:\n- raw disk image (*.img)\n- Mac disk image (*.dmg)\n- Apple IIgs disk image (*.2mg)\n- FM-Towns disk image (*.h0,*.h1,*.h2,*.h3,*.h4)\n- IDE64 disk image (*.hdd)\n- X68k SASI disk image (*.hdf)\n- X68k SCSI disk image (*.hds)"
+    local m="ERROR: $input isn't a HD file.\n\nSupported extensions:\n raw disk image (*.img)\n Mac disk image (*.dmg)\n Apple IIgs disk image (*.2mg)\n FM-Towns disk image (*.h0,*.h1,*.h2,*.h3,*.h4)\n IDE64 disk image (*.hdd)\n X68k SASI disk image (*.hdf)\n X68k SCSI disk image (*.hds)\nSupport *.zip *.7z"
 
     local ext=""
     local _ext=""
@@ -5099,7 +5099,7 @@ function createhd_chdman_mame-tools(){
 
 function batch_createraw_chdman_mame-tools() {
     d="$1"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n- All files (*.*)"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n All files (*.*)"
 
     local output="${d%/}"
     local __output="$output"
@@ -5353,7 +5353,7 @@ function batch_createraw_chdman_mame-tools() {
 function createraw_chdman_mame-tools(){
     local f="$1"
     local input="${f##*/}"
-    local m="ERROR: Invalid extension to $input.\n\nSupported extensions:\n- All files (*.*)"
+    local m="ERROR: Invalid extension to $input.\n\nSupported extensions:\n All files (*.*)"
 
     local DIR=`dirname $f`
 
