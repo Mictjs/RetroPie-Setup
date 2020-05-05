@@ -1819,7 +1819,7 @@ function batch_extractcd_chdman_mame-tools() {
         local default
         while true
         do
-            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/$aux_input\nOutput dir: $__output/*.$exts\n\nOptional parameters:" 22 76 16)
+            local cmd=(dialog --backtitle "$__backtitle" --cancel-label "Continue" --default-item "$default" --menu "Input dir: ${d%/}/$aux_input\nOutput dir: $__output/*.$exts\nBinary output file: $__output/*.bin\n\nOptional parameters:" 22 76 16)
             local options=()
 
             options+=(- "Exit")
