@@ -1826,6 +1826,7 @@ function batch_extractcd_chdman_mame-tools() {
             options+=(- "Exit")
             options+=(I "Input file (fix): ./$aux_input")
             options+=(O "Output file: ./*.$exts")
+            options+=(B "Binary Output file (fix): ./*.bin")
             if [[ "$form" -eq 0 ]]; then
                 ext="toc"
                 exts="cue"
@@ -1849,6 +1850,9 @@ function batch_extractcd_chdman_mame-tools() {
             if [[ -n "$choice" ]]; then
                 default="$choice"
                 case "$choice" in
+                    B)
+                        exts=$ext
+                        ;;
                     E)
                         form="$((( form + 1) % 3))"
                         ;;
@@ -1858,7 +1862,7 @@ function batch_extractcd_chdman_mame-tools() {
                         ;;
                     I)
                         exts=$ext
-                    	;;
+                        ;;
                     O)
                         cmd=(dialog --backtitle "$__backtitle" --inputbox "Please type the directory name for CD output:" 10 60 "$output")
                         output=$("${cmd[@]}" 2>&1 >/dev/tty)
