@@ -575,7 +575,7 @@ function __aux_castool_mame-tools(){
     local format="$1"
     local system="$2"
     export IFS=$'\n'
-    __DIR=$(dialog --backtitle "$__backtitle" --stdout --title "Castool - Choose a ROM Directory" --dselect "$romdir/" 10 70)
+    __DIR=$(dialog --backtitle "$__backtitle" --stdout --title "Choose a ROM Directory (${format// /|}|zip|7z)" --dselect "$romdir/" 10 70)
     [ ! -z $__DIR ] && batch_convert_castool_mame-tools "$__DIR" "$system" "$format"
 }
 
@@ -583,7 +583,7 @@ function _aux_castool_mame-tools() {
     local format="$1"
     local system="$2"
     export IFS=$'\n'
-    FILE=$(dialog --backtitle "$__backtitle" --stdout --title "Castool - Choose a ROM" --fselect "$romdir/" 13 105)
+    FILE=$(dialog --backtitle "$__backtitle" --stdout --title "Choose a ROM (${format// /|}|zip|7z)" --fselect "$romdir/" 13 105)
     [ ! -z $FILE ] && convert_castool_mame-tools "$FILE" "$system" "$format"
 }
 
@@ -592,7 +592,7 @@ function aux_castool_mame-tools(){
     local cmd_2="$2"
     local default
     while true; do
-        local cmd=(dialog --backtitle "$__backtitle" --title "Castool - $cmd_2" --default-item "$default" --menu "Castool - Choose a option" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --title "Castool - convert (${cmd_1// /|}) to wav" --default-item "$default" --menu "Castool - Choose a option" 22 76 16)
         local options=(
             1 "single conversion"
             2 "batch conversion"
@@ -5736,14 +5736,29 @@ function info_chdman_mame-tools(){
 
 function __aux_chdman_mame-tools(){
     local opt="$1"
-    local ver="v5"
-    
+    local format="$2"
     export IFS=$'\n'
-    __DIR=$(dialog --backtitle "$__backtitle" --stdout --title "CHDMAN $ver: ${opt^} - Choose a ROM Directory" --dselect "$romdir/" 10 70)
+    __DIR=$(dialog --backtitle "$__backtitle" --stdout --title "Choose a ROM Directory (${format// /|})" --dselect "$romdir/" 10 70)
     [ ! -z $__DIR ] && batch_"$opt"_chdman_mame-tools "$__DIR"
 }
 
-function _aux_chdman_mame-tools(){
+function _aux_chdman_mame-tools() {
+    local opt="$1"
+    local format="$2"
+    export IFS=$'\n'
+    if [[ "$opt" = "createhd" ]]; then
+        FILE=$(dialog --backtitle "$__backtitle" --default-item "$default" --stdout --cancel-label "No Input" --extra-button --extra-label "Back" --title "Choose a ROM (${format// /|})" --fselect "$romdir/" 13 105)
+    
+        [ $? = 1 ] && FILE="none"
+        [ $FILE = "none" ] || [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
+    else
+        FILE=$(dialog --backtitle "$__backtitle" --default-item "$default" --stdout --title "Choose a ROM (${format// /|})" --fselect "$romdir/" 13 105)
+    
+        [ ! -z $FILE ] && [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
+    fi
+}
+
+function aux_chdman_mame-tools(){
     local cmd_1="$1"
     local cmd_2="$2"
     local default
@@ -5760,7 +5775,7 @@ function _aux_chdman_mame-tools(){
             default="$choice"
             case "$choice" in
                 1)
-                    aux_chdman_mame-tools "$cmd_1" "$cmd_2"
+                    _aux_chdman_mame-tools "$cmd_1" "$cmd_2"
                     ;;
                 2)
                     __aux_chdman_mame-tools "$cmd_1" "$cmd_2"
@@ -5770,24 +5785,6 @@ function _aux_chdman_mame-tools(){
             break
         fi
     done
-}
-
-function aux_chdman_mame-tools() {
-    local opt="$1"
-    local format="$2"
-    local ver="v5"
-
-    export IFS=$'\n'
-    if [[ "$opt" = "createhd" ]]; then
-        FILE=$(dialog --backtitle "$__backtitle" --default-item "$default" --stdout --cancel-label "No Input" --extra-button --extra-label "Back" --title "CHDMAN $ver: ${opt^} - Choose a ROM ($format)" --fselect "$romdir/" 13 105)
-    
-        [ $? = 1 ] && FILE="none"
-        [ $FILE = "none" ] || [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
-    else
-        FILE=$(dialog --backtitle "$__backtitle" --default-item "$default" --stdout --title "CHDMAN $ver: ${opt^} - Choose a ROM ($format)" --fselect "$romdir/" 13 105)
-    
-        [ ! -z $FILE ] && [ -f "$FILE" ] && "$opt"_chdman_mame-tools "$FILE"
-    fi
 }
 
 function chdman_mame-tools() {
@@ -5824,46 +5821,46 @@ function chdman_mame-tools() {
                     rm -rf man.txt
                     ;;
                 1)
-                    aux_chdman_mame-tools "info" "chd"
+                    _aux_chdman_mame-tools "info" "chd"
                     ;;
                 2)
-                    aux_chdman_mame-tools "verify" "chd"
+                    _aux_chdman_mame-tools "verify" "chd"
                     ;;
                 3)
-                    _aux_chdman_mame-tools "createraw" "any file"
+                    aux_chdman_mame-tools "createraw" "*"
                     ;;
                 4)
-                    _aux_chdman_mame-tools "createhd" "any HD image|zip|7z"
+                    aux_chdman_mame-tools "createhd" "* zip 7z"
                     ;;
                 5)
-                    _aux_chdman_mame-tools "createcd" "cue|gdi|toc|zip|7z"
+                    aux_chdman_mame-tools "createcd" "cue gdi toc zip 7z"
                     ;;
                 6)
-                    _aux_chdman_mame-tools "createld" "avi|zip|7z" 
+                    aux_chdman_mame-tools "createld" "avi zip 7z" 
                     ;;
                 7)
-                    _aux_chdman_mame-tools "extractraw" "chd|zip|7z"
+                    aux_chdman_mame-tools "extractraw" "chd zip 7z"
                     ;;
                 8)
-                    _aux_chdman_mame-tools "extracthd" "chd|zip|7z"
+                    aux_chdman_mame-tools "extracthd" "chd zip 7z"
                     ;;
                 9)
-                    _aux_chdman_mame-tools "extractcd" "chd|zip|7z"
+                    aux_chdman_mame-tools "extractcd" "chd zip 7z"
                     ;;
                 10)
-                    _aux_chdman_mame-tools "extractld" "chd|zip|7z"
+                    aux_chdman_mame-tools "extractld" "chd zip 7z"
                     ;;
                 11)
-                    aux_chdman_mame-tools "copy" "chd"
+                    _aux_chdman_mame-tools "copy" "chd"
                     ;;
                 12)
-                    aux_chdman_mame-tools "addmeta" "chd"
+                    _aux_chdman_mame-tools "addmeta" "chd"
                     ;;
                 13)
-                    aux_chdman_mame-tools "delmeta" "chd"
+                    _aux_chdman_mame-tools "delmeta" "chd"
                     ;;
                 14)
-                    aux_chdman_mame-tools "dumpmeta" "chd"
+                    _aux_chdman_mame-tools "dumpmeta" "chd"
                     ;;
                 15)
                     listtemplates_chdman_mame-tools
