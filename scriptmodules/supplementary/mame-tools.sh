@@ -81,7 +81,12 @@ function batch_convert_castool_mame-tools() {
         fi
     done
 
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n ${_ext[@]}\n\nSupported compressions:\n *.zip *.7z"
+    if [[ "$sys" = a26 ]]; then
+        a26sp="(supercharger)"
+    else
+        a26sp=""
+    fi
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n ${_ext[@]} $a26sp\n\nSupported compressions:\n *.zip *.7z"
     
     cd && cd $d
     echo "Reading directory ..."
@@ -309,7 +314,7 @@ function batch_convert_castool_mame-tools() {
         fi
     else
 	    if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-            m="ERROR: ${d%/} doesn't have a zip or 7z compressed valid file.\n\nSupported compressed extensions:\n- ${_ext[@]}"
+            m="ERROR: ${d%/} doesn't have a zip or 7z compressed valid file.\n\nSupported compressed extensions:\n ${_ext[@]} $a26sp"
         else
             if [[ ${out_ext_2} = ??? ]]; then
                 aux_input="*.$out_ext_2"
@@ -454,7 +459,12 @@ function convert_castool_mame-tools(){
         fi
     done
 
-    local m="ERROR: $input isn't a valid file.\n\nSupported extensions:\n ${_ext[@]}\n\nSupported compressions:\n *.zip *.7z"
+    if [[ "$sys" = a26 ]]; then
+        a26sp="(supercharger)"
+    else
+        a26sp=""
+    fi
+    local m="ERROR: $input isn't a valid file.\n\nSupported extensions:\n ${_ext[@]} $a26sp\n\nSupported compressions:\n *.zip *.7z"
 
     if [[ "$f" = *.[zZ][iI][pP] ]] || [[ "$f" = *.7[zZ] ]]; then
         if [[ "$f" = *.[zZ][iI][pP] ]]; then
@@ -466,7 +476,7 @@ function convert_castool_mame-tools(){
             aux_input="$out"
         fi
         if [[ -z $aux_input ]]; then
-            m="ERROR: $input doesn't have a compressed valid file.\n\nSupported compressed extensions:\n- ${_ext[@]}" 
+            m="ERROR: $input doesn't have a compressed valid file.\n\nSupported compressed extensions:\n ${_ext[@]} $a26sp" 
         fi
         input="$input#$aux_input"
         __f="$__f#$aux_input"
@@ -582,7 +592,7 @@ function aux_castool_mame-tools(){
     local cmd_2="$2"
     local default
     while true; do
-        local cmd=(dialog --backtitle "$__backtitle" --title "Castool" --default-item "$default" --menu "Castool - Choose a option" 22 76 16)
+        local cmd=(dialog --backtitle "$__backtitle" --title "Castool - $cmd_2" --default-item "$default" --menu "Castool - Choose a option" 22 76 16)
         local options=(
             1 "single conversion"
             2 "batch conversion"
@@ -1442,7 +1452,7 @@ function batch_extractld_chdman_mame-tools() {
             aux_input="*.{zip,7z}#$aux_input, $aux_input"
         fi
     elif [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-        m="ERROR: ${d%/} doesn't have a zip or 7z compressed AVI file.\n\nSupported compressed extensions:\n- CHD files (*.chd)"
+        m="ERROR: ${d%/} doesn't have a zip or 7z compressed AVI file.\n\nSupported compressed extensions:\n CHD files (*.chd)"
     fi 2>/dev/null >/dev/null
 
     local output="${d%/}"
@@ -1803,7 +1813,7 @@ function batch_extractcd_chdman_mame-tools() {
             aux_input="*.{zip,7z}#$aux_input, $aux_input"
         fi
     elif [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-        m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file.\n\nSupported compressed extensions:\n- CHD files (*.chd)"
+        m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file.\n\nSupported compressed extensions:\n CHD files (*.chd)"
     fi 2>/dev/null >/dev/null
 
     local output="${d%/}"
@@ -2162,7 +2172,7 @@ function batch_extracthd_chdman_mame-tools() {
             aux_input="*.{zip,7z}#$aux_input, $aux_input"
         fi
     elif [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-        m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file.\n\nSupported compressed extensions:\n- CHD files (*.chd)"
+        m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file.\n\nSupported compressed extensions:\n CHD files (*.chd)"
     fi 2>/dev/null >/dev/null
 
     local output="${d%/}"
@@ -2638,7 +2648,7 @@ function batch_extractraw_chdman_mame-tools() {
             aux_input="*.{zip,7z}#$aux_input, $aux_input"
         fi
     elif [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-        m="ERROR: ${d%/} doesn't have a zip or 7z compressed RAW file.\n\nSupported compressed extensions:\n- CHD files (*.chd)"
+        m="ERROR: ${d%/} doesn't have a zip or 7z compressed RAW file.\n\nSupported compressed extensions:\n CHD files (*.chd)"
     fi 2>/dev/null >/dev/null
 
     local output="${d%/}"
@@ -3020,7 +3030,7 @@ function batch_createld_chdman_mame-tools() {
     d="$1"
     _aux_input="chd"
     aux_input="*.$_aux_input"
-    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n AVI files (*.avi)\n\nSupported compressions:\n *.zip *.7z"
+    local m="ERROR: There aren't valid extensions in ${d%/} directory.\n\nSupported extensions:\n AVI laserdisc files (*.avi)\n\nSupported compressions:\n *.zip *.7z"
 
     cd && cd $d
     echo "Reading directory ..."
@@ -3055,7 +3065,7 @@ function batch_createld_chdman_mame-tools() {
             aux_input="*.{zip,7z}#$aux_input, $aux_input"
         fi
     elif [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-        m="ERROR: ${d%/} doesn't have a zip or 7z compressed AVI file.\n\nSupported compressed extensions:\n- AVI files (*.avi)"
+        m="ERROR: ${d%/} doesn't have a zip or 7z compressed AVI file.\n\nSupported compressed extensions:\n AVI laserdisc files (*.avi)"
     fi 2>/dev/null >/dev/null
 
     local output="${d%/}"
@@ -3272,7 +3282,7 @@ function createld_chdman_mame-tools(){
     local f="$1"
     local __f="$f"
     local input="${f##*/}"
-    local m="ERROR: $input isn't a AVI file.\n\nSupported extensions:\n AVI files (*.avi)\n\nSupported compressions:\n *.zip *.7z"
+    local m="ERROR: $input isn't a AVI file.\n\nSupported extensions:\n AVI laserdisc files (*.avi)\n\nSupported compressions:\n *.zip *.7z"
 
     if [[ "$f" = "${f%.*}.avi" ]]; then
         aux_input="$input"
@@ -3288,7 +3298,7 @@ function createld_chdman_mame-tools(){
             aux_input="$out"
         fi
         if [[ -z $aux_input ]]; then
-            m="ERROR: $input haven't a compressed AVI file.\n\nSupported compressed extensions:\n- AVI files (*.avi)" 
+            m="ERROR: $input haven't a compressed AVI file.\n\nSupported compressed extensions:\n AVI laserdisc files (*.avi)" 
         fi
         input="$input#$aux_input"
         __f="$__f#$aux_input"
@@ -3635,7 +3645,7 @@ function batch_createcd_chdman_mame-tools() {
         fi
     else
         if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-            m="ERROR: ${d%/} doesn't have a zip or 7z compressed CD file.\n\nSupported compressed extensions:\n- CUE files (*.cue)\n- GDI files (*.gdi)\n- TOC files (*.toc)"
+            m="ERROR: ${d%/} doesn't have a zip or 7z compressed CD file.\n\nSupported compressed extensions:\n CUE files (*.cue)\n GDI files (*.gdi)\n TOC files (*.toc)"
         else
             if [[ ${out_ext_2} = ??? ]]; then
                 aux_input="*.$out_ext_2"
@@ -4222,7 +4232,7 @@ function batch_createhd_chdman_mame-tools() {
 	    fi
     else
         if [[ -n `find $d -maxdepth 1 -regextype posix-egrep -iregex '.*\.(zip|7z)'` ]] && [[ -z `cat out_3.txt` ]]; then
-            m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file. \n\nSupported compressed extensions:\n- raw disk image (*.img)\n- Mac disk image (*.dmg)\n- Apple IIgs disk image (*.2mg)\n- FM-Towns disk image (*.h0,*.h1,*.h2,*.h3,*.h4)\n- IDE64 disk image (*.hdd)\n- X68k SASI disk image (*.hdf)\n- X68k SCSI disk image (*.hds)"
+            m="ERROR: ${d%/} doesn't have a zip or 7z compressed HD file. \n\nSupported compressed extensions:\n raw disk image (*.img)\n Mac disk image (*.dmg)\n Apple IIgs disk image (*.2mg)\n FM-Towns disk image (*.h0,*.h1,*.h2,*.h3,*.h4)\n IDE64 disk image (*.hdd)\n X68k SASI disk image (*.hdf)\n X68k SCSI disk image (*.hds)"
         else
             if [[ ${out_ext_2} = ?? ]] || [[ ${out_ext_2} = ??? ]]; then
                 aux_input="*.$out_ext_2"
@@ -4593,7 +4603,7 @@ function batch_createhd_chdman_mame-tools() {
         m="$m"
         rm -rf out_*
     fi
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 18 54
 }
 
 function createhd_chdman_mame-tools(){
@@ -5094,7 +5104,7 @@ function createhd_chdman_mame-tools(){
     else
         m="$m"
     fi
-    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 17 54
+    dialog --backtitle "$__backtitle" --stdout --clear --msgbox "$m" 18 54
 }
 
 function batch_createraw_chdman_mame-tools() {
@@ -5726,8 +5736,7 @@ function info_chdman_mame-tools(){
 
 function __aux_chdman_mame-tools(){
     local opt="$1"
-    local manager=`$md_inst/chdman | awk '/manager/' | awk '{print $10}'`
-    local ver="v$manager"
+    local ver="v5"
     
     export IFS=$'\n'
     __DIR=$(dialog --backtitle "$__backtitle" --stdout --title "CHDMAN $ver: ${opt^} - Choose a ROM Directory" --dselect "$romdir/" 10 70)
@@ -5738,8 +5747,7 @@ function _aux_chdman_mame-tools(){
     local cmd_1="$1"
     local cmd_2="$2"
     local default
-    local manager=`$md_inst/chdman | awk '/manager/' | awk '{print $10}'`
-    local ver="v$manager"
+    local ver="v5"
     while true; do
         local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --title "CHDMAN $ver: ${cmd_1^}" --menu "CHDMAN $ver - Choose a option" 22 76 16)
         local options=(
@@ -5767,7 +5775,7 @@ function _aux_chdman_mame-tools(){
 function aux_chdman_mame-tools() {
     local opt="$1"
     local format="$2"
-    local manager=`$md_inst/chdman | awk '/manager/' | awk '{print $10}'`
+    local ver="v5"
 
     export IFS=$'\n'
     if [[ "$opt" = "createhd" ]]; then
@@ -5785,9 +5793,8 @@ function aux_chdman_mame-tools() {
 function chdman_mame-tools() {
     local default
     while true; do
-        local manager=`$md_inst/chdman | awk '/manager/' | awk '{print $10}'`
-        local ver="v$manager"
-        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "CHDMAN $ver (CHD v5) - Choose a option" 22 76 16)
+        local ver="v5"
+        local cmd=(dialog --backtitle "$__backtitle" --default-item "$default" --menu "CHDMAN $ver - Choose a option" 22 76 16)
         local options=(
             S "see manual"
             1 "info - displays information about a CHD"
