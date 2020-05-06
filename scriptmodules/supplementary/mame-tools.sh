@@ -76,7 +76,7 @@ function batch_convert_castool_mame-tools() {
     for ((b=0; b<${#ext[@]}; b++)); do
         if [ "$b" = 0 ]; then
             __ext=(${__ext[@]}${ext[b]})
-	    else 
+	else 
             __ext=(${__ext[@]}\|${ext[b]})
         fi
     done
