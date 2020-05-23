@@ -10,13 +10,8 @@
 #
 
 rp_module_id="lr-bsnes"
-<<<<<<< HEAD
-rp_module_desc="Super Nintendo emu - bsnes (current) port for libretro"
-rp_module_help="ROM Extensions: .smc .sfc .zip .7z\n\nCopy your SNES roms to $romdir/snes"
-=======
-rp_module_desc="Super Nintendo Emulator - bsnes port for libretro (v115)"
-rp_module_help="ROM Extensions: .bml .smc .sfc .zip\n\nCopy your SNES roms to $romdir/snes"
->>>>>>> upstream/master
+rp_module_desc="Super Nintendo emulator - bsnes (current) port for libretro"
+rp_module_help="ROM Extensions: .smc .sfc .zip .zip .7z\n\nCopy your SNES roms to $romdir/snes"
 rp_module_licence="GPL3 https://raw.githubusercontent.com/libretro/bsnes/master/LICENSE.txt"
 rp_module_section="opt"
 rp_module_flags="!armv6"
@@ -33,29 +28,18 @@ function sources_lr-bsnes() {
 }
 
 function build_lr-bsnes() {
-<<<<<<< HEAD
-    cd "bsnes"
-    make clean
-    make target=libretro binary=library -j`nproc`
-=======
     make -C bsnes clean
-    make -C bsnes target="libretro" build="release"
->>>>>>> upstream/master
+    make -C bsnes target="libretro" build="release" -j`nproc`
     md_ret_require="$md_build/bsnes/out/bsnes_libretro.so"
 }
 
 function install_lr-bsnes() {
     md_ret_files=(
         'bsnes/out/bsnes_libretro.so'
-<<<<<<< HEAD
-        'GPLv3.txt'
-        'LICENSE.txt'
-=======
         'LICENSE.txt'
         'GPLv3.txt'
         'CREDITS.md'
         'README.md'
->>>>>>> upstream/master
     )
 }
 
