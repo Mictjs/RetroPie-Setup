@@ -23,9 +23,15 @@ function build_lr-mame2010() {
     rpSwap on 750
     make clean
     local params=()
+<<<<<<< HEAD
     isPlatform "arm" && params+=("VRENDER=soft" "ARM_ENABLED=1")
     make "${params[@]}" ARCHOPTS="$CFLAGS" buildtools -j`nproc`
     make "${params[@]}" ARCHOPTS="$CFLAGS" -j`nproc`
+=======
+    isPlatform "arm" && params+=("VRENDER=soft" "ARM_ENABLED=1" "FORCE_DRC_C_BACKEND=1")
+    make "${params[@]}" ARCHOPTS="$CFLAGS" buildtools
+    make "${params[@]}" ARCHOPTS="$CFLAGS"
+>>>>>>> upstream/master
     rpSwap off
     md_ret_require="$md_build/mame2010_libretro.so"
 }

@@ -112,7 +112,7 @@ function conf_build_vars() {
 
     # workaround for GCC ABI incompatibility with threaded armv7+ C++ apps built
     # on Raspbian's armv6 userland https://github.com/raspberrypi/firmware/issues/491
-    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5.0.0; then
+    if [[ "$__os_id" == "Raspbian" ]] && compareVersions $__gcc_version lt 5; then
         __cxxflags+=" -U__GCC_HAVE_SYNC_COMPARE_AND_SWAP_2"
     fi
 
@@ -208,7 +208,7 @@ function get_os_version() {
                 fi
             fi
             ;;
-        Ubuntu|neon)
+        Ubuntu|neon|Pop)
             if compareVersions "$__os_release" lt 16.04; then
                 error="You need Ubuntu 16.04 or newer"
             # although ubuntu 16.10 reports as being based on stretch it is before some
